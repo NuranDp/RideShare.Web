@@ -64,10 +64,11 @@ System administrator with full control over the platform.
 
 - **Frontend**: Angular 19 (standalone components, Angular Material)
 - **Backend**: .NET 9 Web API (Entity Framework Core)
-- **Database**: SQL Server
+- **Database**: Supabase (PostgreSQL)
 - **Auth**: JWT tokens
 - **Maps**: Leaflet.js with OpenStreetMap tiles
 - **Geocoding**: Nominatim API for address search & reverse geocoding
+- **Real-Time**: SignalR for live notifications & location tracking
 
 ## Project Structure (Monorepo)
 
@@ -365,7 +366,7 @@ CREATE TABLE Ratings (
 ### Phase 1: Foundation (Week 1) ✅
 - [x] Set up monorepo structure
 - [x] Create .NET solution with Api and Core projects
-- [x] Set up Entity Framework Core with SQL Server
+- [x] Set up Entity Framework Core with Supabase (PostgreSQL)
 - [x] Implement User entity with Role support
 - [x] Implement RiderProfile entity
 - [x] Implement auth endpoints (register, login)

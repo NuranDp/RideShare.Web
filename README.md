@@ -10,7 +10,7 @@ A motorcycle-based ride-sharing platform where riders post their commute routes 
 |-------|------------|
 | **Frontend** | Angular 19 (Standalone Components), Angular Material |
 | **Backend** | .NET 9 Web API, Entity Framework Core |
-| **Database** | SQL Server |
+| **Database** | Supabase (PostgreSQL) |
 | **Authentication** | JWT Tokens |
 | **Maps** | Leaflet.js with OpenStreetMap tiles |
 | **Geocoding** | Nominatim API for address search & reverse geocoding |
@@ -96,7 +96,7 @@ ride-share/
 
 - .NET 9 SDK
 - Node.js 18+
-- SQL Server (LocalDB or full instance)
+- Supabase account (free tier available at https://supabase.com)
 - Angular CLI (`npm install -g @angular/cli`)
 
 ### Backend Setup
@@ -106,7 +106,13 @@ ride-share/
    cd src/RideShare.Api
    ```
 
-2. Update the connection string in `appsettings.json` if needed
+2. Update the connection string in `appsettings.json` with your Supabase credentials:
+   ```json
+   "ConnectionStrings": {
+     "DefaultConnection": "Host=aws-1-[REGION].pooler.supabase.com;Port=5432;Database=postgres;Username=postgres.[PROJECT-REF];Password=[YOUR-PASSWORD];SSL Mode=Require;Trust Server Certificate=true"
+   }
+   ```
+   > Get this from Supabase Dashboard → Project Settings → Database → Connection string (Session pooler)
 
 3. Apply database migrations:
    ```bash
