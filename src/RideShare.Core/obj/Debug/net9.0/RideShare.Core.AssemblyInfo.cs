@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RideShare.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+44d819d34e4361231caf63b2e8b646c7e5f49c24")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c50158170968fb8e9f25df7a1db737d0101998b5")]
 [assembly: System.Reflection.AssemblyProductAttribute("RideShare.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RideShare.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

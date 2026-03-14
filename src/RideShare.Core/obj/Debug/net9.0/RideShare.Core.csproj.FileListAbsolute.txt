@@ -9,3 +9,4 @@ D:\Nuran\Personal\Project\ride-share\src\RideShare.Core\obj\Debug\net9.0\RideSha
 D:\Nuran\Personal\Project\ride-share\src\RideShare.Core\obj\Debug\net9.0\refint\RideShare.Core.dll
 D:\Nuran\Personal\Project\ride-share\src\RideShare.Core\obj\Debug\net9.0\RideShare.Core.pdb
 D:\Nuran\Personal\Project\ride-share\src\RideShare.Core\obj\Debug\net9.0\ref\RideShare.Core.dll
+D:\Nuran\Personal\Project\ride-share\src\RideShare.Core\obj\Debug\net9.0\RideShare.Core.sourcelink.json

@@ -8,6 +8,9 @@ using RideShare.Api.Data;
 using RideShare.Api.Hubs;
 using RideShare.Api.Services;
 
+// Enable legacy timestamp behavior for PostgreSQL (allows Local DateTimes)
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -22,9 +25,9 @@ builder.Services.AddOpenApi();
 // Add SignalR
 builder.Services.AddSignalR();
 
-// Configure DbContext
+// Configure DbContext (Supabase PostgreSQL)
 builder.Services.AddDbContext<RideShareDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Configure JWT
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()!;
