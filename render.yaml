@@ -1,0 +1,39 @@
+# Render Blueprint - Deploy RideShare Application
+# https://render.com/docs/blueprint-spec
+
+services:
+  # Backend API - .NET 9
+  - type: web
+    name: rideshare-api
+    runtime: docker
+    dockerfilePath: ./src/RideShare.Api/Dockerfile
+    dockerContext: ./src
+    region: singapore  # Change to your preferred region
+    plan: free  # or starter, standard, etc.
+    healthCheckPath: /api/health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        sync: false  # Set manually in Render dashboard (Supabase connection string)
+      - key: JwtSettings__SecretKey
+        generateValue: true  # Render will generate a random value
+      - key: JwtSettings__Issuer
+        value: RideShareApi
+      - key: JwtSettings__Audience
+        value: RideShareApp
+      - key: JwtSettings__ExpiryInDays
+        value: "7"
+
+  # Frontend - Angular with nginx
+  - type: web
+    name: rideshare-web
+    runtime: docker
+    dockerfilePath: ./src/RideShare.Web/Dockerfile
+    dockerContext: ./src/RideShare.Web
+    region: singapore  # Change to your preferred region
+    plan: free  # or starter, standard, etc.
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY

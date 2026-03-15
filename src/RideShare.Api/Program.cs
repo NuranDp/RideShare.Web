@@ -76,12 +76,15 @@ builder.Services.AddScoped<IRiderService, RiderService>();
 builder.Services.AddScoped<IRideService, RideService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
-// Configure CORS for Angular
+// Configure CORS for Angular (dev and production)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins(
+                "http://localhost:4200",
+                "https://rideshare-web.onrender.com"  // Update after deploying frontend
+              )
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -99,6 +102,10 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Health check endpoint for Render
+app.MapGet("/api/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
+
 app.MapControllers();
 app.MapHub<NotificationHub>("/hubs/notifications");
 app.MapHub<LocationTrackingHub>("/hubs/location");

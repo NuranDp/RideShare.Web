@@ -1,0 +1,24 @@
+# Build output
+**/bin/
+**/obj/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*.user
+*.suo
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.md
+!README.md
+.git/
+.gitignore
