@@ -3219,11 +3219,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Api\\RideShare.Api.csproj",
+      "projectUniqueName": "d:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Api\\RideShare.Api.csproj",
       "projectName": "RideShare.Api",
-      "projectPath": "D:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Api\\RideShare.Api.csproj",
+      "projectPath": "d:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Api\\RideShare.Api.csproj",
       "packagesPath": "C:\\Users\\mnuran\\.nuget\\packages\\",
-      "outputPath": "D:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Api\\obj\\",
+      "outputPath": "d:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Api\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -3244,8 +3244,8 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "D:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Core\\RideShare.Core.csproj": {
-              "projectPath": "D:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Core\\RideShare.Core.csproj"
+            "d:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Core\\RideShare.Core.csproj": {
+              "projectPath": "d:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Core\\RideShare.Core.csproj"
             }
           }
         }
