@@ -2,6 +2,9 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
+# Cache bust arg - change to force fresh build
+ARG CACHE_BUST=2
+
 # Copy package files
 COPY package*.json ./
 
