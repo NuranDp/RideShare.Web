@@ -83,6 +83,8 @@ var allowedOrigins = !string.IsNullOrEmpty(allowedOriginsEnv)
     : builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() 
       ?? new[] { "http://localhost:4200", "https://rideshare-web.onrender.com" };
 
+Console.WriteLine($"CORS Allowed Origins: {string.Join(", ", allowedOrigins)}");
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
@@ -96,13 +98,15 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// CORS must be early in the pipeline - before any errors can occur
+app.UseCors("AllowAngular");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();
 
