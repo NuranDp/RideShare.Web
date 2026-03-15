@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://rideshare-api.onrender.com/api'  // Update this after deploying API
+  apiUrl: 'https://rideshare-api-1pjc.onrender.com/api'
 };
