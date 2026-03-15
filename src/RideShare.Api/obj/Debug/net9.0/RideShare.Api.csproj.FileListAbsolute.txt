@@ -139,3 +139,4 @@ D:\Nuran\Personal\Project\ride-share\src\RideShare.Api\obj\Debug\net9.0\ref\Ride
 D:\Nuran\Personal\Project\ride-share\src\RideShare.Api\obj\Debug\net9.0\RideShare.Api.sourcelink.json
 D:\Nuran\Personal\Project\ride-share\src\RideShare.Api\bin\Debug\net9.0\Npgsql.dll
 D:\Nuran\Personal\Project\ride-share\src\RideShare.Api\bin\Debug\net9.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+d:\Nuran\Personal\Project\ride-share\src\RideShare.Api\bin\Debug\net9.0\appsettings.Production.json
