@@ -77,14 +77,17 @@ builder.Services.AddScoped<IRideService, RideService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
 // Configure CORS for Angular (dev and production)
+var allowedOriginsEnv = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS");
+var allowedOrigins = !string.IsNullOrEmpty(allowedOriginsEnv) 
+    ? allowedOriginsEnv.Split(',', StringSplitOptions.RemoveEmptyEntries)
+    : builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() 
+      ?? new[] { "http://localhost:4200", "https://rideshare-web.onrender.com" };
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins(
-                "http://localhost:4200",
-                "https://rideshare-web.onrender.com"  // Update after deploying frontend
-              )
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
