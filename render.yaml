@@ -33,7 +33,3 @@ services:
     dockerContext: ./src/RideShare.Web
     region: singapore  # Change to your preferred region
     plan: free  # or starter, standard, etc.
-    headers:
-      - path: /*
-        name: X-Frame-Options
-        value: DENY
