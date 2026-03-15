@@ -14,6 +14,8 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: ALLOWED_ORIGINS
+        value: http://localhost:4200,https://rideshare-web.onrender.com
       - key: ConnectionStrings__DefaultConnection
         sync: false  # Set manually in Render dashboard (Supabase connection string)
       - key: JwtSettings__SecretKey
