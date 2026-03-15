@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Core\\RideShare.Core.csproj": {}
+    "d:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Core\\RideShare.Core.csproj": {}
   },
   "projects": {
-    "D:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Core\\RideShare.Core.csproj": {
+    "d:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Core\\RideShare.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Core\\RideShare.Core.csproj",
+        "projectUniqueName": "d:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Core\\RideShare.Core.csproj",
         "projectName": "RideShare.Core",
-        "projectPath": "D:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Core\\RideShare.Core.csproj",
+        "projectPath": "d:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Core\\RideShare.Core.csproj",
         "packagesPath": "C:\\Users\\mnuran\\.nuget\\packages\\",
-        "outputPath": "D:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Core\\obj\\",
+        "outputPath": "d:\\Nuran\\Personal\\Project\\ride-share\\src\\RideShare.Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

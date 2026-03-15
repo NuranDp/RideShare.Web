@@ -8,6 +8,9 @@ using RideShare.Api.Data;
 using RideShare.Api.Hubs;
 using RideShare.Api.Services;
 
+// Enable legacy timestamp behavior for PostgreSQL (allows Local DateTimes)
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -22,9 +25,9 @@ builder.Services.AddOpenApi();
 // Add SignalR
 builder.Services.AddSignalR();
 
-// Configure DbContext
+// Configure DbContext (Supabase PostgreSQL)
 builder.Services.AddDbContext<RideShareDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Configure JWT
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()!;
@@ -73,12 +76,15 @@ builder.Services.AddScoped<IRiderService, RiderService>();
 builder.Services.AddScoped<IRideService, RideService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
-// Configure CORS for Angular
+// Configure CORS for Angular (dev and production)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins(
+                "http://localhost:4200",
+                "https://rideshare-web.onrender.com"  // Update after deploying frontend
+              )
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -96,6 +102,10 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Health check endpoint for Render
+app.MapGet("/api/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
+
 app.MapControllers();
 app.MapHub<NotificationHub>("/hubs/notifications");
 app.MapHub<LocationTrackingHub>("/hubs/location");

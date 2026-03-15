@@ -10,7 +10,7 @@ A motorcycle-based ride-sharing platform where riders post their commute routes 
 |-------|------------|
 | **Frontend** | Angular 19 (Standalone Components), Angular Material |
 | **Backend** | .NET 9 Web API, Entity Framework Core |
-| **Database** | SQL Server |
+| **Database** | Supabase (PostgreSQL) |
 | **Authentication** | JWT Tokens |
 | **Maps** | Leaflet.js with OpenStreetMap tiles |
 | **Geocoding** | Nominatim API for address search & reverse geocoding |
@@ -96,7 +96,7 @@ ride-share/
 
 - .NET 9 SDK
 - Node.js 18+
-- SQL Server (LocalDB or full instance)
+- Supabase account (free tier available at https://supabase.com)
 - Angular CLI (`npm install -g @angular/cli`)
 
 ### Backend Setup
@@ -106,7 +106,13 @@ ride-share/
    cd src/RideShare.Api
    ```
 
-2. Update the connection string in `appsettings.json` if needed
+2. Update the connection string in `appsettings.json` with your Supabase credentials:
+   ```json
+   "ConnectionStrings": {
+     "DefaultConnection": "Host=aws-1-[REGION].pooler.supabase.com;Port=5432;Database=postgres;Username=postgres.[PROJECT-REF];Password=[YOUR-PASSWORD];SSL Mode=Require;Trust Server Certificate=true"
+   }
+   ```
+   > Get this from Supabase Dashboard → Project Settings → Database → Connection string (Session pooler)
 
 3. Apply database migrations:
    ```bash
@@ -258,6 +264,78 @@ The app will be available at `http://localhost:4200`
 - Moving marker animation
 - ETA calculations
 - Route visualization
+
+## Deployment (Render)
+
+This project is configured for deployment on [Render](https://render.com) using Docker.
+
+### Deploy via Render Blueprint
+
+1. Push your code to GitHub
+2. Go to [Render Dashboard](https://dashboard.render.com)
+3. Click "New" → "Blueprint"
+4. Connect your GitHub repository
+5. Render will detect the `render.yaml` and create both services
+
+### Manual Deployment
+
+#### Deploy API
+
+1. Go to Render Dashboard → "New" → "Web Service"
+2. Connect your GitHub repository
+3. Configure:
+   - **Name**: `rideshare-api`
+   - **Runtime**: Docker
+   - **Dockerfile Path**: `./src/RideShare.Api/Dockerfile`
+   - **Docker Context**: `./src`
+4. Add environment variables:
+   - `ConnectionStrings__DefaultConnection`: Your Supabase connection string
+   - `JwtSettings__SecretKey`: A secure random string (32+ characters)
+   - `JwtSettings__Issuer`: `RideShareApi`
+   - `JwtSettings__Audience`: `RideShareApp`
+   - `JwtSettings__ExpiryInDays`: `7`
+5. Deploy
+
+#### Deploy Frontend
+
+1. Go to Render Dashboard → "New" → "Web Service"
+2. Connect your GitHub repository
+3. Configure:
+   - **Name**: `rideshare-web`
+   - **Runtime**: Docker
+   - **Dockerfile Path**: `./src/RideShare.Web/Dockerfile`
+   - **Docker Context**: `./src/RideShare.Web`
+4. Deploy
+
+### Post-Deployment
+
+After deployment, update the URLs:
+
+1. **Update Frontend API URL**: Edit `src/RideShare.Web/src/environments/environment.prod.ts`:
+   ```typescript
+   apiUrl: 'https://your-api-name.onrender.com/api'
+   ```
+
+2. **Update CORS in API**: Edit `src/RideShare.Api/Program.cs` to add your frontend URL:
+   ```csharp
+   policy.WithOrigins(
+       "http://localhost:4200",
+       "https://your-frontend-name.onrender.com"
+   )
+   ```
+
+3. Commit and push changes - Render will auto-deploy
+
+### Environment Variables Reference
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `ConnectionStrings__DefaultConnection` | Supabase PostgreSQL connection string | Yes |
+| `JwtSettings__SecretKey` | Secret key for JWT signing (min 32 chars) | Yes |
+| `JwtSettings__Issuer` | JWT issuer name | Yes |
+| `JwtSettings__Audience` | JWT audience | Yes |
+| `JwtSettings__ExpiryInDays` | Token expiration in days | Yes |
+| `ASPNETCORE_ENVIRONMENT` | Set to `Production` | Auto-set |
 
 ## License
 

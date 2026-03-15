@@ -23,7 +23,7 @@ public class RideShareDbContext : DbContext
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Id).HasDefaultValueSql("NEWID()");
+            entity.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
             entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
             entity.HasIndex(e => e.Email).IsUnique();
             entity.Property(e => e.PasswordHash).IsRequired();
@@ -40,7 +40,7 @@ public class RideShareDbContext : DbContext
         modelBuilder.Entity<RiderProfile>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Id).HasDefaultValueSql("NEWID()");
+            entity.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
             entity.Property(e => e.LicenseNumber).HasMaxLength(50);
             entity.Property(e => e.LicenseImageUrl).HasMaxLength(500);
             entity.Property(e => e.MotorcycleModel).HasMaxLength(100);
@@ -64,7 +64,7 @@ public class RideShareDbContext : DbContext
         modelBuilder.Entity<Ride>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Id).HasDefaultValueSql("NEWID()");
+            entity.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
             entity.Property(e => e.Origin).IsRequired().HasMaxLength(255);
             entity.Property(e => e.Destination).IsRequired().HasMaxLength(255);
             entity.Property(e => e.Notes).HasMaxLength(500);
@@ -80,7 +80,7 @@ public class RideShareDbContext : DbContext
         modelBuilder.Entity<RideRequest>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Id).HasDefaultValueSql("NEWID()");
+            entity.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
             entity.Property(e => e.Status).HasConversion<string>().HasMaxLength(20);
             entity.Property(e => e.Message).HasMaxLength(500);
 
@@ -99,7 +99,7 @@ public class RideShareDbContext : DbContext
         modelBuilder.Entity<Rating>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Id).HasDefaultValueSql("NEWID()");
+            entity.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
             entity.Property(e => e.Score).IsRequired();
             entity.Property(e => e.Comment).HasMaxLength(500);
 
