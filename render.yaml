@@ -1,6 +1,5 @@
-# Render Blueprint - Deploy RideShare API
+# Render Blueprint - Deploy RideShare
 # https://render.com/docs/blueprint-spec
-# Note: Frontend is deployed separately from its own repo
 
 services:
   # Backend API - .NET 9
@@ -25,3 +24,12 @@ services:
         value: RideShareApp
       - key: JwtSettings__ExpiryInDays
         value: "7"
+
+  # Frontend - Angular
+  - type: web
+    name: rideshare-web
+    runtime: docker
+    dockerfilePath: ./src/RideShare.Web/Dockerfile
+    dockerContext: ./src/RideShare.Web
+    region: singapore
+    plan: free
