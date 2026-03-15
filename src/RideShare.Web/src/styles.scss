@@ -1,0 +1,186 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Box-sizing reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body { 
+  height: 100%;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  overflow-x: hidden;
+}
+
+/* Global mat-icon alignment fix */
+mat-icon {
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* Fix mat-icon alignment in buttons */
+button mat-icon,
+a mat-icon {
+  vertical-align: middle;
+}
+
+/* Fix mat-icon alignment in mat-card-subtitle */
+mat-card-subtitle {
+  display: flex !important;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ========== MOBILE RESPONSIVE STYLES ========== */
+
+/* Responsive dialogs */
+.cdk-overlay-pane {
+  max-width: 95vw !important;
+}
+
+@media (max-width: 600px) {
+  .cdk-overlay-pane {
+    width: 95vw !important;
+    max-width: 95vw !important;
+  }
+  
+  .mat-mdc-dialog-container {
+    padding: 16px !important;
+  }
+  
+  .mat-mdc-dialog-title {
+    font-size: 18px !important;
+  }
+  
+  .mat-mdc-dialog-content {
+    max-height: 70vh !important;
+  }
+}
+
+/* Touch-friendly buttons */
+@media (max-width: 768px) {
+  .mat-mdc-button,
+  .mat-mdc-raised-button,
+  .mat-mdc-outlined-button,
+  .mat-mdc-icon-button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .mat-mdc-form-field {
+    width: 100%;
+  }
+}
+
+/* Mobile toolbar adjustments */
+@media (max-width: 480px) {
+  .mat-toolbar {
+    padding: 0 8px !important;
+  }
+  
+  .mat-toolbar .toolbar-title {
+    font-size: 16px !important;
+  }
+  
+  .mat-toolbar button[mat-icon-button] {
+    margin: 0 2px;
+  }
+}
+
+/* Mobile card adjustments */
+@media (max-width: 480px) {
+  mat-card {
+    margin: 8px !important;
+    border-radius: 8px !important;
+  }
+  
+  mat-card-header {
+    padding: 12px !important;
+  }
+  
+  mat-card-content {
+    padding: 0 12px 12px !important;
+  }
+  
+  mat-card-actions {
+    padding: 8px 12px !important;
+  }
+}
+
+/* Mobile map containers */
+@media (max-width: 480px) {
+  .map-container {
+    height: 200px !important;
+    min-height: 200px !important;
+  }
+}
+
+/* Mobile typography */
+@media (max-width: 480px) {
+  h1 { 
+    font-size: 22px !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  h2 { 
+    font-size: 18px !important;
+    word-wrap: break-word;
+  }
+  h3 { 
+    font-size: 16px !important;
+  }
+
+  /* Prevent content overflow on mobile */
+  .page-header,
+  mat-card-header,
+  mat-card-title,
+  mat-card-subtitle {
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  mat-card-title {
+    font-size: 14px !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal !important;
+    line-height: 1.3;
+  }
+
+  /* Force all containers to respect viewport width */
+  .my-rides-container,
+  .dashboard-container,
+  .main-content,
+  app-root,
+  mat-sidenav-content {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Fix mat-card on mobile */
+  mat-card {
+    max-width: calc(100vw - 32px) !important;
+    overflow: hidden !important;
+  }
+
+  /* Fix mat-card-header layout */
+  .mat-mdc-card-header {
+    flex-wrap: wrap !important;
+  }
+
+  /* Truncated route fix */
+  .truncated-route {
+    white-space: normal !important;
+    word-break: break-word !important;
+    max-width: calc(100vw - 100px) !important;
+  }
+
+  /* Mat tab body */
+  .mat-mdc-tab-body-content {
+    overflow-x: hidden !important;
+  }
+}
