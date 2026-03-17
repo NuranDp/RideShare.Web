@@ -100,8 +100,7 @@ ride-share/
 │           ├── components/     # Shared components
 │           │   ├── location-picker/
 │           │   ├── ride-map/
-│           │   ├── route-preview/
-│           │   ├── rating-dialog/
+│           │   ├── route-preview/           │   ├── unified-route-map/│           │   ├── rating-dialog/
 │           │   └── notification-*/
 │           ├── services/       # API services
 │           ├── guards/         # Route guards

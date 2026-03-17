@@ -24,6 +24,7 @@ src/app/
 │   ├── location-picker/    # Reusable map location selector
 │   ├── ride-map/           # Ride list map view
 │   ├── route-preview/      # Route visualization
+│   ├── unified-route-map/  # Combined route & tracking map
 │   ├── rating-dialog/      # Rating submission
 │   ├── notification-bell/  # Notification indicator
 │   └── notification-toast/ # Toast notifications

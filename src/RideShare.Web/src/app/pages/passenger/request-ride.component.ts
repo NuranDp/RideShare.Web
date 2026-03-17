@@ -211,6 +211,14 @@ import * as L from 'leaflet';
                         </button>
                       }
                     </mat-form-field>
+                    <button mat-stroked-button class="use-location-btn" (click)="useCurrentLocation('pickup')" [disabled]="gettingPickupLocation">
+                      @if (gettingPickupLocation) {
+                        <mat-spinner diameter="16"></mat-spinner>
+                      } @else {
+                        <mat-icon>my_location</mat-icon>
+                      }
+                      <span>{{ gettingPickupLocation ? 'Getting location...' : 'Use Current Location' }}</span>
+                    </button>
                     @if (showPickupResults && pickupSearchResults.length > 0) {
                       <div class="search-results">
                         @for (result of pickupSearchResults; track result.place_id) {
@@ -257,6 +265,14 @@ import * as L from 'leaflet';
                         </button>
                       }
                     </mat-form-field>
+                    <button mat-stroked-button class="use-location-btn" (click)="useCurrentLocation('dropoff')" [disabled]="gettingDropoffLocation">
+                      @if (gettingDropoffLocation) {
+                        <mat-spinner diameter="16"></mat-spinner>
+                      } @else {
+                        <mat-icon>my_location</mat-icon>
+                      }
+                      <span>{{ gettingDropoffLocation ? 'Getting location...' : 'Use Current Location' }}</span>
+                    </button>
                     @if (showDropoffResults && dropoffSearchResults.length > 0) {
                       <div class="search-results">
                         @for (result of dropoffSearchResults; track result.place_id) {
@@ -316,16 +332,25 @@ import * as L from 'leaflet';
             <!-- Action Buttons -->
             <div class="action-buttons">
               <button mat-stroked-button class="cancel-btn" (click)="goBack()" [disabled]="sending">
+                <mat-icon>arrow_back</mat-icon>
                 Cancel
               </button>
               <button mat-raised-button 
                       class="send-btn"
                       [class.ready]="isValid()"
+                      [class.pulse]="isValid() && !sending"
                       (click)="sendRequest()" 
                       [disabled]="sending || !isValid()">
                 @if (sending) {
-                  <mat-spinner diameter="20"></mat-spinner>
-                  <span>Sending...</span>
+                  <ng-container>
+                    <mat-spinner diameter="20"></mat-spinner>
+                    <span>Sending Request...</span>
+                  </ng-container>
+                } @else if (!pickupLat) {
+                  <ng-container>
+                    <mat-icon>touch_app</mat-icon>
+                    <span>Set Pickup Point First</span>
+                  </ng-container>
                 } @else {
                   <ng-container>
                     <mat-icon>send</mat-icon>
@@ -917,6 +942,34 @@ import * as L from 'leaflet';
       color: #666;
     }
 
+    .use-location-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      margin-top: 8px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #1976d2;
+      border-color: #1976d2;
+    }
+
+    .use-location-btn:disabled {
+      opacity: 0.7;
+    }
+
+    .use-location-btn mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    .use-location-btn mat-spinner {
+      margin-right: 4px;
+    }
+
     /* Message Card */
     .message-field {
       width: 100%;
@@ -927,39 +980,93 @@ import * as L from 'leaflet';
       display: flex;
       gap: 12px;
       padding-top: 8px;
+      position: sticky;
+      bottom: 80px;
+      background: white;
+      padding: 16px;
+      margin: -16px;
+      margin-top: 8px;
+      border-radius: 16px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+      z-index: 10;
     }
 
     .cancel-btn {
-      flex: 1;
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0 16px;
+      height: 48px;
+      border-radius: 24px;
+    }
+
+    .cancel-btn mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
     }
 
     .send-btn {
-      flex: 2;
-      height: 48px;
-      border-radius: 24px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      flex: 1;
+      height: 52px;
+      border-radius: 26px;
+      background: #bdbdbd;
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      font-weight: 500;
-      transition: all 0.3s;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: none;
+      cursor: not-allowed;
+    }
+
+    .send-btn mat-icon {
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
     }
 
     .send-btn:disabled {
       background: #e0e0e0;
-      color: #999;
+      color: #9e9e9e;
+      transform: none;
+      box-shadow: none;
     }
 
-    .send-btn.ready:not(:disabled) {
-      background: linear-gradient(135deg, #43a047, #2e7d32);
-      box-shadow: 0 4px 16px rgba(46, 125, 50, 0.3);
+    .send-btn.ready {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.35);
     }
 
     .send-btn.ready:not(:disabled):hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(102, 126, 234, 0.45);
+    }
+
+    .send-btn.ready:not(:disabled):active {
+      transform: translateY(0);
+      box-shadow: 0 2px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .send-btn.pulse:not(:disabled) {
+      animation: pulse-purple 2s infinite;
+    }
+
+    @keyframes pulse-purple {
+      0% {
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.35);
+      }
+      50% {
+        box-shadow: 0 4px 30px rgba(102, 126, 234, 0.55), 0 0 0 8px rgba(102, 126, 234, 0.1);
+      }
+      100% {
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.35);
+      }
     }
 
     /* Map Column */
@@ -1166,6 +1273,8 @@ export class RequestRideComponent implements OnInit, AfterViewInit, OnDestroy {
   showDropoffResults = false;
   pickupSearching = false;
   dropoffSearching = false;
+  gettingPickupLocation = false;
+  gettingDropoffLocation = false;
   private searchDebounceTimer: any;
   
   private map: L.Map | null = null;
@@ -1797,5 +1906,103 @@ export class RequestRideComponent implements OnInit, AfterViewInit, OnDestroy {
 
   goToProfile(): void {
     this.router.navigate(['/passenger'], { queryParams: { tab: 'profile' } });
+  }
+
+  useCurrentLocation(type: 'pickup' | 'dropoff'): void {
+    if (!navigator.geolocation) {
+      this.snackBar.open('Geolocation is not supported by your browser', 'Close', { duration: 3000 });
+      return;
+    }
+
+    if (type === 'pickup') {
+      this.gettingPickupLocation = true;
+    } else {
+      this.gettingDropoffLocation = true;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        
+        // Reverse geocode to get address
+        this.reverseGeocode(lat, lng, type);
+      },
+      (error) => {
+        if (type === 'pickup') {
+          this.gettingPickupLocation = false;
+        } else {
+          this.gettingDropoffLocation = false;
+        }
+        
+        let message = 'Unable to get your location';
+        if (error.code === error.PERMISSION_DENIED) {
+          message = 'Location permission denied. Please enable location access.';
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+          message = 'Location information unavailable';
+        } else if (error.code === error.TIMEOUT) {
+          message = 'Location request timed out';
+        }
+        this.snackBar.open(message, 'Close', { duration: 3000 });
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+  }
+
+  private reverseGeocode(lat: number, lng: number, type: 'pickup' | 'dropoff'): void {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`;
+    
+    fetch(url, { headers: { 'Accept': 'application/json' } })
+      .then(response => response.json())
+      .then(result => {
+        const address = result.display_name || `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+        const shortAddress = this.getShortDisplayName(address);
+        
+        if (type === 'pickup') {
+          this.pickupLat = lat;
+          this.pickupLng = lng;
+          this.pickupLocation = address;
+          this.pickupSearchQuery = shortAddress;
+          this.gettingPickupLocation = false;
+          this.selectionMode = 'dropoff';
+          this.snackBar.open('Pickup location set from GPS!', 'OK', { duration: 2000 });
+        } else {
+          this.dropoffLat = lat;
+          this.dropoffLng = lng;
+          this.dropoffLocation = address;
+          this.dropoffSearchQuery = shortAddress;
+          this.gettingDropoffLocation = false;
+          this.snackBar.open('Drop-off location set from GPS!', 'OK', { duration: 2000 });
+        }
+        
+        if (this.map) {
+          this.updateMarkerFromSearch(lat, lng, type);
+          this.updateFullRouteIfReady();
+        }
+      })
+      .catch(() => {
+        // Fallback: Use coordinates only
+        if (type === 'pickup') {
+          this.pickupLat = lat;
+          this.pickupLng = lng;
+          this.pickupLocation = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+          this.pickupSearchQuery = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+          this.gettingPickupLocation = false;
+          this.selectionMode = 'dropoff';
+        } else {
+          this.dropoffLat = lat;
+          this.dropoffLng = lng;
+          this.dropoffLocation = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+          this.dropoffSearchQuery = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+          this.gettingDropoffLocation = false;
+        }
+        
+        if (this.map) {
+          this.updateMarkerFromSearch(lat, lng, type);
+          this.updateFullRouteIfReady();
+        }
+        
+        this.snackBar.open('Location set!', 'OK', { duration: 2000 });
+      });
   }
 }

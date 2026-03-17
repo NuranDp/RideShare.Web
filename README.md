@@ -78,8 +78,8 @@ ride-share/
 │           │   └── register/
 │           ├── components/     # Shared components
 │           │   ├── location-picker/
-│           │   ├── ride-map/
-│           │   ├── rating-dialog/
+│           │   ├── ride-map/           │   ├── route-preview/
+           │   ├── unified-route-map/│           │   ├── rating-dialog/
 │           │   └── notification-*/
 │           └── services/       # API & SignalR services
 │
