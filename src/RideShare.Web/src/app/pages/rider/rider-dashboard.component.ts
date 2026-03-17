@@ -53,6 +53,28 @@ import * as L from 'leaflet';
       <!-- Rides Tab -->
       @if (activeTab === 'rides') {
         <div class="tab-content rides-tab">
+          <!-- Welcome Section -->
+          <div class="welcome-section">
+            <div class="welcome-content">
+              <div class="welcome-text">
+                <span class="greeting">Hey, {{ getFirstName() }}! 🏍️</span>
+                <h2>Ready to share your ride?</h2>
+              </div>
+              <div class="welcome-stats">
+                <div class="stat-item">
+                  <span class="stat-value">{{ totalRides }}</span>
+                  <span class="stat-label">Rides</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                  <span class="stat-value">{{ riderRating > 0 ? riderRating.toFixed(1) : '-' }}</span>
+                  <span class="stat-label">Rating</span>
+                </div>
+              </div>
+            </div>
+            <div class="welcome-decoration"></div>
+          </div>
+
           <!-- Quick Actions -->
           <div class="quick-actions">
             <button class="action-card primary" routerLink="/rider/post-ride">
@@ -551,6 +573,102 @@ import * as L from 'leaflet';
       font-size: 13px;
       color: #999;
       margin-top: 4px;
+    }
+
+    /* Welcome Section */
+    .welcome-section {
+      margin-bottom: 24px;
+      padding: 20px;
+      background: linear-gradient(135deg, #0D47A1 0%, #034694 40%, #00796B 100%);
+      border-radius: 20px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .welcome-text {
+      flex: 1;
+    }
+
+    .welcome-text .greeting {
+      font-size: 14px;
+      opacity: 0.9;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .welcome-section h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .welcome-stats {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,0.15);
+      padding: 12px 16px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    .welcome-stats .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .welcome-stats .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .welcome-stats .stat-label {
+      font-size: 11px;
+      opacity: 0.8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: white;
+    }
+
+    .welcome-stats .stat-divider {
+      width: 1px;
+      height: 30px;
+      background: rgba(255,255,255,0.3);
+    }
+
+    .welcome-decoration {
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 120px;
+      height: 120px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50%;
+    }
+
+    .welcome-decoration::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80px;
+      height: 80px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
     }
 
     /* Quick Actions */
@@ -1940,6 +2058,11 @@ export class RiderDashboardComponent implements OnInit, AfterViewChecked, OnDest
     if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
     if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
     return date.toLocaleDateString();
+  }
+
+  getFirstName(): string {
+    const fullName = this.authService.currentUser()?.fullName;
+    return fullName?.split(' ')[0] || 'Rider';
   }
 
   logout(): void {

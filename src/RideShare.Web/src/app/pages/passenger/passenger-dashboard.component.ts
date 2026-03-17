@@ -40,8 +40,16 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
         <div class="tab-content home-tab">
           <!-- Welcome Section -->
           <div class="welcome-section">
-            <h2>Hello, {{ getFirstName() }}!</h2>
-            <p>Find your next ride</p>
+            <div class="welcome-content">
+              <div class="welcome-text">
+                <span class="greeting">Hello, {{ getFirstName() }}! 👋</span>
+                <h2>Where are you heading today?</h2>
+              </div>
+              <div class="welcome-icon">
+                <mat-icon>hail</mat-icon>
+              </div>
+            </div>
+            <div class="welcome-wave"></div>
           </div>
 
           <!-- Quick Actions -->
@@ -369,20 +377,66 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
 
     /* Welcome Section */
     .welcome-section {
-      padding: 16px 0;
+      margin-bottom: 24px;
+      padding: 24px 20px 40px;
+      background: linear-gradient(135deg, #034694 0%, #1565C0 50%, #42A5F5 100%);
+      border-radius: 20px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .welcome-text {
+      flex: 1;
+    }
+
+    .welcome-text .greeting {
+      font-size: 14px;
+      opacity: 0.9;
+      display: block;
+      margin-bottom: 4px;
     }
 
     .welcome-section h2 {
       margin: 0;
-      font-size: 26px;
+      font-size: 22px;
       font-weight: 700;
-      color: #333;
+      line-height: 1.3;
     }
 
-    .welcome-section p {
-      margin: 4px 0 0;
-      color: #666;
-      font-size: 15px;
+    .welcome-icon {
+      width: 60px;
+      height: 60px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .welcome-icon mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+
+    .welcome-wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,69.3C960,85,1056,107,1152,101.3C1248,96,1344,64,1392,48L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+      background-size: cover;
     }
 
     /* Quick Actions */
