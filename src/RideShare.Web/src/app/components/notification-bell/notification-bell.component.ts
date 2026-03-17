@@ -92,7 +92,7 @@ import { NotificationService, Notification } from '../../services/notification.s
       justify-content: space-between;
       align-items: center;
       padding: 16px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
       margin: -8px -8px 0;
       border-radius: 4px 4px 0 0;
@@ -201,12 +201,12 @@ import { NotificationService, Notification } from '../../services/notification.s
     }
 
     .notification-item.unread {
-      background-color: rgba(102, 126, 234, 0.08);
-      border-left-color: #667eea;
+      background-color: rgba(3, 70, 148, 0.08);
+      border-left-color: #034694;
     }
 
     .notification-item.unread:hover {
-      background-color: rgba(102, 126, 234, 0.12);
+      background-color: rgba(3, 70, 148, 0.12);
     }
 
     .notification-icon {
@@ -230,7 +230,7 @@ import { NotificationService, Notification } from '../../services/notification.s
     .icon-accepted { background: linear-gradient(135deg, #4caf50, #2e7d32); }
     .icon-rejected { background: linear-gradient(135deg, #f44336, #c62828); }
     .icon-cancelled { background: linear-gradient(135deg, #ff9800, #ef6c00); }
-    .icon-completed { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .icon-completed { background: linear-gradient(135deg, #034694, #0A56A4); }
     .icon-rating { background: linear-gradient(135deg, #ffc107, #ff8f00); }
     .icon-default { background: linear-gradient(135deg, #607d8b, #455a64); }
 
@@ -306,7 +306,7 @@ import { NotificationService, Notification } from '../../services/notification.s
       gap: 6px;
       padding: 12px 16px;
       background: #f8f9fc;
-      color: #667eea;
+      color: #034694;
       font-size: 13px;
       font-weight: 500;
       border-top: 1px solid #eee;

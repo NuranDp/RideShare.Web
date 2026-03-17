@@ -214,7 +214,7 @@ import * as L from 'leaflet';
     }
 
     .logo-icon {
-      color: #667eea;
+      color: #034694;
       font-size: 28px;
       width: 28px;
       height: 28px;
@@ -375,7 +375,7 @@ import * as L from 'leaflet';
       border-radius: 16px;
       padding: 16px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      border-left: 4px solid #667eea;
+      border-left: 4px solid #034694;
     }
 
     .request-card.processed {
@@ -395,7 +395,7 @@ import * as L from 'leaflet';
       width: 44px;
       height: 44px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -462,8 +462,8 @@ import * as L from 'leaflet';
 
     /* Journey Visual */
     .journey-visual {
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
-      border: 1px solid rgba(102, 126, 234, 0.2);
+      background: linear-gradient(135deg, rgba(3, 70, 148, 0.08), rgba(10, 86, 164, 0.08));
+      border: 1px solid rgba(3, 70, 148, 0.2);
       border-radius: 12px;
       padding: 12px;
       margin-bottom: 12px;
@@ -474,7 +474,7 @@ import * as L from 'leaflet';
       align-items: center;
       gap: 6px;
       font-size: 11px;
-      color: #667eea;
+      color: #034694;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -563,7 +563,7 @@ import * as L from 'leaflet';
       background: #f8f9fc;
       border: 1px dashed #ddd;
       border-radius: 10px;
-      color: #667eea;
+      color: #034694;
       font-size: 13px;
       font-weight: 500;
       cursor: pointer;
@@ -573,7 +573,7 @@ import * as L from 'leaflet';
 
     .view-route-btn:hover {
       background: #f0f3ff;
-      border-color: #667eea;
+      border-color: #034694;
     }
 
     .view-route-btn mat-icon {
@@ -658,7 +658,7 @@ import * as L from 'leaflet';
     }
 
     .action-btn.accept {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
     }
 
@@ -740,7 +740,7 @@ import * as L from 'leaflet';
     }
 
     .nav-item.active {
-      color: #667eea;
+      color: #034694;
     }
 
     /* Mobile adjustments */

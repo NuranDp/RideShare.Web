@@ -233,7 +233,7 @@ import { UnifiedRouteMapComponent, LocationCoordinates, RouteInfo } from '../../
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
       display: flex;
       align-items: center;
@@ -308,7 +308,7 @@ import { UnifiedRouteMapComponent, LocationCoordinates, RouteInfo } from '../../
     }
 
     .option-icon.active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
     }
 
     .option-icon.active mat-icon {
@@ -348,7 +348,7 @@ import { UnifiedRouteMapComponent, LocationCoordinates, RouteInfo } from '../../
     }
 
     .option-toggle.active .toggle-track {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
     }
 
     .toggle-thumb {
@@ -413,7 +413,7 @@ import { UnifiedRouteMapComponent, LocationCoordinates, RouteInfo } from '../../
       padding: 16px 24px;
       border: none;
       border-radius: 16px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
       font-size: 16px;
       font-weight: 600;

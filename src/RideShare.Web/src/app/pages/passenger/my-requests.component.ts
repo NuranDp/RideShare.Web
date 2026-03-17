@@ -326,7 +326,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
     }
 
     .logo-icon {
-      color: #667eea;
+      color: #034694;
       font-size: 28px;
       width: 28px;
       height: 28px;
@@ -382,7 +382,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
     }
 
     .tab-btn.active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
     }
 
@@ -428,7 +428,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
       width: 80px;
       height: 80px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -538,7 +538,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -643,7 +643,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
       gap: 6px;
       font-size: 13px;
       font-weight: 600;
-      color: #667eea;
+      color: #034694;
       margin-bottom: 10px;
     }
 
@@ -856,7 +856,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
     }
 
     .action-btn.primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
     }
 
@@ -909,7 +909,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
     }
 
     .nav-item.active {
-      color: #667eea;
+      color: #034694;
     }
 
     /* Mobile */

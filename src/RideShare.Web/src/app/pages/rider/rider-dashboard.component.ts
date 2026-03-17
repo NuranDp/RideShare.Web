@@ -464,7 +464,7 @@ import * as L from 'leaflet';
     }
 
     .logo-icon {
-      color: #667eea;
+      color: #034694;
       font-size: 28px;
       width: 28px;
       height: 28px;
@@ -539,7 +539,7 @@ import * as L from 'leaflet';
     }
 
     .header-badge {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
       padding: 4px 10px;
       border-radius: 12px;
@@ -580,7 +580,7 @@ import * as L from 'leaflet';
     }
 
     .action-card.primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
     }
 
@@ -607,7 +607,7 @@ import * as L from 'leaflet';
       font-size: 24px;
       width: 24px;
       height: 24px;
-      color: #667eea;
+      color: #034694;
     }
 
     .icon-badge {
@@ -638,7 +638,7 @@ import * as L from 'leaflet';
     }
 
     .request-count {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
       padding: 2px 8px;
       border-radius: 10px;
@@ -658,7 +658,7 @@ import * as L from 'leaflet';
       border-radius: 16px;
       padding: 16px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      border-left: 4px solid #667eea;
+      border-left: 4px solid #034694;
     }
 
     .request-header {
@@ -672,7 +672,7 @@ import * as L from 'leaflet';
       width: 44px;
       height: 44px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -814,8 +814,8 @@ import * as L from 'leaflet';
 
     /* Passenger Journey */
     .passenger-journey {
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
-      border: 1px solid rgba(102, 126, 234, 0.2);
+      background: linear-gradient(135deg, rgba(3, 70, 148, 0.08), rgba(10, 86, 164, 0.08));
+      border: 1px solid rgba(3, 70, 148, 0.2);
       border-radius: 10px;
       padding: 10px;
     }
@@ -825,7 +825,7 @@ import * as L from 'leaflet';
       align-items: center;
       gap: 6px;
       font-size: 11px;
-      color: #667eea;
+      color: #034694;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -941,10 +941,10 @@ import * as L from 'leaflet';
       width: 100%;
       padding: 10px;
       margin-bottom: 12px;
-      border: 1px dashed #667eea;
+      border: 1px dashed #034694;
       border-radius: 10px;
       background: #f8f9ff;
-      color: #667eea;
+      color: #034694;
       font-size: 13px;
       font-weight: 500;
       cursor: pointer;
@@ -1077,13 +1077,13 @@ import * as L from 'leaflet';
     }
 
     .action-btn.accept {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
     }
 
     .action-btn.accept:hover:not(:disabled) {
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 4px 12px rgba(3, 70, 148, 0.3);
     }
 
     @keyframes spin {
@@ -1382,7 +1382,7 @@ import * as L from 'leaflet';
       width: 72px;
       height: 72px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1472,7 +1472,7 @@ import * as L from 'leaflet';
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #667eea;
+      color: #034694;
     }
 
     .menu-icon.logout {
@@ -1547,11 +1547,11 @@ import * as L from 'leaflet';
     }
 
     .nav-item.active {
-      color: #667eea;
+      color: #034694;
     }
 
     .nav-item.active mat-icon {
-      color: #667eea;
+      color: #034694;
     }
   `]
 })
@@ -1740,7 +1740,7 @@ export class RiderDashboardComponent implements OnInit, AfterViewChecked, OnDest
 
     // Draw route line connecting all points in order: A -> P -> D -> B
     L.polyline(points, {
-      color: '#667eea',
+      color: '#034694',
       weight: 4,
       opacity: 0.8,
       dashArray: '10, 10'

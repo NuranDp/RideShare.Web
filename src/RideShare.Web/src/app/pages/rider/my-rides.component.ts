@@ -298,7 +298,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
     }
 
     .logo-icon {
-      color: #667eea;
+      color: #034694;
       font-size: 28px;
       width: 28px;
       height: 28px;
@@ -354,7 +354,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
     }
 
     .tab-btn.active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
     }
 
@@ -412,7 +412,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
       width: 80px;
       height: 80px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -702,7 +702,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
     }
 
     .action-btn.primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
     }
 
@@ -732,7 +732,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
 
     .request-badge {
       padding: 2px 8px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
       border-radius: 10px;
       font-size: 12px;
@@ -792,7 +792,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
       margin: -4px 0 0 -12px;
       background: none;
       border: none;
-      color: #667eea;
+      color: #034694;
       font-size: 13px;
       font-weight: 500;
       cursor: pointer;
@@ -844,7 +844,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
     }
 
     .nav-item.active {
-      color: #667eea;
+      color: #034694;
     }
 
     /* Floating Action Button */
@@ -856,9 +856,9 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
       height: 56px;
       border-radius: 16px;
       border: none;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
-      box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 4px 16px rgba(3, 70, 148, 0.4);
       cursor: pointer;
       display: flex;
       align-items: center;

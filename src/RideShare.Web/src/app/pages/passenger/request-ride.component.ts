@@ -478,7 +478,7 @@ import * as L from 'leaflet';
       align-items: center;
       gap: 16px;
       padding: 16px 24px 16px 64px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
     }
 
@@ -549,7 +549,7 @@ import * as L from 'leaflet';
     }
 
     ::ng-deep .mat-mdc-card-avatar {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white !important;
       border-radius: 10px !important;
     }
@@ -807,7 +807,7 @@ import * as L from 'leaflet';
     }
 
     .point-input.active {
-      border-color: #667eea;
+      border-color: #034694;
       background: #f8f9ff;
     }
 
@@ -1038,19 +1038,19 @@ import * as L from 'leaflet';
     }
 
     .send-btn.ready {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       cursor: pointer;
-      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.35);
+      box-shadow: 0 4px 20px rgba(3, 70, 148, 0.35);
     }
 
     .send-btn.ready:not(:disabled):hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(102, 126, 234, 0.45);
+      box-shadow: 0 8px 28px rgba(3, 70, 148, 0.45);
     }
 
     .send-btn.ready:not(:disabled):active {
       transform: translateY(0);
-      box-shadow: 0 2px 12px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 2px 12px rgba(3, 70, 148, 0.3);
     }
 
     .send-btn.pulse:not(:disabled) {
@@ -1059,13 +1059,13 @@ import * as L from 'leaflet';
 
     @keyframes pulse-purple {
       0% {
-        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.35);
+        box-shadow: 0 4px 20px rgba(3, 70, 148, 0.35);
       }
       50% {
-        box-shadow: 0 4px 30px rgba(102, 126, 234, 0.55), 0 0 0 8px rgba(102, 126, 234, 0.1);
+        box-shadow: 0 4px 30px rgba(3, 70, 148, 0.55), 0 0 0 8px rgba(3, 70, 148, 0.1);
       }
       100% {
-        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.35);
+        box-shadow: 0 4px 20px rgba(3, 70, 148, 0.35);
       }
     }
 
@@ -1243,7 +1243,7 @@ import * as L from 'leaflet';
     }
 
     .nav-item.active {
-      color: #667eea;
+      color: #034694;
     }
   `]
 })

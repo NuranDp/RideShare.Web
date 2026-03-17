@@ -1,5 +1,31 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* ========== CHELSEA BLUE THEME VARIABLES ========== */
+:root {
+  --primary-dark: #034694;
+  --primary: #0A56A4;
+  --primary-light: #1565C0;
+  --primary-gradient: linear-gradient(135deg, #034694 0%, #0A56A4 50%, #1565C0 100%);
+  --primary-gradient-simple: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
+  --primary-shadow: rgba(3, 70, 148, 0.35);
+  --primary-shadow-light: rgba(3, 70, 148, 0.15);
+  
+  --success: #2e7d32;
+  --success-light: #4caf50;
+  --warning: #f57c00;
+  --warning-light: #ff9800;
+  --danger: #c62828;
+  --danger-light: #f44336;
+  
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --bg-card: #ffffff;
+}
+
 /* Box-sizing reset */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -14,6 +40,7 @@ body {
   margin: 0; 
   font-family: Roboto, "Helvetica Neue", sans-serif;
   overflow-x: hidden;
+  background-color: var(--bg-primary);
 }
 
 /* Global mat-icon alignment fix */

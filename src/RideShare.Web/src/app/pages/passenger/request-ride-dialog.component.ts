@@ -418,7 +418,7 @@ import * as L from 'leaflet';
       justify-content: space-between;
       align-items: flex-start;
       padding: 20px 24px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
     }
 
@@ -603,8 +603,8 @@ import * as L from 'leaflet';
     }
 
     .step.active .step-indicator {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
+      box-shadow: 0 4px 12px rgba(3, 70, 148, 0.4);
     }
 
     .step.active .step-num {
@@ -942,8 +942,8 @@ import * as L from 'leaflet';
     }
 
     .point-card.editing {
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      border-color: #034694;
+      box-shadow: 0 0 0 3px rgba(3, 70, 148, 0.1);
     }
 
     .point-card.set {
@@ -1139,7 +1139,7 @@ import * as L from 'leaflet';
       min-width: 150px;
       height: 44px;
       border-radius: 22px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
       display: flex;
       align-items: center;

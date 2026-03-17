@@ -223,7 +223,7 @@ import * as L from 'leaflet';
     }
 
     .logo-icon {
-      color: #667eea;
+      color: #034694;
       font-size: 28px;
       width: 28px;
       height: 28px;
@@ -294,7 +294,7 @@ import * as L from 'leaflet';
     }
 
     .action-btn.primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
     }
 
@@ -366,7 +366,7 @@ import * as L from 'leaflet';
     }
 
     .recenter-btn mat-icon {
-      color: #667eea;
+      color: #034694;
     }
 
     /* Floating Info Card */
@@ -407,7 +407,7 @@ import * as L from 'leaflet';
     .rider-avatar {
       width: 48px;
       height: 48px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -438,7 +438,7 @@ import * as L from 'leaflet';
       align-items: center;
       gap: 4px;
       font-size: 13px;
-      color: #667eea;
+      color: #034694;
       font-weight: 500;
       margin-top: 2px;
     }
@@ -471,7 +471,7 @@ import * as L from 'leaflet';
     }
 
     .quick-actions .action-btn.call {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
     }
 
@@ -616,7 +616,7 @@ import * as L from 'leaflet';
     }
 
     .legend-dot.rider {
-      background: #667eea;
+      background: #034694;
     }
 
     .expand-hint {
@@ -661,7 +661,7 @@ import * as L from 'leaflet';
     }
 
     .nav-item.active {
-      color: #667eea;
+      color: #034694;
     }
   `]
 })
@@ -786,7 +786,7 @@ export class TrackRideComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const riderIcon = L.divIcon({
       className: 'custom-marker',
-      html: '<div style="background:#667eea; width:32px; height:32px; border-radius:50%; border:4px solid white; box-shadow:0 2px 8px rgba(102,126,234,0.5);"></div>',
+      html: '<div style="background:#034694; width:32px; height:32px; border-radius:50%; border:4px solid white; box-shadow:0 2px 8px rgba(102,126,234,0.5);"></div>',
       iconSize: [32, 32],
       iconAnchor: [16, 16]
     });
@@ -833,7 +833,7 @@ export class TrackRideComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       const riderIcon = L.divIcon({
         className: 'custom-marker',
-        html: '<div style="background:#667eea; width:32px; height:32px; border-radius:50%; border:4px solid white; box-shadow:0 2px 8px rgba(102,126,234,0.5);"></div>',
+        html: '<div style="background:#034694; width:32px; height:32px; border-radius:50%; border:4px solid white; box-shadow:0 2px 8px rgba(102,126,234,0.5);"></div>',
         iconSize: [32, 32],
         iconAnchor: [16, 16]
       });

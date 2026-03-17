@@ -451,7 +451,7 @@ import { RatingDialogComponent, RatingDialogData } from '../../components/rating
     }
 
     .nav-item.active {
-      color: #667eea;
+      color: #034694;
     }
   `]
 })

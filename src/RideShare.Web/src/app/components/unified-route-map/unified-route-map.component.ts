@@ -316,7 +316,7 @@ interface SearchResult {
       display: flex;
       justify-content: space-around;
       padding: 12px 16px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
     }
 
     .route-stat {
@@ -612,7 +612,7 @@ export class UnifiedRouteMapComponent implements OnInit, AfterViewInit, OnDestro
         // Draw new route
         const coordinates = route.geometry.coordinates.map((c: number[]) => [c[1], c[0]]);
         this.routeLine = L.polyline(coordinates, {
-          color: '#667eea',
+          color: '#034694',
           weight: 5,
           opacity: 0.8,
           lineCap: 'round',

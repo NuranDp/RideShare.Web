@@ -290,7 +290,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
     }
 
     .logo-icon {
-      color: #667eea;
+      color: #034694;
       font-size: 28px;
       width: 28px;
       height: 28px;
@@ -413,7 +413,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
     }
 
     .action-card.primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
     }
 
@@ -439,7 +439,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
       font-size: 24px;
       width: 24px;
       height: 24px;
-      color: #667eea;
+      color: #034694;
     }
 
     .action-label {
@@ -749,7 +749,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
       width: 72px;
       height: 72px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -820,7 +820,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #667eea;
+      color: #034694;
     }
 
     .menu-icon.logout {
@@ -870,8 +870,8 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
 
     .action-btn.outline {
       background: white;
-      border: 1px solid #667eea;
-      color: #667eea;
+      border: 1px solid #034694;
+      color: #034694;
     }
 
     /* Bottom Navigation */
@@ -914,11 +914,11 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
     }
 
     .nav-item.active {
-      color: #667eea;
+      color: #034694;
     }
 
     .nav-item.active mat-icon {
-      color: #667eea;
+      color: #034694;
     }
   `]
 })

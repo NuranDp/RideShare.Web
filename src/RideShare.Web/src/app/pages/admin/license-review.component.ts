@@ -36,15 +36,19 @@ import { LicenseVerificationItem } from '../../models/rider.model';
     RouterLink
   ],
   template: `
-    <div class="review-container">
-      <div class="header">
-        <h1>License Verification Requests</h1>
-        <button mat-button routerLink="/admin">
+    <div class="page-header">
+      <div class="header-content">
+        <button mat-icon-button class="back-btn" routerLink="/admin">
           <mat-icon>arrow_back</mat-icon>
-          Back to Dashboard
         </button>
+        <div class="header-text">
+          <h1>License Verification</h1>
+          <p>Review and approve rider licenses</p>
+        </div>
       </div>
+    </div>
 
+    <div class="review-container">
       @if (loading()) {
         <div class="loading-container">
           <mat-spinner diameter="40"></mat-spinner>
@@ -53,17 +57,30 @@ import { LicenseVerificationItem } from '../../models/rider.model';
       } @else if (requests().length === 0) {
         <mat-card class="empty-card">
           <mat-card-content>
-            <mat-icon>check_circle</mat-icon>
+            <div class="empty-icon">
+              <mat-icon>check_circle</mat-icon>
+            </div>
             <h2>All Caught Up!</h2>
             <p>No pending license verification requests.</p>
+            <button mat-raised-button class="back-dashboard-btn" routerLink="/admin">
+              <mat-icon>dashboard</mat-icon>
+              Back to Dashboard
+            </button>
           </mat-card-content>
         </mat-card>
       } @else {
+        <div class="requests-count">
+          <mat-icon>pending_actions</mat-icon>
+          {{ requests().length }} pending {{ requests().length === 1 ? 'request' : 'requests' }}
+        </div>
+
         <div class="requests-grid">
           @for (request of requests(); track request.id) {
             <mat-card class="request-card">
               <mat-card-header>
-                <mat-icon mat-card-avatar class="avatar-icon">person</mat-icon>
+                <div class="rider-avatar">
+                  <mat-icon>person</mat-icon>
+                </div>
                 <mat-card-title>{{ request.riderName }}</mat-card-title>
                 <mat-card-subtitle>{{ request.riderEmail }}</mat-card-subtitle>
               </mat-card-header>
@@ -86,7 +103,7 @@ import { LicenseVerificationItem } from '../../models/rider.model';
                     <span class="label">License Plate</span>
                     <span class="value">{{ request.plateNumber || 'Not specified' }}</span>
                   </div>
-                  <div class="info-item">
+                  <div class="info-item full-width">
                     <span class="label">Submitted</span>
                     <span class="value">{{ request.submittedAt | date:'medium' }}</span>
                   </div>
@@ -150,22 +167,54 @@ import { LicenseVerificationItem } from '../../models/rider.model';
     </div>
   `,
   styles: [`
-    .review-container {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 1rem;
+    .page-header {
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
+      color: white;
+      padding: 20px 24px;
     }
 
-    .header {
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 2rem;
+      gap: 16px;
+    }
 
-      h1 {
-        margin: 0;
-        color: #333;
-      }
+    .back-btn {
+      background: rgba(255,255,255,0.15);
+    }
+
+    .header-text h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .header-text p {
+      margin: 4px 0 0;
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
+    .review-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #f8fafc;
+      min-height: calc(100vh - 100px);
+    }
+
+    .requests-count {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      padding: 12px 16px;
+      background: #e3f2fd;
+      border-radius: 8px;
+      color: #034694;
+      font-weight: 500;
     }
 
     .loading-container {
@@ -178,92 +227,147 @@ import { LicenseVerificationItem } from '../../models/rider.model';
 
     .empty-card {
       text-align: center;
-      padding: 3rem;
+      padding: 48px;
+      border-radius: 16px !important;
+      max-width: 400px;
+      margin: 40px auto;
+    }
 
-      mat-icon {
-        font-size: 64px;
-        width: 64px;
-        height: 64px;
-        color: #4caf50;
-        margin-bottom: 1rem;
-      }
+    .empty-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #4caf50, #2e7d32);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
 
-      h2 {
-        margin: 0 0 0.5rem;
-        color: #333;
-      }
+    .empty-icon mat-icon {
+      font-size: 44px;
+      width: 44px;
+      height: 44px;
+      color: white;
+    }
 
-      p {
-        color: #666;
-        margin: 0;
-      }
+    .empty-card h2 {
+      margin: 0 0 8px;
+      color: #1e293b;
+    }
+
+    .empty-card p {
+      color: #64748b;
+      margin: 0 0 24px;
+    }
+
+    .back-dashboard-btn {
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%) !important;
+      color: white !important;
+      border-radius: 8px !important;
     }
 
     .requests-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-      gap: 1.5rem;
+      gap: 20px;
     }
 
     .request-card {
-      .avatar-icon {
-        background: #1976d2;
-        color: white;
-        border-radius: 50%;
-        padding: 8px;
-        font-size: 24px;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+      border-radius: 16px !important;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06) !important;
+      transition: all 0.3s;
+    }
+
+    .request-card:hover {
+      box-shadow: 0 8px 24px rgba(3, 70, 148, 0.12) !important;
+    }
+
+    .rider-avatar {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 16px;
+    }
+
+    .rider-avatar mat-icon {
+      color: white;
+      font-size: 26px;
+      width: 26px;
+      height: 26px;
+    }
+
+    mat-card-header {
+      padding: 20px 20px 0 !important;
+    }
+
+    mat-card-title {
+      font-weight: 600 !important;
+      color: #1e293b !important;
     }
 
     .info-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-      margin: 1rem 0;
+      gap: 16px;
+      margin: 16px 0;
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: 12px;
 
       .info-item {
         display: flex;
         flex-direction: column;
 
+        &.full-width {
+          grid-column: 1 / -1;
+        }
+
         .label {
-          font-size: 0.75rem;
-          color: #666;
+          font-size: 11px;
+          color: #64748b;
           text-transform: uppercase;
+          font-weight: 500;
         }
 
         .value {
-          font-size: 0.95rem;
-          color: #333;
+          font-size: 14px;
+          color: #1e293b;
           font-weight: 500;
+          margin-top: 2px;
         }
       }
     }
 
     .license-image {
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid #eee;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #e2e8f0;
 
       .image-link {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        color: #1976d2;
+        gap: 8px;
+        color: #034694;
         text-decoration: none;
+        font-weight: 500;
+        padding: 8px 16px;
+        background: #e3f2fd;
+        border-radius: 8px;
+        transition: all 0.2s;
 
         &:hover {
-          text-decoration: underline;
+          background: #bbdefb;
         }
       }
     }
 
     .reject-input {
-      margin-top: 1rem;
+      margin-top: 16px;
     }
 
     .full-width {
@@ -271,24 +375,33 @@ import { LicenseVerificationItem } from '../../models/rider.model';
     }
 
     mat-card-actions {
-      padding: 1rem;
+      padding: 16px 20px !important;
+      gap: 8px;
       
       mat-spinner {
-        margin: 0 1rem;
+        margin: 0 16px;
       }
 
       button {
-        margin-left: 0.5rem;
+        border-radius: 8px !important;
+      }
+
+      button[color="primary"] {
+        background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%) !important;
       }
     }
 
     @media (max-width: 600px) {
-      .review-container {
-        padding: 1rem;
+      .page-header {
+        padding: 16px;
       }
 
-      h1 {
-        font-size: 22px;
+      .header-text h1 {
+        font-size: 20px;
+      }
+
+      .review-container {
+        padding: 16px;
       }
 
       .requests-grid {

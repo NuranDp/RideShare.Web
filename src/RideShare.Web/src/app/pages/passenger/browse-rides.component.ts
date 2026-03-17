@@ -286,7 +286,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
     }
 
     .logo-icon {
-      color: #667eea;
+      color: #034694;
       font-size: 28px;
       width: 28px;
       height: 28px;
@@ -342,7 +342,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #667eea;
+      color: #034694;
     }
 
     .search-header span {
@@ -409,7 +409,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
     }
 
     .search-btn.primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
     }
 
@@ -511,7 +511,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
       width: 44px;
       height: 44px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -688,7 +688,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
       padding: 14px 24px;
       border: none;
       border-radius: 14px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
       font-size: 15px;
       font-weight: 600;
@@ -815,8 +815,8 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
 
     .action-btn.outline {
       background: white;
-      border: 1px solid #667eea;
-      color: #667eea;
+      border: 1px solid #034694;
+      color: #034694;
     }
 
     /* Mobile */
@@ -869,7 +869,7 @@ import { NotificationBellComponent } from '../../components/notification-bell/no
     }
 
     .nav-item.active {
-      color: #667eea;
+      color: #034694;
     }
   `]
 })
