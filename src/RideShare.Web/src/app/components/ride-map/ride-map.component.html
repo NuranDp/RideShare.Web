@@ -1,0 +1,14 @@
+<div class="map-wrapper">
+  <div class="ride-map-container" [id]="mapId"></div>
+  @if (!mapReady) {
+    <div class="map-loading">
+      <mat-spinner diameter="30"></mat-spinner>
+      <span>Loading map...</span>
+    </div>
+  }
+  @if (mapReady && rides.length === 0) {
+    <div class="no-rides-overlay">
+      <span>No rides with location data available</span>
+    </div>
+  }
+</div>

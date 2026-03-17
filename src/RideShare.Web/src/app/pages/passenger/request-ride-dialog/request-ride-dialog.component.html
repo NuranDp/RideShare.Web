@@ -1,0 +1,362 @@
+<!-- Modern Header -->
+<div class="dialog-header">
+  <div class="header-content">
+    <div class="header-icon">
+      <mat-icon>two_wheeler</mat-icon>
+    </div>
+    <div class="header-text">
+      <h2>Request to Join Ride</h2>
+      <p>Select your pickup & drop-off points on the map</p>
+    </div>
+  </div>
+  <button mat-icon-button class="close-btn" (click)="cancel()" [disabled]="sending">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <!-- Compact Ride Summary -->
+  <div class="ride-summary-banner">
+    <div class="route-flow">
+      <div class="route-point origin">
+        <mat-icon>trip_origin</mat-icon>
+        <span>{{ getShortAddress(data.ride.origin) }}</span>
+      </div>
+      <div class="route-arrow">
+        <mat-icon>arrow_forward</mat-icon>
+      </div>
+      <div class="route-point destination">
+        <mat-icon>place</mat-icon>
+        <span>{{ getShortAddress(data.ride.destination) }}</span>
+      </div>
+    </div>
+    <div class="ride-quick-info">
+      <span class="info-badge rider">
+        <mat-icon>person</mat-icon>
+        {{ data.ride.riderName }}
+      </span>
+      <span class="info-badge time">
+        <mat-icon>schedule</mat-icon>
+        {{ formatShortDateTime(data.ride.departureTime) }}
+      </span>
+      @if (data.ride.helmetProvided) {
+        <span class="info-badge helmet">
+          <mat-icon>sports_motorsports</mat-icon>
+          Helmet
+        </span>
+      }
+    </div>
+  </div>
+
+  <!-- Progress Steps -->
+  <div class="progress-steps">
+    <div class="step" 
+         [class.active]="selectionMode === 'pickup' && !pickupLat"
+         [class.completed]="pickupLat"
+         (click)="selectionMode = 'pickup'">
+      <div class="step-indicator">
+        @if (pickupLat) {
+          <mat-icon class="check-icon">check_circle</mat-icon>
+        } @else {
+          <span class="step-num">1</span>
+        }
+      </div>
+      <span class="step-label">Pickup</span>
+    </div>
+    <div class="progress-line" [class.filled]="pickupLat"></div>
+    <div class="step" 
+         [class.active]="selectionMode === 'dropoff' && !dropoffLat"
+         [class.completed]="dropoffLat"
+         (click)="selectionMode = 'dropoff'">
+      <div class="step-indicator">
+        @if (dropoffLat) {
+          <mat-icon class="check-icon">check_circle</mat-icon>
+        } @else {
+          <span class="step-num">2</span>
+        }
+      </div>
+      <span class="step-label">Drop-off</span>
+    </div>
+    <div class="progress-line" [class.filled]="dropoffLat"></div>
+    <div class="step" 
+         [class.active]="pickupLat && dropoffLat"
+         [class.completed]="false">
+      <div class="step-indicator">
+        <span class="step-num">3</span>
+      </div>
+      <span class="step-label">Confirm</span>
+    </div>
+  </div>
+
+  <!-- Map Section -->
+  <div class="map-section">
+    <!-- Mode Toggle with Instructions -->
+    <div class="map-header">
+      <div class="mode-toggle">
+        <button class="mode-btn pickup" 
+                [class.active]="selectionMode === 'pickup'"
+                (click)="selectionMode = 'pickup'">
+          <mat-icon>trip_origin</mat-icon>
+          <span>Pickup</span>
+          @if (pickupLat) {
+            <mat-icon class="set-icon">check</mat-icon>
+          }
+        </button>
+        <button class="mode-btn dropoff" 
+                [class.active]="selectionMode === 'dropoff'"
+                (click)="selectionMode = 'dropoff'">
+          <mat-icon>flag</mat-icon>
+          <span>Drop-off</span>
+          @if (dropoffLat) {
+            <mat-icon class="set-icon">check</mat-icon>
+          }
+        </button>
+      </div>
+      @if (pickupLat || dropoffLat) {
+        <button mat-icon-button 
+                class="reset-btn"
+                matTooltip="Reset all points"
+                (click)="resetPoints()">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      }
+    </div>
+
+    <!-- Map Container -->
+    <div class="map-wrapper">
+      <div id="request-map" class="map-container"></div>
+      
+      <!-- Route Loading Overlay -->
+      @if (routeLoading) {
+        <div class="route-loading-overlay">
+          <mat-spinner diameter="36"></mat-spinner>
+          <span>Calculating route...</span>
+        </div>
+      }
+      
+      <!-- Floating instruction -->
+      @if (!pickupLat && !dropoffLat) {
+        <div class="floating-instruction" @fadeSlide>
+          <mat-icon>touch_app</mat-icon>
+          <span>Tap on the map to set your <strong>{{ selectionMode }}</strong> point</span>
+        </div>
+      }
+
+      <!-- Compact Legend -->
+      <div class="map-legend">
+        <div class="legend-item" matTooltip="Rider's start">
+          <span class="legend-marker origin">A</span>
+        </div>
+        <div class="legend-item" matTooltip="Rider's destination">
+          <span class="legend-marker dest">B</span>
+        </div>
+        @if (pickupLat) {
+          <div class="legend-item" matTooltip="Your pickup">
+            <span class="legend-marker pickup">P</span>
+          </div>
+        }
+        @if (dropoffLat) {
+          <div class="legend-item" matTooltip="Your drop-off">
+            <span class="legend-marker dropoff">D</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Selected Points Cards -->
+  <div class="points-section">
+    <div class="point-card pickup" 
+         [class.set]="pickupLat" 
+         [class.editing]="selectionMode === 'pickup'"
+         (click)="selectionMode = 'pickup'">
+      <div class="point-header">
+        <div class="point-badge pickup">
+          <span>P</span>
+        </div>
+        <div class="point-details">
+          <span class="point-label">Pickup Point</span>
+          @if (pickupLat) {
+            <span class="point-status set">
+              <mat-icon>check_circle</mat-icon>
+              Location set
+            </span>
+          } @else {
+            <span class="point-status pending">Search or tap map</span>
+          }
+        </div>
+        @if (pickupLat) {
+          <button mat-icon-button 
+                  class="clear-btn" 
+                  (click)="clearPickup($event)"
+                  matTooltip="Clear">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+      <!-- Search Input -->
+      <div class="search-input-wrapper" (click)="$event.stopPropagation()">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-icon matPrefix class="search-icon">search</mat-icon>
+          <input matInput 
+                 [(ngModel)]="pickupSearchQuery"
+                 (input)="onPickupSearchInput($event)"
+                 (focus)="onSearchFocus('pickup')"
+                 (blur)="onSearchBlur('pickup')"
+                 placeholder="Search location...">
+          @if (pickupSearchQuery) {
+            <button mat-icon-button matSuffix (click)="clearPickupSearch($event)">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+        @if (showPickupResults && pickupSearchResults.length > 0) {
+          <div class="search-results">
+            @for (result of pickupSearchResults; track result.place_id) {
+              <div class="search-result-item" (mousedown)="$event.preventDefault(); selectPickupResult(result)">
+                <mat-icon class="result-icon">place</mat-icon>
+                <div class="result-text">
+                  <span class="result-name">{{ result.display_name.split(',')[0] }}</span>
+                  <span class="result-address">{{ getShortDisplayName(result.display_name) }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        }
+        @if (pickupSearching) {
+          <div class="search-loading">
+            <mat-spinner diameter="20"></mat-spinner>
+            <span>Searching...</span>
+          </div>
+        }
+      </div>
+      @if (pickupLocation) {
+        <div class="selected-location">
+          <mat-icon>check_circle</mat-icon>
+          <span>{{ pickupLocation }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="point-card dropoff" 
+         [class.set]="dropoffLat" 
+         [class.editing]="selectionMode === 'dropoff'"
+         (click)="selectionMode = 'dropoff'">
+      <div class="point-header">
+        <div class="point-badge dropoff">
+          <span>D</span>
+        </div>
+        <div class="point-details">
+          <span class="point-label">Drop-off Point</span>
+          @if (dropoffLat) {
+            <span class="point-status set">
+              <mat-icon>check_circle</mat-icon>
+              Location set
+            </span>
+          } @else {
+            <span class="point-status pending">Search or tap map</span>
+          }
+        </div>
+        @if (dropoffLat) {
+          <button mat-icon-button 
+                  class="clear-btn" 
+                  (click)="clearDropoff($event)"
+                  matTooltip="Clear">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+      <!-- Search Input -->
+      <div class="search-input-wrapper" (click)="$event.stopPropagation()">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-icon matPrefix class="search-icon">search</mat-icon>
+          <input matInput 
+                 [(ngModel)]="dropoffSearchQuery"
+                 (input)="onDropoffSearchInput($event)"
+                 (focus)="onSearchFocus('dropoff')"
+                 (blur)="onSearchBlur('dropoff')"
+                 placeholder="Search location...">
+          @if (dropoffSearchQuery) {
+            <button mat-icon-button matSuffix (click)="clearDropoffSearch($event)">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+        @if (showDropoffResults && dropoffSearchResults.length > 0) {
+          <div class="search-results">
+            @for (result of dropoffSearchResults; track result.place_id) {
+              <div class="search-result-item" (mousedown)="$event.preventDefault(); selectDropoffResult(result)">
+                <mat-icon class="result-icon">place</mat-icon>
+                <div class="result-text">
+                  <span class="result-name">{{ result.display_name.split(',')[0] }}</span>
+                  <span class="result-address">{{ getShortDisplayName(result.display_name) }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        }
+        @if (dropoffSearching) {
+          <div class="search-loading">
+            <mat-spinner diameter="20"></mat-spinner>
+            <span>Searching...</span>
+          </div>
+        }
+      </div>
+      @if (dropoffLocation) {
+        <div class="selected-location">
+          <mat-icon>check_circle</mat-icon>
+          <span>{{ dropoffLocation }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Message Section -->
+  <div class="message-section">
+    <div class="section-label">
+      <mat-icon>chat_bubble_outline</mat-icon>
+      <span>Message to Rider</span>
+      <span class="optional-tag">Optional</span>
+    </div>
+    <mat-form-field appearance="outline" class="message-field">
+      <textarea matInput 
+                [(ngModel)]="message" 
+                rows="2"
+                placeholder="Introduce yourself or add any notes for the rider..."></textarea>
+      <mat-hint align="end">{{ message.length }}/200</mat-hint>
+    </mat-form-field>
+  </div>
+
+  <!-- Ready State Summary -->
+  @if (isValid()) {
+    <div class="ready-summary" @scaleIn>
+      <mat-icon class="ready-icon">rocket_launch</mat-icon>
+      <div class="ready-text">
+        <strong>Ready to send!</strong>
+        <span>The rider will be notified of your request.</span>
+      </div>
+    </div>
+  }
+</mat-dialog-content>
+
+<!-- Action Footer -->
+<mat-dialog-actions>
+  <button mat-button class="cancel-btn" (click)="cancel()" [disabled]="sending">
+    Cancel
+  </button>
+  <button mat-raised-button 
+          class="send-btn"
+          [class.ready]="isValid()"
+          (click)="sendRequest()" 
+          [disabled]="sending || !isValid()">
+    @if (sending) {
+      <mat-spinner diameter="20"></mat-spinner>
+      <span>Sending...</span>
+    } @else {
+      <ng-container>
+        <mat-icon>send</mat-icon>
+        <span>Send Request</span>
+      </ng-container>
+    }
+  </button>
+</mat-dialog-actions>

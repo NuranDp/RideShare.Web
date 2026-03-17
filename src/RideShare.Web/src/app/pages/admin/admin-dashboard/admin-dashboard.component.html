@@ -1,0 +1,87 @@
+<div class="admin-header">
+  <div class="header-content">
+    <div class="brand">
+      <mat-icon>admin_panel_settings</mat-icon>
+      <span>Share Ride Admin</span>
+    </div>
+    <div class="user-info">
+      <span class="user-name">{{ authService.currentUser()?.fullName }}</span>
+      <button mat-icon-button (click)="authService.logout()" matTooltip="Logout">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="dashboard-container">
+  <div class="welcome-section">
+    <h1>Welcome to Admin Dashboard</h1>
+    <p>Manage your platform from here</p>
+  </div>
+  
+  <div class="cards-grid">
+    <mat-card class="admin-card">
+      <mat-card-header>
+        <div class="card-icon users">
+          <mat-icon>people</mat-icon>
+        </div>
+        <mat-card-title>User Management</mat-card-title>
+        <mat-card-subtitle>Manage all users</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>View, activate, or deactivate user accounts.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button class="action-btn">Manage Users</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="admin-card highlight">
+      <mat-card-header>
+        <div class="card-icon verify">
+          <mat-icon>verified_user</mat-icon>
+        </div>
+        <mat-card-title>License Verification</mat-card-title>
+        <mat-card-subtitle>Review pending licenses</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Approve or reject rider license submissions.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button class="action-btn primary" routerLink="/admin/license-review">Review Licenses</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="admin-card">
+      <mat-card-header>
+        <div class="card-icon rides">
+          <mat-icon>two_wheeler</mat-icon>
+        </div>
+        <mat-card-title>Ride Management</mat-card-title>
+        <mat-card-subtitle>Oversee all rides</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>View and manage all rides on the platform.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button class="action-btn">View Rides</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="admin-card">
+      <mat-card-header>
+        <div class="card-icon stats">
+          <mat-icon>analytics</mat-icon>
+        </div>
+        <mat-card-title>Platform Statistics</mat-card-title>
+        <mat-card-subtitle>View metrics & analytics</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Monitor platform usage and performance metrics.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button class="action-btn">View Stats</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

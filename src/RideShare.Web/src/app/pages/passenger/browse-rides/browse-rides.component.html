@@ -1,0 +1,223 @@
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <mat-icon class="logo-icon">search</mat-icon>
+    <span class="app-title">Find a Ride</span>
+  </div>
+  <div class="top-bar-right">
+    <button class="view-toggle" (click)="toggleViewMode()">
+      <mat-icon>{{ viewMode === 'list' ? 'map' : 'view_list' }}</mat-icon>
+    </button>
+    <app-notification-bell></app-notification-bell>
+  </div>
+</div>
+
+<!-- Search Section -->
+<div class="search-section" [class.collapsed]="searchCollapsed">
+  <div class="search-header" (click)="searchCollapsed = !searchCollapsed">
+    <div class="search-icon">
+      <mat-icon>search</mat-icon>
+    </div>
+    <span>Search & Filter</span>
+    <mat-icon class="expand-icon">{{ searchCollapsed ? 'expand_more' : 'expand_less' }}</mat-icon>
+  </div>
+  @if (!searchCollapsed) {
+    <div class="search-form">
+      <div class="search-field">
+        <mat-icon class="field-icon origin">trip_origin</mat-icon>
+        <input type="text" [(ngModel)]="searchParams.origin" placeholder="From (origin)">
+      </div>
+      <div class="search-field">
+        <mat-icon class="field-icon dest">place</mat-icon>
+        <input type="text" [(ngModel)]="searchParams.destination" placeholder="To (destination)">
+      </div>
+      <div class="search-actions">
+        <button class="search-btn outline" (click)="clearSearch()">Clear</button>
+        <button class="search-btn primary" (click)="searchRides()">
+          <mat-icon>search</mat-icon>
+          Search
+        </button>
+      </div>
+    </div>
+  }
+</div>
+
+<!-- Content Area -->
+<div class="content-area">
+  @if (loading) {
+    <div class="loading-state">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Searching for rides...</p>
+    </div>
+  } @else if (rides.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <mat-icon>search_off</mat-icon>
+      </div>
+      <h3>No rides found</h3>
+      <p>Try adjusting your search criteria or check back later.</p>
+      <button class="action-btn outline" (click)="clearSearch()">
+        <mat-icon>refresh</mat-icon>
+        Clear Filters
+      </button>
+    </div>
+  } @else {
+    @if (viewMode === 'map') {
+      <!-- Map View -->
+      <div class="map-view">
+        <app-ride-map 
+          [rides]="ridesWithCoords" 
+          (rideClicked)="onRideClicked($event)">
+        </app-ride-map>
+        @if (selectedRide) {
+          <div class="map-card">
+            <div class="map-card-header">
+              <div class="rider-avatar">
+                <mat-icon>two_wheeler</mat-icon>
+              </div>
+              <div class="rider-info">
+                <span class="rider-name">{{ selectedRide.riderName }}</span>
+                @if (selectedRide.riderRating > 0) {
+                  <span class="rating">
+                    <mat-icon>star</mat-icon>
+                    {{ selectedRide.riderRating | number:'1.1-1' }}
+                  </span>
+                }
+              </div>
+              <button class="close-btn" (click)="selectedRide = null">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+            <div class="map-card-route">
+              <div class="route-point">
+                <span class="marker origin">A</span>
+                <span>{{ getShortAddress(selectedRide.origin) }}</span>
+              </div>
+              <mat-icon class="route-arrow">arrow_forward</mat-icon>
+              <div class="route-point">
+                <span class="marker dest">B</span>
+                <span>{{ getShortAddress(selectedRide.destination) }}</span>
+              </div>
+            </div>
+            <div class="map-card-meta">
+              <div class="meta-item">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ formatDateTime(selectedRide.departureTime) }}</span>
+              </div>
+              <div class="meta-item">
+                <mat-icon>sports_motorsports</mat-icon>
+                <span>{{ selectedRide.helmetProvided ? 'Helmet provided' : 'No helmet' }}</span>
+              </div>
+            </div>
+            <button class="request-btn" (click)="requestRide(selectedRide)">
+              <mat-icon>send</mat-icon>
+              Request Ride
+            </button>
+          </div>
+        }
+      </div>
+    } @else {
+      <!-- List View -->
+      <div class="results-count">
+        <span>{{ rides.length }} ride{{ rides.length === 1 ? '' : 's' }} available</span>
+      </div>
+      <div class="rides-list">
+        @for (ride of rides; track ride.id) {
+          <div class="ride-card" matRipple (click)="toggleExpand(ride.id)">
+            <!-- Card Header -->
+            <div class="card-header">
+              <div class="rider-section">
+                <div class="rider-avatar">
+                  <mat-icon>two_wheeler</mat-icon>
+                </div>
+                <div class="rider-info">
+                  <span class="rider-name">{{ ride.riderName }}</span>
+                  @if (ride.riderRating > 0) {
+                    <span class="rating">
+                      <mat-icon>star</mat-icon>
+                      {{ ride.riderRating | number:'1.1-1' }}
+                    </span>
+                  }
+                </div>
+              </div>
+              <div class="helmet-badge" [class.provided]="ride.helmetProvided">
+                <mat-icon>{{ ride.helmetProvided ? 'check_circle' : 'cancel' }}</mat-icon>
+                <span>{{ ride.helmetProvided ? 'Helmet' : 'No helmet' }}</span>
+              </div>
+            </div>
+
+            <!-- Route Section -->
+            <div class="route-section">
+              <div class="route-point">
+                <span class="marker origin">A</span>
+                <div class="route-details">
+                  <span class="route-label">Pickup</span>
+                  <span class="route-address">{{ ride.origin }}</span>
+                </div>
+              </div>
+              <div class="route-connector">
+                <div class="connector-line"></div>
+              </div>
+              <div class="route-point">
+                <span class="marker dest">B</span>
+                <div class="route-details">
+                  <span class="route-label">Drop-off</span>
+                  <span class="route-address">{{ ride.destination }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Time Badge -->
+            <div class="time-badge">
+              <mat-icon>schedule</mat-icon>
+              <span>{{ formatDateTime(ride.departureTime) }}</span>
+            </div>
+
+            <!-- Expanded Content -->
+            @if (expandedRideId === ride.id) {
+              <div class="expanded-content">
+                @if (ride.originLat && ride.originLng && ride.destLat && ride.destLng) {
+                  <div class="route-preview">
+                    <app-route-preview
+                      [origin]="{ lat: ride.originLat, lng: ride.originLng, address: ride.origin }"
+                      [destination]="{ lat: ride.destLat, lng: ride.destLng, address: ride.destination }">
+                    </app-route-preview>
+                  </div>
+                }
+                <button class="request-btn full" (click)="requestRide(ride); $event.stopPropagation()">
+                  <mat-icon>send</mat-icon>
+                  Request to Join
+                </button>
+              </div>
+            }
+
+            <!-- Expand Indicator -->
+            <div class="expand-indicator">
+              <mat-icon>{{ expandedRideId === ride.id ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <a class="nav-item" routerLink="/passenger">
+    <mat-icon>home</mat-icon>
+    <span>Home</span>
+  </a>
+  <a class="nav-item active" routerLink="/passenger/browse-rides">
+    <mat-icon>search</mat-icon>
+    <span>Find Ride</span>
+  </a>
+  <a class="nav-item" routerLink="/passenger/my-requests">
+    <mat-icon>pending_actions</mat-icon>
+    <span>Requests</span>
+  </a>
+  <a class="nav-item" (click)="goToProfile()">
+    <mat-icon>person</mat-icon>
+    <span>Profile</span>
+  </a>
+</nav>

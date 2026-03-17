@@ -1,0 +1,61 @@
+<div class="location-picker">
+  <div class="search-row">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>{{ label }}</mat-label>
+      <input matInput 
+             [(ngModel)]="address" 
+             (input)="onSearchInput($event)"
+             (keydown.enter)="searchAddress()"
+             [placeholder]="placeholder"
+             [matAutocomplete]="auto">
+      <mat-icon matPrefix>{{ icon }}</mat-icon>
+      <button mat-icon-button matSuffix type="button" 
+              (click)="searchAddress()" 
+              [disabled]="!address || searching"
+              matTooltip="Search location">
+        @if (searching) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          <mat-icon>search</mat-icon>
+        }
+      </button>
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
+        @for (result of searchResults; track result.display_name) {
+          <mat-option [value]="result">
+            <mat-icon>place</mat-icon>
+            <span class="result-text">{{ result.display_name }}</span>
+          </mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+    
+    <button mat-mini-fab color="primary" type="button"
+            (click)="useCurrentLocation(); $event.stopPropagation()"
+            [disabled]="gettingLocation"
+            matTooltip="Use my current location"
+            class="location-btn">
+      @if (gettingLocation) {
+        <mat-spinner diameter="20" color="accent"></mat-spinner>
+      } @else {
+        <mat-icon>my_location</mat-icon>
+      }
+    </button>
+  </div>
+  
+  <div class="map-wrapper">
+    <div class="map-container" [id]="mapId"></div>
+    @if (!mapReady) {
+      <div class="map-loading">
+        <mat-spinner diameter="30"></mat-spinner>
+        <span>Loading map...</span>
+      </div>
+    }
+  </div>
+  
+  @if (selectedLocation) {
+    <div class="selected-info">
+      <mat-icon class="small-icon">check_circle</mat-icon>
+      <span>{{ selectedLocation.address || 'Location selected' }}</span>
+    </div>
+  }
+</div>

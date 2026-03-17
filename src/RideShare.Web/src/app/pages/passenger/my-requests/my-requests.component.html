@@ -1,0 +1,270 @@
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <mat-icon class="logo-icon">pending_actions</mat-icon>
+    <span class="app-title">My Requests</span>
+  </div>
+  <div class="top-bar-right">
+    <app-notification-bell></app-notification-bell>
+  </div>
+</div>
+
+<!-- Tab Toggle -->
+<div class="tab-toggle-container">
+  <div class="tab-toggle">
+    <button class="tab-btn" [class.active]="activeTab === 'pending'" (click)="activeTab = 'pending'">
+      <mat-icon>hourglass_top</mat-icon>
+      <span>Pending</span>
+      @if (pendingRequests.length > 0) {
+        <span class="tab-badge">{{ pendingRequests.length }}</span>
+      }
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'accepted'" (click)="activeTab = 'accepted'">
+      <mat-icon>check_circle</mat-icon>
+      <span>Accepted</span>
+      @if (acceptedRequests.length > 0) {
+        <span class="tab-badge">{{ acceptedRequests.length }}</span>
+      }
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'history'" (click)="activeTab = 'history'">
+      <mat-icon>history</mat-icon>
+      <span>History</span>
+    </button>
+  </div>
+</div>
+
+<!-- Content Area -->
+<div class="content-area">
+  @if (loading) {
+    <div class="loading-state">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading your requests...</p>
+    </div>
+  } @else {
+    <!-- Pending Tab -->
+    @if (activeTab === 'pending') {
+      @if (pendingRequests.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">
+            <mat-icon>hourglass_empty</mat-icon>
+          </div>
+          <h3>No pending requests</h3>
+          <p>Your ride requests will appear here</p>
+          <button class="action-btn primary" routerLink="/passenger/browse-rides">
+            <mat-icon>search</mat-icon>
+            Find a Ride
+          </button>
+        </div>
+      } @else {
+        <div class="requests-list">
+          @for (request of pendingRequests; track request.id) {
+            <ng-container *ngTemplateOutlet="requestCard; context: { request: request }"></ng-container>
+          }
+        </div>
+      }
+    }
+
+    <!-- Accepted Tab -->
+    @if (activeTab === 'accepted') {
+      @if (acceptedRequests.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon secondary">
+            <mat-icon>check_circle_outline</mat-icon>
+          </div>
+          <h3>No accepted requests</h3>
+          <p>Your confirmed rides will appear here</p>
+        </div>
+      } @else {
+        <div class="requests-list">
+          @for (request of acceptedRequests; track request.id) {
+            <ng-container *ngTemplateOutlet="requestCard; context: { request: request }"></ng-container>
+          }
+        </div>
+      }
+    }
+
+    <!-- History Tab -->
+    @if (activeTab === 'history') {
+      @if (historyRequests.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon secondary">
+            <mat-icon>history</mat-icon>
+          </div>
+          <h3>No history yet</h3>
+          <p>Past requests will appear here</p>
+        </div>
+      } @else {
+        <div class="requests-list">
+          @for (request of historyRequests; track request.id) {
+            <ng-container *ngTemplateOutlet="requestCard; context: { request: request }"></ng-container>
+          }
+        </div>
+      }
+    }
+  }
+
+  <!-- Request Card Template -->
+  <ng-template #requestCard let-request="request">
+    <div class="request-card" [class]="'status-border-' + request.status.toLowerCase()">
+      <!-- Status Badge -->
+      <div class="status-badge" [class]="'badge-' + request.status.toLowerCase()">
+        <mat-icon>{{ getStatusIcon(request.status) }}</mat-icon>
+        <span>{{ request.status }}</span>
+      </div>
+
+      <!-- Rider Info -->
+      <div class="rider-section">
+        <div class="rider-avatar">
+          <mat-icon>two_wheeler</mat-icon>
+        </div>
+        <div class="rider-info">
+          <span class="rider-name">{{ request.riderName }}</span>
+          <span class="rider-label">Rider</span>
+        </div>
+      </div>
+
+      <!-- Route Section -->
+      <div class="route-section">
+        <div class="route-point">
+          <span class="marker origin">A</span>
+          <div class="route-details">
+            <span class="route-label">From</span>
+            <span class="route-address">{{ request.origin }}</span>
+          </div>
+        </div>
+        <div class="route-connector">
+          <div class="connector-line"></div>
+        </div>
+        <div class="route-point">
+          <span class="marker dest">B</span>
+          <div class="route-details">
+            <span class="route-label">To</span>
+            <span class="route-address">{{ request.destination }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- My Pickup/Dropoff -->
+      @if (request.pickupLocation || request.dropoffLocation) {
+        <div class="my-route-section">
+          <div class="my-route-title">
+            <mat-icon>person_pin_circle</mat-icon>
+            Your Stops
+          </div>
+          @if (request.pickupLocation) {
+            <div class="my-stop">
+              <span class="stop-marker pickup">P</span>
+              <span>{{ request.pickupLocation }}</span>
+            </div>
+          }
+          @if (request.dropoffLocation) {
+            <div class="my-stop">
+              <span class="stop-marker dropoff">D</span>
+              <span>{{ request.dropoffLocation }}</span>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Time Badge -->
+      <div class="time-badge">
+        <mat-icon>schedule</mat-icon>
+        <span>{{ formatDateTime(request.departureTime) }}</span>
+      </div>
+
+      <!-- Message -->
+      @if (request.message) {
+        <div class="message-section">
+          <mat-icon>message</mat-icon>
+          <span>{{ request.message }}</span>
+        </div>
+      }
+
+      <!-- Contact Info (for accepted) -->
+      @if (request.status === 'Accepted') {
+        <div class="contact-section">
+          <div class="contact-title">
+            <mat-icon>contact_phone</mat-icon>
+            Rider Contact
+          </div>
+          <div class="contact-item">
+            <mat-icon>person</mat-icon>
+            <span>{{ request.riderName }}</span>
+          </div>
+          <div class="contact-item">
+            <mat-icon>phone</mat-icon>
+            <span>{{ request.riderPhone || 'Not provided' }}</span>
+          </div>
+        </div>
+      }
+
+      <!-- In Progress Banner -->
+      @if (request.status === 'Accepted' && request.rideStatus === 'InProgress') {
+        <div class="live-banner">
+          <div class="pulse-dot"></div>
+          <span>Ride in progress! Track your rider's location</span>
+        </div>
+      }
+
+      <!-- Rate Prompt -->
+      @if (request.status === 'Accepted' && request.rideStatus === 'Completed' && !request.hasRated) {
+        <div class="rate-banner">
+          <mat-icon>star_border</mat-icon>
+          <span>Ride completed! Please rate your experience</span>
+        </div>
+      }
+
+      <!-- Rated Badge -->
+      @if (request.hasRated) {
+        <div class="rated-badge">
+          <mat-icon>check_circle</mat-icon>
+          <span>You've rated this ride</span>
+        </div>
+      }
+
+      <!-- Actions -->
+      <div class="card-actions">
+        @if (request.status === 'Pending') {
+          <button class="action-btn danger" (click)="cancelRequest(request)">
+            <mat-icon>close</mat-icon>
+            Cancel Request
+          </button>
+        }
+
+        @if (request.status === 'Accepted' && request.rideStatus === 'InProgress') {
+          <button class="action-btn primary" [routerLink]="['/passenger/track-ride', request.rideId]">
+            <mat-icon>location_on</mat-icon>
+            Track Ride
+          </button>
+        }
+
+        @if (request.status === 'Accepted' && request.rideStatus === 'Completed' && !request.hasRated) {
+          <button class="action-btn accent" (click)="rateRide(request)">
+            <mat-icon>star</mat-icon>
+            Rate Ride
+          </button>
+        }
+      </div>
+    </div>
+  </ng-template>
+</div>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <a class="nav-item" routerLink="/passenger">
+    <mat-icon>home</mat-icon>
+    <span>Home</span>
+  </a>
+  <a class="nav-item" routerLink="/passenger/browse-rides">
+    <mat-icon>search</mat-icon>
+    <span>Find Ride</span>
+  </a>
+  <a class="nav-item active" routerLink="/passenger/my-requests">
+    <mat-icon>pending_actions</mat-icon>
+    <span>Requests</span>
+  </a>
+  <a class="nav-item" (click)="goToProfile()">
+    <mat-icon>person</mat-icon>
+    <span>Profile</span>
+  </a>
+</nav>

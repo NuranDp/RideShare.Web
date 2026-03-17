@@ -1,0 +1,245 @@
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <mat-icon class="logo-icon">list_alt</mat-icon>
+    <span class="app-title">My Rides</span>
+  </div>
+  <div class="top-bar-right">
+    <app-notification-bell></app-notification-bell>
+  </div>
+</div>
+
+<!-- Tab Toggle -->
+<div class="tab-toggle-container">
+  <div class="tab-toggle">
+    <button class="tab-btn" [class.active]="activeTab === 'active'" (click)="activeTab = 'active'">
+      <mat-icon>schedule</mat-icon>
+      <span>Active</span>
+      @if (activeRides.length > 0) {
+        <span class="tab-badge">{{ activeRides.length }}</span>
+      }
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'history'" (click)="activeTab = 'history'">
+      <mat-icon>history</mat-icon>
+      <span>History</span>
+      @if (historyRides.length > 0) {
+        <span class="tab-badge secondary">{{ historyRides.length }}</span>
+      }
+    </button>
+  </div>
+</div>
+
+<!-- Content Area -->
+<div class="content-area">
+  @if (loading) {
+    <div class="loading-state">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading your rides...</p>
+    </div>
+  } @else {
+    <!-- Active Tab -->
+    @if (activeTab === 'active') {
+      @if (activeRides.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">
+            <mat-icon>two_wheeler</mat-icon>
+          </div>
+          <h3>No active rides</h3>
+          <p>Share your daily commute and help fellow commuters!</p>
+          <button class="action-btn primary" routerLink="/rider/post-ride">
+            <mat-icon>add</mat-icon>
+            Post a Ride
+          </button>
+        </div>
+      } @else {
+        <div class="rides-list">
+          @for (ride of activeRides; track ride.id) {
+            <div class="ride-card" [class]="'status-border-' + ride.status.toLowerCase()">
+              <!-- Status Badge -->
+              <div class="status-badge" [class]="'badge-' + ride.status.toLowerCase()">
+                <mat-icon>{{ getStatusIcon(ride.status) }}</mat-icon>
+                <span>{{ ride.status }}</span>
+              </div>
+
+              <!-- Route Display -->
+              <div class="route-section">
+                <div class="route-point">
+                  <span class="marker origin">A</span>
+                  <div class="route-details">
+                    <span class="route-label">Pickup</span>
+                    <span class="route-address">{{ ride.origin }}</span>
+                  </div>
+                </div>
+                <div class="route-connector">
+                  <div class="connector-line"></div>
+                </div>
+                <div class="route-point">
+                  <span class="marker dest">B</span>
+                  <div class="route-details">
+                    <span class="route-label">Drop-off</span>
+                    <span class="route-address">{{ ride.destination }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Time & Info -->
+              <div class="ride-info">
+                <div class="info-item">
+                  <mat-icon>schedule</mat-icon>
+                  <span>{{ formatDateTime(ride.departureTime) }}</span>
+                </div>
+                <div class="info-item">
+                  <mat-icon>sports_motorsports</mat-icon>
+                  <span>{{ ride.helmetProvided ? 'Helmet provided' : 'No helmet' }}</span>
+                </div>
+                @if (ride.notes) {
+                  <div class="info-item notes">
+                    <mat-icon>notes</mat-icon>
+                    <span>{{ ride.notes }}</span>
+                  </div>
+                }
+              </div>
+
+              <!-- In Progress Status -->
+              @if (ride.status === 'InProgress') {
+                <div class="live-tracking-banner">
+                  <div class="pulse-dot"></div>
+                  <span>Live tracking active</span>
+                </div>
+              }
+
+              <!-- Actions -->
+              <div class="card-actions">
+                <button class="action-btn outline" (click)="viewRequests(ride)">
+                  <mat-icon>group</mat-icon>
+                  <span>Requests</span>
+                  @if (ride.requestCount > 0) {
+                    <span class="request-badge">{{ ride.requestCount }}</span>
+                  }
+                </button>
+
+                @if (ride.status === 'Active') {
+                  <button class="action-btn danger" (click)="cancelRide(ride)">
+                    <mat-icon>close</mat-icon>
+                    <span>Cancel</span>
+                  </button>
+                }
+
+                @if (ride.status === 'Booked') {
+                  <button class="action-btn primary" (click)="startRide(ride)" [disabled]="startingRide">
+                    @if (startingRide) {
+                      <mat-spinner diameter="18"></mat-spinner>
+                    } @else {
+                      <mat-icon>play_arrow</mat-icon>
+                    }
+                    <span>Start Ride</span>
+                  </button>
+                }
+
+                @if (ride.status === 'InProgress') {
+                  <button class="action-btn success" (click)="completeRide(ride)">
+                    <mat-icon>check_circle</mat-icon>
+                    <span>Complete</span>
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+
+    <!-- History Tab -->
+    @if (activeTab === 'history') {
+      @if (historyRides.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon secondary">
+            <mat-icon>history</mat-icon>
+          </div>
+          <h3>No ride history</h3>
+          <p>Completed and cancelled rides will appear here.</p>
+        </div>
+      } @else {
+        <div class="rides-list">
+          @for (ride of historyRides; track ride.id) {
+            <div class="ride-card history" [class.cancelled]="ride.status === 'Cancelled'">
+              <!-- Status Badge -->
+              <div class="status-badge" [class]="'badge-' + ride.status.toLowerCase()">
+                <mat-icon>{{ getStatusIcon(ride.status) }}</mat-icon>
+                <span>{{ ride.status }}</span>
+              </div>
+
+              <!-- Route Display -->
+              <div class="route-section compact">
+                <div class="route-inline">
+                  <span class="marker small origin">A</span>
+                  <span class="route-text">{{ getShortAddress(ride.origin) }}</span>
+                  <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+                  <span class="marker small dest">B</span>
+                  <span class="route-text">{{ getShortAddress(ride.destination) }}</span>
+                </div>
+              </div>
+
+              <!-- Expandable Details -->
+              @if (expandedRides.has(ride.id)) {
+                <div class="expanded-details">
+                  <div class="detail-row">
+                    <mat-icon class="origin-color">trip_origin</mat-icon>
+                    <span>{{ ride.origin }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon class="dest-color">location_on</mat-icon>
+                    <span>{{ ride.destination }}</span>
+                  </div>
+                </div>
+              }
+
+              <!-- Time & Info -->
+              <div class="ride-info">
+                <div class="info-item">
+                  <mat-icon>schedule</mat-icon>
+                  <span>{{ formatDateTime(ride.departureTime) }}</span>
+                </div>
+                <div class="info-item">
+                  <mat-icon>sports_motorsports</mat-icon>
+                  <span>{{ ride.helmetProvided ? 'Helmet provided' : 'No helmet' }}</span>
+                </div>
+              </div>
+
+              <!-- Show More Button -->
+              <button class="show-more-btn" (click)="toggleExpand(ride.id)">
+                <mat-icon>{{ expandedRides.has(ride.id) ? 'expand_less' : 'expand_more' }}</mat-icon>
+                {{ expandedRides.has(ride.id) ? 'Show less' : 'Show details' }}
+              </button>
+            </div>
+          }
+        </div>
+      }
+    }
+  }
+</div>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <button class="nav-item" routerLink="/rider">
+    <mat-icon>home</mat-icon>
+    <span>Home</span>
+  </button>
+  <button class="nav-item active">
+    <mat-icon>list_alt</mat-icon>
+    <span>My Rides</span>
+  </button>
+  <button class="nav-item" (click)="goToRequests()">
+    <mat-icon>person_add</mat-icon>
+    <span>Requests</span>
+  </button>
+  <button class="nav-item" (click)="goToProfile()">
+    <mat-icon>person</mat-icon>
+    <span>Profile</span>
+  </button>
+</nav>
+
+<!-- Floating Action Button -->
+<button class="fab" matRipple routerLink="/rider/post-ride">
+  <mat-icon>add</mat-icon>
+</button>

@@ -1,0 +1,137 @@
+<div class="unified-route-map">
+  <!-- Location Inputs -->
+  <div class="location-inputs">
+    <!-- Origin Input -->
+    <div class="location-input-row" [class.active]="activeInput === 'origin'">
+      <div class="location-marker origin">A</div>
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Pickup Location</mat-label>
+        <input matInput 
+               [(ngModel)]="originAddress" 
+               (focus)="setActiveInput('origin')"
+               (input)="onSearchInput($event, 'origin')"
+               (keydown.enter)="searchAddress('origin')"
+               placeholder="Search or tap on map"
+               [matAutocomplete]="autoOrigin">
+        <button mat-icon-button matSuffix type="button" 
+                (click)="searchAddress('origin')" 
+                [disabled]="!originAddress || searching">
+          @if (searching && activeInput === 'origin') {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            <mat-icon>search</mat-icon>
+          }
+        </button>
+        <mat-autocomplete #autoOrigin="matAutocomplete" (optionSelected)="onOptionSelected($event, 'origin')">
+          @for (result of searchResults; track result.display_name) {
+            <mat-option [value]="result">
+              <mat-icon>place</mat-icon>
+              <span>{{ result.display_name }}</span>
+            </mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+      <button mat-icon-button type="button"
+              (click)="useCurrentLocation('origin')"
+              [disabled]="gettingLocation"
+              matTooltip="Use my current location">
+        @if (gettingLocation && activeInput === 'origin') {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          <mat-icon>my_location</mat-icon>
+        }
+      </button>
+    </div>
+
+    <!-- Destination Input -->
+    <div class="location-input-row" [class.active]="activeInput === 'dest'">
+      <div class="location-marker dest">B</div>
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Drop-off Location</mat-label>
+        <input matInput 
+               [(ngModel)]="destAddress" 
+               (focus)="setActiveInput('dest')"
+               (input)="onSearchInput($event, 'dest')"
+               (keydown.enter)="searchAddress('dest')"
+               placeholder="Search or tap on map"
+               [matAutocomplete]="autoDest">
+        <button mat-icon-button matSuffix type="button" 
+                (click)="searchAddress('dest')" 
+                [disabled]="!destAddress || searching">
+          @if (searching && activeInput === 'dest') {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            <mat-icon>search</mat-icon>
+          }
+        </button>
+        <mat-autocomplete #autoDest="matAutocomplete" (optionSelected)="onOptionSelected($event, 'dest')">
+          @for (result of searchResults; track result.display_name) {
+            <mat-option [value]="result">
+              <mat-icon>place</mat-icon>
+              <span>{{ result.display_name }}</span>
+            </mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+      <button mat-icon-button type="button"
+              (click)="useCurrentLocation('dest')"
+              [disabled]="gettingLocation"
+              matTooltip="Use my current location">
+        @if (gettingLocation && activeInput === 'dest') {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          <mat-icon>my_location</mat-icon>
+        }
+      </button>
+    </div>
+  </div>
+
+  <!-- Map Container -->
+  <div class="map-wrapper">
+    <div class="map-container" id="unified-route-map"></div>
+    @if (!mapReady) {
+      <div class="map-loading">
+        <mat-spinner diameter="30"></mat-spinner>
+        <span>Loading map...</span>
+      </div>
+    }
+    @if (loadingRoute) {
+      <div class="route-loading">
+        <mat-spinner diameter="24"></mat-spinner>
+        <span>Calculating route...</span>
+      </div>
+    }
+    
+    <!-- Map Instructions -->
+    <div class="map-hint">
+      @if (!origin) {
+        <mat-icon>touch_app</mat-icon>
+        <span>Tap on map to set pickup location</span>
+      } @else if (!destination) {
+        <mat-icon>touch_app</mat-icon>
+        <span>Tap on map to set drop-off location</span>
+      } @else {
+        <mat-icon>check_circle</mat-icon>
+        <span>Route set! Tap to adjust locations</span>
+      }
+    </div>
+  </div>
+
+  <!-- Route Info -->
+  @if (routeInfo && origin && destination) {
+    <div class="route-info-bar">
+      <div class="route-stat">
+        <mat-icon>straighten</mat-icon>
+        <span>{{ formatDistance(routeInfo.distance) }}</span>
+      </div>
+      <div class="route-stat">
+        <mat-icon>schedule</mat-icon>
+        <span>{{ formatDuration(routeInfo.duration) }}</span>
+      </div>
+      <div class="route-stat">
+        <mat-icon>two_wheeler</mat-icon>
+        <span>Motorcycle</span>
+      </div>
+    </div>
+  }
+</div>

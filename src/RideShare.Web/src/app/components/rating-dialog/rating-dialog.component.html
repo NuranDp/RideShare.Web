@@ -1,0 +1,55 @@
+<h2 mat-dialog-title>
+  <mat-icon>star</mat-icon>
+  Rate Your Ride
+</h2>
+
+<mat-dialog-content>
+  <div class="ride-info">
+    <p><strong>Rider:</strong> {{ data.riderName }}</p>
+    <p><strong>Route:</strong> {{ data.origin }} → {{ data.destination }}</p>
+  </div>
+
+  <div class="rating-stars">
+    <p>How was your experience?</p>
+    <div class="stars">
+      @for (star of [1, 2, 3, 4, 5]; track star) {
+        <button 
+          mat-icon-button 
+          (click)="setRating(star)"
+          [class.active]="star <= rating"
+          type="button">
+          <mat-icon>{{ star <= rating ? 'star' : 'star_border' }}</mat-icon>
+        </button>
+      }
+    </div>
+    <p class="rating-label">{{ getRatingLabel() }}</p>
+  </div>
+
+  <mat-form-field appearance="outline" class="comment-field">
+    <mat-label>Comment (optional)</mat-label>
+    <textarea 
+      matInput 
+      [(ngModel)]="comment" 
+      rows="3" 
+      maxlength="500"
+      placeholder="Share your experience...">
+    </textarea>
+    <mat-hint>{{ comment.length }}/500</mat-hint>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close [disabled]="submitting">Cancel</button>
+  <button 
+    mat-raised-button 
+    color="primary" 
+    (click)="submit()"
+    [disabled]="rating === 0 || submitting">
+    @if (submitting) {
+      <mat-spinner diameter="20"></mat-spinner>
+    } @else {
+      <mat-icon>send</mat-icon>
+      Submit Rating
+    }
+  </button>
+</mat-dialog-actions>

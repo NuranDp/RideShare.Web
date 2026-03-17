@@ -1,0 +1,244 @@
+<!-- Top App Bar -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <mat-icon class="logo-icon">hail</mat-icon>
+    <span class="app-title">Passenger</span>
+  </div>
+  <div class="top-bar-right">
+    <app-notification-bell></app-notification-bell>
+  </div>
+</div>
+
+<!-- Main Content Area -->
+<div class="content-area">
+  <!-- Home Tab -->
+  @if (activeTab === 'home') {
+    <div class="tab-content home-tab">
+      <!-- Welcome Section -->
+      <div class="welcome-section">
+        <div class="welcome-content">
+          <div class="welcome-text">
+            <span class="greeting">Hello, {{ getFirstName() }}! 👋</span>
+            <h2>Where are you heading today?</h2>
+          </div>
+          <div class="welcome-icon">
+            <mat-icon>hail</mat-icon>
+          </div>
+        </div>
+        <div class="welcome-wave"></div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <button class="action-card primary" routerLink="/passenger/browse-rides">
+          <div class="action-icon">
+            <mat-icon>search</mat-icon>
+          </div>
+          <span class="action-label">Find a Ride</span>
+        </button>
+        <button class="action-card" routerLink="/passenger/my-requests">
+          <div class="action-icon">
+            <mat-icon>pending_actions</mat-icon>
+          </div>
+          <span class="action-label">My Requests</span>
+          @if (pendingCount > 0) {
+            <span class="action-badge">{{ pendingCount }}</span>
+          }
+        </button>
+      </div>
+
+      <!-- Active Rides Section -->
+      <div class="section">
+        <div class="section-title">
+          <mat-icon>schedule</mat-icon>
+          <span>Upcoming Rides</span>
+        </div>
+        @if (upcomingRides.length === 0) {
+          <div class="empty-state">
+            <mat-icon>event_busy</mat-icon>
+            <p>No upcoming rides</p>
+            <button class="action-btn outline" routerLink="/passenger/browse-rides">
+              <mat-icon>search</mat-icon>
+              Find a Ride
+            </button>
+          </div>
+        } @else {
+          <div class="rides-list">
+            @for (ride of upcomingRides; track ride.id) {
+              <div class="ride-card" matRipple [routerLink]="ride.rideStatus === 'InProgress' ? ['/passenger/track-ride', ride.rideId] : null">
+                <div class="ride-route">
+                  <div class="route-point">
+                    <span class="marker origin">A</span>
+                    <span class="location">{{ getShortAddress(ride.origin) }}</span>
+                  </div>
+                  <mat-icon class="route-arrow">arrow_forward</mat-icon>
+                  <div class="route-point">
+                    <span class="marker dest">B</span>
+                    <span class="location">{{ getShortAddress(ride.destination) }}</span>
+                  </div>
+                </div>
+                <div class="ride-meta">
+                  <span class="ride-time">
+                    <mat-icon>schedule</mat-icon>
+                    {{ formatDateTime(ride.departureTime) }}
+                  </span>
+                  <span class="ride-status" [class]="ride.status.toLowerCase()">
+                    {{ ride.rideStatus === 'InProgress' ? 'In Progress' : ride.status }}
+                  </span>
+                </div>
+                @if (ride.rideStatus === 'InProgress') {
+                  <div class="live-badge">
+                    <div class="pulse-dot"></div>
+                    <span>Live Tracking</span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Stats Section -->
+      <div class="section">
+        <div class="section-title">
+          <mat-icon>insights</mat-icon>
+          <span>Your Stats</span>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value">{{ totalRides }}</div>
+            <div class="stat-label">Total Rides</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">{{ pendingCount }}</div>
+            <div class="stat-label">Pending</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">{{ acceptedCount }}</div>
+            <div class="stat-label">Accepted</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Activity Tab -->
+  @if (activeTab === 'activity') {
+    <div class="tab-content activity-tab">
+      <div class="section-header">
+        <h2>Activity</h2>
+      </div>
+
+      <div class="activity-list">
+        @if (activities.length === 0) {
+          <div class="empty-state">
+            <mat-icon>history</mat-icon>
+            <p>No recent activity</p>
+          </div>
+        } @else {
+          @for (activity of activities; track activity.id) {
+            <div class="activity-item" matRipple>
+              <div class="activity-icon" [class]="activity.type">
+                <mat-icon>{{ getActivityIcon(activity.type) }}</mat-icon>
+              </div>
+              <div class="activity-content">
+                <span class="activity-title">{{ activity.title }}</span>
+                <span class="activity-desc">{{ activity.description }}</span>
+                <span class="activity-time">{{ activity.time }}</span>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Profile Tab -->
+  @if (activeTab === 'profile') {
+    <div class="tab-content profile-tab">
+      <!-- Profile Header -->
+      <div class="profile-header">
+        <div class="profile-avatar">
+          @if (authService.currentUser()?.profilePhotoUrl) {
+            <img [src]="authService.currentUser()?.profilePhotoUrl" alt="Profile">
+          } @else {
+            <mat-icon>person</mat-icon>
+          }
+        </div>
+        <div class="profile-info">
+          <h2>{{ authService.currentUser()?.fullName }}</h2>
+          <p>{{ authService.currentUser()?.email }}</p>
+        </div>
+      </div>
+
+      <!-- Profile Menu -->
+      <div class="profile-menu">
+        <div class="menu-section">
+          <div class="menu-item" matRipple routerLink="/passenger/my-requests">
+            <div class="menu-icon">
+              <mat-icon>pending_actions</mat-icon>
+            </div>
+            <div class="menu-content">
+              <span class="menu-title">My Requests</span>
+              <span class="menu-subtitle">View all your ride requests</span>
+            </div>
+            <mat-icon class="menu-arrow">chevron_right</mat-icon>
+          </div>
+
+          <div class="menu-item" matRipple routerLink="/passenger/ride-history">
+            <div class="menu-icon">
+              <mat-icon>history</mat-icon>
+            </div>
+            <div class="menu-content">
+              <span class="menu-title">Ride History</span>
+              <span class="menu-subtitle">View past rides and ratings</span>
+            </div>
+            <mat-icon class="menu-arrow">chevron_right</mat-icon>
+          </div>
+
+          <div class="menu-item" matRipple>
+            <div class="menu-icon">
+              <mat-icon>contact_phone</mat-icon>
+            </div>
+            <div class="menu-content">
+              <span class="menu-title">Emergency Contact</span>
+              <span class="menu-subtitle">{{ emergencyContact || 'Add emergency contact' }}</span>
+            </div>
+            <mat-icon class="menu-arrow">chevron_right</mat-icon>
+          </div>
+        </div>
+
+        <div class="menu-section">
+          <div class="menu-item logout" matRipple (click)="logout()">
+            <div class="menu-icon logout">
+              <mat-icon>logout</mat-icon>
+            </div>
+            <div class="menu-content">
+              <span class="menu-title">Log Out</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <button class="nav-item" [class.active]="activeTab === 'home'" (click)="activeTab = 'home'">
+    <mat-icon>home</mat-icon>
+    <span>Home</span>
+  </button>
+  <button class="nav-item" routerLink="/passenger/browse-rides">
+    <mat-icon>search</mat-icon>
+    <span>Find Ride</span>
+  </button>
+  <button class="nav-item" routerLink="/passenger/my-requests">
+    <mat-icon>pending_actions</mat-icon>
+    <span>Requests</span>
+  </button>
+  <button class="nav-item" [class.active]="activeTab === 'profile'" (click)="activeTab = 'profile'">
+    <mat-icon>person</mat-icon>
+    <span>Profile</span>
+  </button>
+</nav>

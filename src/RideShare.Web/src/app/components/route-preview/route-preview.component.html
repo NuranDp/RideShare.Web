@@ -1,0 +1,61 @@
+<div class="route-preview">
+  <div class="route-header">
+    <mat-icon class="route-icon">route</mat-icon>
+    <span class="route-title">Route Preview</span>
+    @if (loading) {
+      <mat-spinner diameter="20" class="loading-spinner"></mat-spinner>
+    }
+  </div>
+
+  <div class="map-wrapper">
+    <div class="map-container" [id]="mapId"></div>
+    @if (loading) {
+      <div class="map-loading-overlay">
+        <mat-spinner diameter="40"></mat-spinner>
+        <span>Calculating route...</span>
+      </div>
+    }
+  </div>
+
+  @if (routeInfo && !loading) {
+    <div class="route-stats">
+      <mat-chip-set>
+        <mat-chip class="stat-chip distance">
+          <mat-icon>straighten</mat-icon>
+          {{ formatDistance(routeInfo.distance) }}
+        </mat-chip>
+        <mat-chip class="stat-chip duration">
+          <mat-icon>schedule</mat-icon>
+          {{ formatDuration(routeInfo.duration) }}
+        </mat-chip>
+        <mat-chip class="stat-chip mode">
+          <mat-icon>two_wheeler</mat-icon>
+          Motorcycle
+        </mat-chip>
+      </mat-chip-set>
+    </div>
+  }
+
+  @if (error) {
+    <div class="route-error">
+      <mat-icon>warning</mat-icon>
+      <span>{{ error }}</span>
+    </div>
+  }
+
+  <div class="route-endpoints">
+    <div class="endpoint origin">
+      <mat-icon class="origin-icon">location_on</mat-icon>
+      <span class="endpoint-text">{{ origin?.address || 'Origin' | slice:0:50 }}{{ (origin?.address?.length || 0) > 50 ? '...' : '' }}</span>
+    </div>
+    <div class="endpoint-connector">
+      <div class="connector-line"></div>
+      <mat-icon class="arrow-down">arrow_downward</mat-icon>
+      <div class="connector-line"></div>
+    </div>
+    <div class="endpoint destination">
+      <mat-icon class="dest-icon">flag</mat-icon>
+      <span class="endpoint-text">{{ destination?.address || 'Destination' | slice:0:50 }}{{ (destination?.address?.length || 0) > 50 ? '...' : '' }}</span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,143 @@
+<div class="profile-container">
+  <mat-card class="profile-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>sports_motorsports</mat-icon>
+      <mat-card-title>Rider Profile</mat-card-title>
+      <mat-card-subtitle>Manage your rider information and license verification</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (loading()) {
+        <div class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Loading profile...</p>
+        </div>
+      } @else {
+        <!-- Verification Status Banner -->
+        <div class="status-banner" [class]="getStatusClass()">
+          @if (profile()?.isLicenseVerified) {
+            <mat-icon>verified</mat-icon>
+            <span>You are a verified rider!</span>
+          } @else if (profile()?.licenseNumber) {
+            <mat-icon>hourglass_empty</mat-icon>
+            <span>Your license verification is pending review</span>
+          } @else {
+            <mat-icon>info</mat-icon>
+            <span>Submit your license for verification to start giving rides</span>
+          }
+        </div>
+
+        <!-- Stats Section -->
+        @if (profile()?.isLicenseVerified) {
+          <div class="stats-section">
+            <div class="stat-item">
+              <span class="stat-value">{{ profile()?.totalRides || 0 }}</span>
+              <span class="stat-label">Rides Given</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{{ profile()?.averageRating?.toFixed(1) || 'N/A' }}</span>
+              <span class="stat-label">Rating</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{{ profile()?.totalRatings || 0 }}</span>
+              <span class="stat-label">Reviews</span>
+            </div>
+          </div>
+        }
+
+        <mat-divider></mat-divider>
+
+        <!-- Profile Form -->
+        <form [formGroup]="profileForm" (ngSubmit)="updateProfile()" class="profile-form">
+          <h3>Motorcycle Information</h3>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Motorcycle Model</mat-label>
+            <input matInput formControlName="motorcycleModel" placeholder="e.g., Honda CB150R">
+            <mat-icon matSuffix>two_wheeler</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>License Plate Number</mat-label>
+            <input matInput formControlName="plateNumber" placeholder="e.g., Dhaka Metro 12-3456">
+            <mat-icon matSuffix>pin</mat-icon>
+          </mat-form-field>
+
+          <button 
+            mat-raised-button 
+            color="primary" 
+            type="submit"
+            [disabled]="saving() || !profileForm.dirty || !profileForm.valid">
+            @if (saving()) {
+              <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+              <mat-icon>save</mat-icon>
+              Save Profile
+            }
+          </button>
+        </form>
+
+        <mat-divider></mat-divider>
+
+        <!-- License Submission Section -->
+        @if (!profile()?.isLicenseVerified) {
+          <form [formGroup]="licenseForm" (ngSubmit)="submitLicense()" class="license-form">
+            <h3>License Verification</h3>
+            <p class="form-description">
+              Submit your driving license details for verification. 
+              An admin will review and approve your request.
+            </p>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>License Number</mat-label>
+              <input matInput formControlName="licenseNumber" placeholder="Enter your license number">
+              <mat-icon matSuffix>badge</mat-icon>
+              @if (licenseForm.get('licenseNumber')?.hasError('required')) {
+                <mat-error>License number is required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>License Expiry Date</mat-label>
+              <input matInput type="date" formControlName="licenseExpiryDate">
+              <mat-icon matSuffix>event</mat-icon>
+              @if (licenseForm.get('licenseExpiryDate')?.hasError('required')) {
+                <mat-error>Expiry date is required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>License Image URL</mat-label>
+              <input matInput formControlName="licenseImageUrl" placeholder="URL to your license image">
+              <mat-icon matSuffix>image</mat-icon>
+              <mat-hint>Upload your image to a service and paste the URL here</mat-hint>
+              @if (licenseForm.get('licenseImageUrl')?.hasError('required')) {
+                <mat-error>License image URL is required</mat-error>
+              }
+            </mat-form-field>
+
+            <button 
+              mat-raised-button 
+              color="accent" 
+              type="submit"
+              [disabled]="submittingLicense() || !licenseForm.valid">
+              @if (submittingLicense()) {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else {
+                <mat-icon>upload</mat-icon>
+                Submit for Verification
+              }
+            </button>
+          </form>
+        }
+      }
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-button routerLink="/rider">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Dashboard
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

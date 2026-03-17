@@ -19,57 +19,8 @@ export interface RideLocation {
   selector: 'app-ride-map',
   standalone: true,
   imports: [CommonModule, MatProgressSpinnerModule],
-  template: `
-    <div class="map-wrapper">
-      <div class="ride-map-container" [id]="mapId"></div>
-      @if (!mapReady) {
-        <div class="map-loading">
-          <mat-spinner diameter="30"></mat-spinner>
-          <span>Loading map...</span>
-        </div>
-      }
-      @if (mapReady && rides.length === 0) {
-        <div class="no-rides-overlay">
-          <span>No rides with location data available</span>
-        </div>
-      }
-    </div>
-  `,
-  styles: [`
-    .map-wrapper {
-      position: relative;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .ride-map-container {
-      height: 400px;
-      width: 100%;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      z-index: 1;
-    }
-
-    .map-loading, .no-rides-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      background: rgba(255,255,255,0.9);
-      z-index: 2;
-    }
-
-    .no-rides-overlay {
-      background: rgba(255,255,255,0.8);
-      color: #666;
-    }
-  `]
+  templateUrl: './ride-map.component.html',
+  styleUrls: ['./ride-map.component.scss']
 })
 export class RideMapComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @Input() rides: RideLocation[] = [];

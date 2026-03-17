@@ -7,8 +7,8 @@ import { NotificationService, Notification } from '../../services/notification.s
   selector: 'app-notification-toast',
   standalone: true,
   imports: [CommonModule, MatSnackBarModule],
-  template: ``,
-  styles: []
+  templateUrl: './notification-toast.component.html',
+  styleUrls: ['./notification-toast.component.scss']
 })
 export class NotificationToastComponent implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);

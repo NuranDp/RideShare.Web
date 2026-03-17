@@ -1,0 +1,118 @@
+<!-- Top Bar -->
+<div class="top-bar">
+  <button class="back-btn" matRipple routerLink="/rider">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <div class="top-bar-title">
+    <h1>Post a Ride</h1>
+    <span class="subtitle">Share your commute</span>
+  </div>
+  <div class="top-bar-spacer"></div>
+</div>
+
+<!-- Main Content -->
+<div class="content-area">
+  <form [formGroup]="rideForm" (ngSubmit)="onSubmit()">
+    <!-- Step 1: Route Section -->
+    <div class="form-section">
+      <div class="section-header">
+        <span class="step-badge">1</span>
+        <h2>Route</h2>
+      </div>
+
+      <!-- Unified Route Map -->
+      <app-unified-route-map
+        (originSelected)="onOriginSelected($event)"
+        (destinationSelected)="onDestSelected($event)"
+        (routeCalculated)="onRouteCalculated($event)">
+      </app-unified-route-map>
+    </div>
+
+    <!-- Step 2: Schedule Section -->
+    <div class="form-section">
+      <div class="section-header">
+        <span class="step-badge">2</span>
+        <h2>Schedule</h2>
+      </div>
+
+      <div class="schedule-grid">
+        <div class="schedule-item">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Departure Date</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="departureDate" [min]="minDate">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            @if (rideForm.get('departureDate')?.hasError('required')) {
+              <mat-error>Date is required</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="schedule-item">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Departure Time</mat-label>
+            <input matInput type="time" formControlName="departureTime">
+            @if (rideForm.get('departureTime')?.hasError('required')) {
+              <mat-error>Time is required</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Details Section -->
+    <div class="form-section">
+      <div class="section-header">
+        <span class="step-badge">3</span>
+        <h2>Details</h2>
+      </div>
+
+      <!-- Helmet Toggle -->
+      <div class="option-card" matRipple (click)="toggleHelmet()">
+        <div class="option-icon" [class.active]="rideForm.get('helmetProvided')?.value">
+          <mat-icon>sports_motorsports</mat-icon>
+        </div>
+        <div class="option-content">
+          <span class="option-title">Provide Helmet</span>
+          <span class="option-desc">I will provide a helmet for my passenger</span>
+        </div>
+        <div class="option-toggle" [class.active]="rideForm.get('helmetProvided')?.value">
+          <div class="toggle-track">
+            <div class="toggle-thumb"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="notes-card">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Notes (Optional)</mat-label>
+          <textarea matInput formControlName="notes" rows="3"
+            placeholder="Route details, pickup points, preferences..."></textarea>
+          <mat-icon matPrefix>notes</mat-icon>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Validation Warning -->
+    @if (!originLocation || !destLocation) {
+      <div class="warning-banner">
+        <mat-icon>info</mat-icon>
+        <span>Select both pickup and drop-off locations to continue</span>
+      </div>
+    }
+  </form>
+</div>
+
+<!-- Bottom Action Bar -->
+<div class="bottom-bar">
+  <button class="submit-btn" [disabled]="loading || !rideForm.valid || !originLocation || !destLocation"
+          (click)="onSubmit()">
+    @if (loading) {
+      <mat-spinner diameter="24" color="accent"></mat-spinner>
+    } @else {
+      <mat-icon>add_circle</mat-icon>
+      <span>Post Ride</span>
+    }
+  </button>
+</div>

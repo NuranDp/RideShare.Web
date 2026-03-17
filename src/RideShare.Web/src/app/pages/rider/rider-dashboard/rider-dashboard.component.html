@@ -1,0 +1,475 @@
+<!-- Top App Bar -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <mat-icon class="logo-icon">{{ getTabIcon() }}</mat-icon>
+    <span class="app-title">{{ getTabTitle() }}</span>
+  </div>
+  <div class="top-bar-right">
+    <app-notification-bell></app-notification-bell>
+  </div>
+</div>
+
+<!-- Main Content Area -->
+<div class="content-area">
+  <!-- Rides Tab -->
+  @if (activeTab === 'rides') {
+    <div class="tab-content rides-tab">
+      <!-- Welcome Section -->
+      <div class="welcome-section">
+        <div class="welcome-content">
+          <div class="welcome-text">
+            <span class="greeting">Hey, {{ getFirstName() }}! 🏍️</span>
+            <h2>Ready to share your ride?</h2>
+          </div>
+          <div class="welcome-stats">
+            <div class="stat-item">
+              <span class="stat-value">{{ totalRides }}</span>
+              <span class="stat-label">Rides</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="stat-value">{{ riderRating > 0 ? (riderRating | number:'1.1-1') : '-' }}</span>
+              <span class="stat-label">Rating</span>
+            </div>
+          </div>
+        </div>
+        <div class="welcome-decoration"></div>
+      </div>
+
+      <!-- Share Ride CTA -->
+      <button class="share-ride-btn" routerLink="/rider/post-ride">
+        <div class="share-ride-content">
+          <div class="share-ride-icon">
+            <mat-icon>two_wheeler</mat-icon>
+          </div>
+          <div class="share-ride-text">
+            <span class="share-ride-title">Share Your Ride</span>
+            <span class="share-ride-subtitle">Post your route & earn</span>
+          </div>
+        </div>
+        <mat-icon class="share-ride-arrow">arrow_forward</mat-icon>
+      </button>
+
+      <!-- Active Rides Section -->
+      <div class="rides-section">
+        <div class="section-title">
+          <mat-icon>schedule</mat-icon>
+          <span>Upcoming Rides</span>
+        </div>
+        @if (upcomingRides.length === 0) {
+          <div class="empty-state">
+            <mat-icon>event_busy</mat-icon>
+            <p>No upcoming rides</p>
+            <button mat-stroked-button color="primary" routerLink="/rider/post-ride">
+              Share your first ride
+            </button>
+          </div>
+        } @else {
+          <div class="rides-list">
+            @for (ride of upcomingRides; track ride.id) {
+              <div class="ride-card" matRipple routerLink="/rider/my-rides">
+                <div class="ride-route">
+                  <div class="route-point">
+                    <span class="marker origin">A</span>
+                    <span class="location">{{ getShortAddress(ride.origin) }}</span>
+                  </div>
+                  <mat-icon class="route-arrow">arrow_forward</mat-icon>
+                  <div class="route-point">
+                    <span class="marker dest">B</span>
+                    <span class="location">{{ getShortAddress(ride.destination) }}</span>
+                  </div>
+                </div>
+                <div class="ride-meta">
+                  <span class="ride-time">
+                    <mat-icon>schedule</mat-icon>
+                    {{ formatDateTime(ride.departureTime) }}
+                  </span>
+                  <span class="ride-status" [class]="ride.status.toLowerCase()">
+                    {{ ride.status }}
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Pending Requests Section -->
+      @if (pendingRequestsList.length > 0) {
+        <div class="pending-section">
+          <div class="section-title">
+            <mat-icon>person_add</mat-icon>
+            <span>Pending Requests</span>
+            <span class="count-badge">{{ pendingRequestsList.length }}</span>
+          </div>
+          <div class="pending-list">
+            @for (request of pendingRequestsList.slice(0, 3); track request.id) {
+              <div class="pending-item">
+                <div class="pending-main" (click)="showRequestDetails(request.id)">
+                  <div class="pending-avatar">
+                    @if (request.passengerPhoto) {
+                      <img [src]="request.passengerPhoto" alt="Passenger">
+                    } @else {
+                      <mat-icon>person</mat-icon>
+                    }
+                  </div>
+                  <div class="pending-content">
+                    <span class="pending-name">{{ request.passengerName }}</span>
+                    <div class="pending-route">
+                      <span class="route-pill pickup">{{ request.pickupLocation ? getMediumAddress(request.pickupLocation) : 'Ride origin' }}</span>
+                      <mat-icon class="route-arrow-icon">east</mat-icon>
+                      <span class="route-pill dropoff">{{ request.dropoffLocation ? getMediumAddress(request.dropoffLocation) : 'Ride dest' }}</span>
+                    </div>
+                  </div>
+                  <mat-icon class="chevron-icon">chevron_right</mat-icon>
+                </div>
+                <div class="pending-footer">
+                  <span class="pending-time">{{ formatRelativeTime(request.requestedAt) }}</span>
+                  <button class="accept-btn" (click)="acceptRequest(request); $event.stopPropagation()" [disabled]="processingRequest === request.id">
+                    @if (processingRequest === request.id && processingAction === 'accept') {
+                      <mat-icon class="spinning">sync</mat-icon>
+                      <span>Accepting...</span>
+                    } @else {
+                      <mat-icon>check_circle</mat-icon>
+                      <span>Accept</span>
+                    }
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+          @if (pendingRequestsList.length > 3) {
+            <button class="view-all-btn" (click)="activeTab = 'requests'">
+              View all {{ pendingRequestsList.length }} requests
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Requests Tab -->
+  @if (activeTab === 'requests') {
+    <div class="tab-content requests-tab">
+      <div class="section-header">
+        <h2>Pending Requests</h2>
+        @if (pendingRequestsList.length > 0) {
+          <span class="header-badge">{{ pendingRequestsList.length }}</span>
+        }
+      </div>
+
+      @if (pendingRequestsList.length === 0) {
+        <div class="empty-state">
+          <mat-icon>person_add</mat-icon>
+          <p>No pending requests</p>
+          <span class="empty-subtitle">When passengers request to join your rides, they'll appear here</span>
+        </div>
+      } @else {
+        <div class="requests-list">
+          @for (request of pendingRequestsList; track request.id) {
+            <div class="request-card">
+              <!-- Passenger Header -->
+              <div class="request-header">
+                <div class="passenger-avatar">
+                  @if (request.passengerPhoto) {
+                    <img [src]="request.passengerPhoto" alt="Passenger">
+                  } @else {
+                    <mat-icon>person</mat-icon>
+                  }
+                </div>
+                <div class="passenger-info">
+                  <span class="passenger-name">{{ request.passengerName }}</span>
+                  <span class="request-time">{{ formatRelativeTime(request.requestedAt) }}</span>
+                </div>
+                <span class="ride-time-badge">
+                  <mat-icon>schedule</mat-icon>
+                  {{ formatShortDateTime(request.departureTime) }}
+                </span>
+              </div>
+
+              <!-- Journey Visual -->
+              <div class="journey-visual">
+                <!-- Your Ride Route (dimmed background) -->
+                <div class="your-ride-label">
+                  <mat-icon>two_wheeler</mat-icon>
+                  <span>Your Route</span>
+                </div>
+                <div class="ride-route-bar">
+                  <div class="route-endpoint start">
+                    <span class="endpoint-marker">A</span>
+                    <span class="endpoint-text">{{ getShortAddress(request.rideOrigin) }}</span>
+                  </div>
+                  <div class="route-line"></div>
+                  <div class="route-endpoint end">
+                    <span class="endpoint-marker">B</span>
+                    <span class="endpoint-text">{{ getShortAddress(request.rideDestination) }}</span>
+                  </div>
+                </div>
+
+                <!-- Passenger Journey (highlighted) -->
+                <div class="passenger-journey">
+                  <div class="passenger-label">
+                    <mat-icon>person</mat-icon>
+                    <span>Passenger wants</span>
+                  </div>
+                  <div class="passenger-points">
+                    <div class="passenger-point pickup">
+                      <span class="point-marker pickup">P</span>
+                      <div class="point-details">
+                        <span class="point-label">Pick up at</span>
+                        <span class="point-location">{{ request.pickupLocation ? getShortAddress(request.pickupLocation) : 'Ride start (A)' }}</span>
+                      </div>
+                    </div>
+                    <mat-icon class="journey-arrow">east</mat-icon>
+                    <div class="passenger-point dropoff">
+                      <span class="point-marker dropoff">D</span>
+                      <div class="point-details">
+                        <span class="point-label">Drop off at</span>
+                        <span class="point-location">{{ request.dropoffLocation ? getShortAddress(request.dropoffLocation) : 'Ride end (B)' }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Message -->
+              @if (request.message) {
+                <div class="request-message">
+                  <mat-icon>chat_bubble_outline</mat-icon>
+                  <span>{{ request.message }}</span>
+                </div>
+              }
+              
+              <!-- View Details Button -->
+              <button class="view-details-btn" (click)="toggleRequestDetails(request.id)">
+                <mat-icon>{{ expandedRequestId === request.id ? 'expand_less' : 'map' }}</mat-icon>
+                <span>{{ expandedRequestId === request.id ? 'Hide Map' : 'View Route' }}</span>
+              </button>
+              
+              <!-- Expandable Map Section -->
+              @if (expandedRequestId === request.id) {
+                <div class="map-preview-section">
+                  <div class="map-container" [id]="'request-map-' + request.id"></div>
+                  <div class="route-details-expanded">
+                    <div class="detail-row">
+                      <mat-icon class="origin-icon">trip_origin</mat-icon>
+                      <div class="detail-text">
+                        <span class="detail-label">From</span>
+                        <span class="detail-value">{{ request.rideOrigin }}</span>
+                      </div>
+                    </div>
+                    @if (request.pickupLocation) {
+                      <div class="detail-row pickup">
+                        <mat-icon class="pickup-icon">hail</mat-icon>
+                        <div class="detail-text">
+                          <span class="detail-label">Passenger Pickup</span>
+                          <span class="detail-value">{{ request.pickupLocation }}</span>
+                        </div>
+                      </div>
+                    }
+                    @if (request.dropoffLocation) {
+                      <div class="detail-row dropoff">
+                        <mat-icon class="dropoff-icon">place</mat-icon>
+                        <div class="detail-text">
+                          <span class="detail-label">Passenger Dropoff</span>
+                          <span class="detail-value">{{ request.dropoffLocation }}</span>
+                        </div>
+                      </div>
+                    }
+                    <div class="detail-row">
+                      <mat-icon class="dest-icon">location_on</mat-icon>
+                      <div class="detail-text">
+                        <span class="detail-label">To</span>
+                        <span class="detail-value">{{ request.rideDestination }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+              
+              <div class="request-actions">
+                <button class="action-btn reject" (click)="rejectRequest(request)" [disabled]="processingRequest === request.id">
+                  @if (processingRequest === request.id && processingAction === 'reject') {
+                    <mat-icon class="spinning">sync</mat-icon>
+                  } @else {
+                    <mat-icon>close</mat-icon>
+                  }
+                  <span>Decline</span>
+                </button>
+                <button class="action-btn accept" (click)="acceptRequest(request)" [disabled]="processingRequest === request.id">
+                  @if (processingRequest === request.id && processingAction === 'accept') {
+                    <mat-icon class="spinning">sync</mat-icon>
+                  } @else {
+                    <mat-icon>check</mat-icon>
+                  }
+                  <span>Accept</span>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Profile Tab -->
+  @if (activeTab === 'profile') {
+    <div class="tab-content profile-tab">
+      <!-- Profile Header -->
+      <div class="profile-header">
+        <div class="profile-avatar">
+          @if (authService.currentUser()?.profilePhotoUrl) {
+            <img [src]="authService.currentUser()?.profilePhotoUrl" alt="Profile">
+          } @else {
+            <mat-icon>person</mat-icon>
+          }
+        </div>
+        <div class="profile-info">
+          <h2>{{ authService.currentUser()?.fullName }}</h2>
+          <p>{{ authService.currentUser()?.email }}</p>
+          @if (isVerified) {
+            <span class="verified-badge">
+              <mat-icon>verified</mat-icon>
+              Verified Rider
+            </span>
+          }
+        </div>
+      </div>
+
+      <!-- Profile Menu -->
+      <div class="profile-menu">
+        <div class="menu-section">
+          <div class="menu-item" matRipple routerLink="/rider/profile">
+            <div class="menu-icon">
+              <mat-icon>badge</mat-icon>
+            </div>
+            <div class="menu-content">
+              <span class="menu-title">License Verification</span>
+              <span class="menu-subtitle">
+                @if (isVerified) {
+                  Verified
+                } @else if (isPending) {
+                  Pending review
+                } @else {
+                  Submit your license
+                }
+              </span>
+            </div>
+            <mat-icon class="menu-arrow">chevron_right</mat-icon>
+          </div>
+
+          <div class="menu-item" matRipple routerLink="/rider/profile">
+            <div class="menu-icon">
+              <mat-icon>two_wheeler</mat-icon>
+            </div>
+            <div class="menu-content">
+              <span class="menu-title">Motorcycle Info</span>
+              <span class="menu-subtitle">{{ motorcycleModel || 'Add your motorcycle details' }}</span>
+            </div>
+            <mat-icon class="menu-arrow">chevron_right</mat-icon>
+          </div>
+
+          <div class="menu-item" matRipple routerLink="/rider/profile">
+            <div class="menu-icon">
+              <mat-icon>contact_phone</mat-icon>
+            </div>
+            <div class="menu-content">
+              <span class="menu-title">Emergency Contact</span>
+              <span class="menu-subtitle">{{ emergencyContact || 'Add emergency contact' }}</span>
+            </div>
+            <mat-icon class="menu-arrow">chevron_right</mat-icon>
+          </div>
+        </div>
+
+        <div class="menu-section">
+          <div class="menu-item" matRipple routerLink="/rider/my-rides">
+            <div class="menu-icon">
+              <mat-icon>history</mat-icon>
+            </div>
+            <div class="menu-content">
+              <span class="menu-title">Ride History</span>
+              <span class="menu-subtitle">View all your past rides</span>
+            </div>
+            <mat-icon class="menu-arrow">chevron_right</mat-icon>
+          </div>
+
+          <div class="menu-item" matRipple>
+            <div class="menu-icon">
+              <mat-icon>star</mat-icon>
+            </div>
+            <div class="menu-content">
+              <span class="menu-title">My Ratings</span>
+              <span class="menu-subtitle">{{ riderRating | number:'1.1-1' }} average from {{ totalRatings }} reviews</span>
+            </div>
+            <mat-icon class="menu-arrow">chevron_right</mat-icon>
+          </div>
+        </div>
+
+        <div class="menu-section">
+          <div class="menu-item logout" matRipple (click)="logout()">
+            <div class="menu-icon logout">
+              <mat-icon>logout</mat-icon>
+            </div>
+            <div class="menu-content">
+              <span class="menu-title">Log Out</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+<!-- Confirmation Modal -->
+@if (confirmingRequest) {
+  <div class="modal-overlay" (click)="cancelConfirm()">
+    <div class="confirm-modal" (click)="$event.stopPropagation()">
+      <div class="confirm-icon">
+        <mat-icon>person_add</mat-icon>
+      </div>
+      <h3 class="confirm-title">Accept Request?</h3>
+      <p class="confirm-message">Allow <strong>{{ confirmingRequest.passengerName }}</strong> to join your ride?</p>
+      <div class="confirm-details">
+        <div class="confirm-route">
+          <span class="route-label">Route:</span>
+          <span>{{ getShortAddress(confirmingRequest.rideOrigin) }} → {{ getShortAddress(confirmingRequest.rideDestination) }}</span>
+        </div>
+      </div>
+      <div class="confirm-actions">
+        <button class="confirm-btn cancel" (click)="cancelConfirm()">
+          Cancel
+        </button>
+        <button class="confirm-btn accept" (click)="confirmAccept()" [disabled]="processingRequest">
+          @if (processingRequest) {
+            <mat-icon class="spinning">sync</mat-icon>
+            Accepting...
+          } @else {
+            <mat-icon>check</mat-icon>
+            Accept
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <button class="nav-item" [class.active]="activeTab === 'rides'" (click)="activeTab = 'rides'">
+    <mat-icon>home</mat-icon>
+    <span>Home</span>
+  </button>
+  <button class="nav-item" routerLink="/rider/my-rides">
+    <mat-icon>list_alt</mat-icon>
+    <span>My Rides</span>
+  </button>
+  <button class="nav-item" [class.active]="activeTab === 'requests'" (click)="activeTab = 'requests'">
+    <mat-icon [matBadge]="pendingRequestsList.length" matBadgeSize="small" matBadgeColor="warn" [matBadgeHidden]="pendingRequestsList.length === 0">person_add</mat-icon>
+    <span>Requests</span>
+  </button>
+  <button class="nav-item" [class.active]="activeTab === 'profile'" (click)="activeTab = 'profile'">
+    <mat-icon>person</mat-icon>
+    <span>Profile</span>
+  </button>
+</nav>

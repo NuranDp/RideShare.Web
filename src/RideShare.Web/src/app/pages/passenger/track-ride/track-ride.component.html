@@ -1,0 +1,169 @@
+<div class="page-container">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <mat-icon class="logo-icon">gps_fixed</mat-icon>
+      <span class="app-title">Live Tracking</span>
+    </div>
+    <div class="top-bar-right">
+      <app-notification-bell></app-notification-bell>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading ride information...</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="error-container">
+      <div class="error-icon">
+        <mat-icon>error_outline</mat-icon>
+      </div>
+      <h3>{{ error() }}</h3>
+      <p>Please try again or go back to your requests</p>
+      <button class="action-btn primary" routerLink="/passenger/my-requests">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Requests
+      </button>
+    </div>
+  }
+
+  @if (!loading() && !error() && rideLocation()) {
+    <!-- Map Container (Full Screen) -->
+    <div class="map-wrapper">
+      <div id="tracking-map" class="tracking-map"></div>
+      
+      <!-- Connection Status -->
+      <div class="connection-badge" [class.connected]="locationService.connectionState() === 'connected'">
+        <div class="pulse-dot" [class.active]="locationService.connectionState() === 'connected'"></div>
+        <span>{{ locationService.connectionState() === 'connected' ? 'Live' : 'Connecting...' }}</span>
+      </div>
+
+      <!-- Recenter Button -->
+      <button class="recenter-btn" (click)="recenterMap()">
+        <mat-icon>my_location</mat-icon>
+      </button>
+    </div>
+
+    <!-- Floating Info Card -->
+    <div class="info-card" [class.expanded]="cardExpanded" (click)="toggleCard()">
+      <div class="card-handle"></div>
+      
+      <!-- Rider Header -->
+      <div class="rider-header">
+        <div class="rider-avatar">
+          <mat-icon>sports_motorsports</mat-icon>
+        </div>
+        <div class="rider-info">
+          <span class="rider-name">{{ rideLocation()?.riderName }}</span>
+          @if (rideLocation()?.vehicleNumber) {
+            <span class="vehicle-info">
+              <mat-icon>two_wheeler</mat-icon>
+              {{ rideLocation()?.vehicleNumber }}
+            </span>
+          }
+        </div>
+        <div class="status-badge live">
+          <div class="pulse-dot active"></div>
+          <span>In Progress</span>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      @if (rideLocation()?.riderPhone) {
+        <div class="quick-actions">
+          <a class="action-btn call" href="tel:{{ rideLocation()?.riderPhone }}">
+            <mat-icon>phone</mat-icon>
+            <span>Call Rider</span>
+          </a>
+        </div>
+      }
+
+      @if (cardExpanded) {
+        <!-- Route Display -->
+        <div class="route-display">
+          <div class="route-point">
+            <div class="point-marker pickup">
+              <span>P</span>
+            </div>
+            <div class="point-details">
+              <span class="point-label">Pickup</span>
+              <span class="point-address">{{ getShortAddress(rideLocation()?.origin || '') }}</span>
+            </div>
+          </div>
+          <div class="route-connector">
+            <div class="connector-line"></div>
+          </div>
+          <div class="route-point">
+            <div class="point-marker dropoff">
+              <span>D</span>
+            </div>
+            <div class="point-details">
+              <span class="point-label">Drop-off</span>
+              <span class="point-address">{{ getShortAddress(rideLocation()?.destination || '') }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Time Info -->
+        <div class="time-info">
+          @if (rideLocation()?.startedAt) {
+            <div class="time-item">
+              <mat-icon>play_circle</mat-icon>
+              <span>Started at {{ formatTime(rideLocation()!.startedAt!) }}</span>
+            </div>
+          }
+          @if (lastUpdateTime() || rideLocation()?.locationUpdatedAt) {
+            <div class="time-item live">
+              <mat-icon>update</mat-icon>
+              <span>Last update: {{ formatTime(lastUpdateTime() || rideLocation()!.locationUpdatedAt!) }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- Legend -->
+        <div class="map-legend">
+          <div class="legend-item">
+            <div class="legend-dot pickup"></div>
+            <span>Pickup</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot dropoff"></div>
+            <span>Drop-off</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot rider"></div>
+            <span>Rider</span>
+          </div>
+        </div>
+      }
+
+      <div class="expand-hint">
+        <mat-icon>{{ cardExpanded ? 'expand_more' : 'expand_less' }}</mat-icon>
+      </div>
+    </div>
+  }
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a class="nav-item" routerLink="/passenger">
+      <mat-icon>home</mat-icon>
+      <span>Home</span>
+    </a>
+    <a class="nav-item" routerLink="/passenger/browse-rides">
+      <mat-icon>search</mat-icon>
+      <span>Find Ride</span>
+    </a>
+    <a class="nav-item active" routerLink="/passenger/my-requests">
+      <mat-icon>pending_actions</mat-icon>
+      <span>Requests</span>
+    </a>
+    <a class="nav-item" (click)="goToProfile()">
+      <mat-icon>person</mat-icon>
+      <span>Profile</span>
+    </a>
+  </nav>
+</div>

@@ -1,0 +1,141 @@
+<div class="history-container">
+  <div class="page-header">
+    <div>
+      <h1>Ride History</h1>
+      <p class="subtitle">Your past rides</p>
+    </div>
+    <button mat-raised-button color="primary" routerLink="/passenger/browse-rides">
+      <mat-icon>search</mat-icon>
+      Find a Ride
+    </button>
+  </div>
+
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading your ride history...</p>
+    </div>
+  }
+
+  @if (!loading && history.length === 0) {
+    <mat-card class="empty-state">
+      <mat-icon>history</mat-icon>
+      <h3>No ride history yet</h3>
+      <p>Once you complete rides, they'll appear here.</p>
+      <button mat-raised-button color="primary" routerLink="/passenger/browse-rides">
+        Find Your First Ride
+      </button>
+    </mat-card>
+  }
+
+  @if (!loading && history.length > 0) {
+    <div class="stats-summary">
+      <div class="stat-card">
+        <mat-icon>check_circle</mat-icon>
+        <div class="stat-value">{{ completedCount }}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+      <div class="stat-card">
+        <mat-icon>cancel</mat-icon>
+        <div class="stat-value">{{ cancelledCount }}</div>
+        <div class="stat-label">Cancelled</div>
+      </div>
+      <div class="stat-card">
+        <mat-icon>star</mat-icon>
+        <div class="stat-value">{{ ratedCount }}</div>
+        <div class="stat-label">Rated</div>
+      </div>
+    </div>
+
+    <div class="history-list">
+      @for (ride of history; track ride.rideId) {
+        <mat-card class="history-card" [class.cancelled]="ride.rideStatus === 'Cancelled'">
+          <mat-card-header>
+            <mat-icon mat-card-avatar [class]="'status-icon status-' + ride.rideStatus.toLowerCase()">
+              {{ ride.rideStatus === 'Completed' ? 'check_circle' : 'cancel' }}
+            </mat-icon>
+            <mat-card-title>{{ ride.origin }} → {{ ride.destination }}</mat-card-title>
+            <mat-card-subtitle>
+              <mat-icon class="small-icon">person</mat-icon>
+              {{ ride.riderName }}
+              @if (ride.riderRating > 0) {
+                <span class="rating-badge">
+                  <mat-icon class="star-icon">star</mat-icon>
+                  {{ ride.riderRating | number:'1.1-1' }}
+                </span>
+              }
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="ride-details">
+              <div class="detail-item">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ formatDateTime(ride.departureTime) }}</span>
+              </div>
+              <div class="detail-item">
+                <mat-icon>sports_motorsports</mat-icon>
+                <span>{{ ride.helmetProvided ? 'Helmet provided' : 'No helmet' }}</span>
+              </div>
+              <div class="detail-item">
+                <mat-icon>event</mat-icon>
+                <span>{{ ride.rideStatus === 'Completed' ? 'Completed' : 'Cancelled' }}: {{ formatDate(ride.completedAt) }}</span>
+              </div>
+            </div>
+
+            <mat-chip [class]="'chip-' + ride.rideStatus.toLowerCase()">
+              {{ ride.rideStatus }}
+            </mat-chip>
+
+            @if (ride.hasRated) {
+              <div class="my-rating">
+                <span>Your rating:</span>
+                @for (star of [1, 2, 3, 4, 5]; track star) {
+                  <mat-icon class="rating-star" [class.filled]="star <= (ride.myRating || 0)">
+                    {{ star <= (ride.myRating || 0) ? 'star' : 'star_border' }}
+                  </mat-icon>
+                }
+              </div>
+            }
+          </mat-card-content>
+
+          @if (ride.rideStatus === 'Completed' && !ride.hasRated) {
+            <mat-card-actions align="end">
+              <button mat-raised-button color="accent" (click)="rateRide(ride)">
+                <mat-icon>star</mat-icon>
+                Rate This Ride
+              </button>
+            </mat-card-actions>
+          }
+        </mat-card>
+      }
+    </div>
+  }
+
+  <div class="back-link">
+    <button mat-button routerLink="/passenger">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Dashboard
+    </button>
+  </div>
+</div>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <a class="nav-item" routerLink="/passenger">
+    <mat-icon>home</mat-icon>
+    <span>Home</span>
+  </a>
+  <a class="nav-item" routerLink="/passenger/browse-rides">
+    <mat-icon>search</mat-icon>
+    <span>Find Ride</span>
+  </a>
+  <a class="nav-item" routerLink="/passenger/my-requests">
+    <mat-icon>pending_actions</mat-icon>
+    <span>Requests</span>
+  </a>
+  <a class="nav-item" (click)="goToProfile()">
+    <mat-icon>person</mat-icon>
+    <span>Profile</span>
+  </a>
+</nav>

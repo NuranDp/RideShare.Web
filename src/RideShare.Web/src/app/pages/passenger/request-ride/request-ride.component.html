@@ -1,0 +1,381 @@
+<div class="page-container">
+  <!-- Fixed Back Button -->
+  <button mat-icon-button class="back-btn-fixed" routerLink="/passenger/browse-rides">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Loading ride details...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error) {
+    <div class="error-container">
+      <mat-icon>error_outline</mat-icon>
+      <h2>Ride not found</h2>
+      <p>{{ error }}</p>
+      <button mat-raised-button color="primary" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Go Back
+      </button>
+    </div>
+  }
+
+  <!-- Main Content -->
+  @if (ride && !loading && !error) {
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="header-icon">
+          <mat-icon>two_wheeler</mat-icon>
+        </div>
+        <div class="header-text">
+          <h1>Request to Join Ride</h1>
+          <p>Select your pickup & drop-off points on the map</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-wrapper">
+      <!-- Left Column: Info & Controls -->
+      <div class="info-column">
+        <!-- Ride Summary Card -->
+        <mat-card class="ride-summary-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar class="route-icon">route</mat-icon>
+            <mat-card-title>Route Details</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="route-flow">
+              <div class="route-point origin">
+                <div class="point-marker origin">A</div>
+                <div class="point-info">
+                  <span class="label">From</span>
+                  <span class="address">{{ ride.origin }}</span>
+                </div>
+              </div>
+              <div class="route-connector">
+                <mat-icon>south</mat-icon>
+              </div>
+              <div class="route-point destination">
+                <div class="point-marker dest">B</div>
+                <div class="point-info">
+                  <span class="label">To</span>
+                  <span class="address">{{ ride.destination }}</span>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Rider Info Card -->
+        <mat-card class="rider-info-card">
+          <mat-card-content>
+            <div class="rider-details">
+              <div class="rider-avatar">
+                @if (ride.riderPhoto) {
+                  <img [src]="ride.riderPhoto" alt="Rider">
+                } @else {
+                  <mat-icon>person</mat-icon>
+                }
+              </div>
+              <div class="rider-info">
+                <span class="rider-name">{{ ride.riderName }}</span>
+                <div class="rider-meta">
+                  <span class="rating">
+                    <mat-icon>star</mat-icon>
+                    {{ ride.riderRating.toFixed(1) }}
+                  </span>
+                  <span class="rides">{{ ride.riderTotalRides }} rides</span>
+                </div>
+              </div>
+            </div>
+            <div class="ride-badges">
+              <span class="badge time">
+                <mat-icon>schedule</mat-icon>
+                {{ formatDateTime(ride.departureTime) }}
+              </span>
+              @if (ride.helmetProvided) {
+                <span class="badge helmet">
+                  <mat-icon>sports_motorsports</mat-icon>
+                  Helmet provided
+                </span>
+              }
+              @if (ride.motorcycleModel) {
+                <span class="badge bike">
+                  <mat-icon>two_wheeler</mat-icon>
+                  {{ ride.motorcycleModel }}
+                </span>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Pickup & Dropoff Selection -->
+        <mat-card class="selection-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar>pin_drop</mat-icon>
+            <mat-card-title>Your Stops</mat-card-title>
+            <mat-card-subtitle>Click on the map or search below</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <!-- Mode Toggle -->
+            <div class="mode-toggle">
+              <button class="mode-btn pickup" 
+                      [class.active]="selectionMode === 'pickup'"
+                      (click)="selectionMode = 'pickup'">
+                <div class="mode-marker pickup">P</div>
+                <span>Pickup</span>
+                @if (pickupLat) {
+                  <mat-icon class="check">check_circle</mat-icon>
+                }
+              </button>
+              <button class="mode-btn dropoff" 
+                      [class.active]="selectionMode === 'dropoff'"
+                      (click)="selectionMode = 'dropoff'">
+                <div class="mode-marker dropoff">D</div>
+                <span>Drop-off</span>
+                @if (dropoffLat) {
+                  <mat-icon class="check">check_circle</mat-icon>
+                }
+              </button>
+            </div>
+
+            <!-- Pickup Point -->
+            <div class="point-input" [class.active]="selectionMode === 'pickup'" (click)="selectionMode = 'pickup'">
+              <div class="point-badge pickup">P</div>
+              <div class="input-wrapper">
+                <mat-form-field appearance="outline" class="search-field">
+                  <mat-icon matPrefix>search</mat-icon>
+                  <input matInput 
+                         [(ngModel)]="pickupSearchQuery"
+                         (input)="onSearchInput('pickup')"
+                         (focus)="onSearchFocus('pickup')"
+                         (blur)="onSearchBlur('pickup')"
+                         placeholder="Search pickup location...">
+                  @if (pickupSearchQuery) {
+                    <button mat-icon-button matSuffix (click)="clearSearch('pickup', $event)">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  }
+                </mat-form-field>
+                <button mat-stroked-button class="use-location-btn" (click)="useCurrentLocation('pickup')" [disabled]="gettingPickupLocation">
+                  @if (gettingPickupLocation) {
+                    <mat-spinner diameter="16"></mat-spinner>
+                  } @else {
+                    <mat-icon>my_location</mat-icon>
+                  }
+                  <span>{{ gettingPickupLocation ? 'Getting location...' : 'Use Current Location' }}</span>
+                </button>
+                @if (showPickupResults && pickupSearchResults.length > 0) {
+                  <div class="search-results">
+                    @for (result of pickupSearchResults; track result.place_id) {
+                      <div class="search-result-item" (mousedown)="selectSearchResult(result, 'pickup', $event)">
+                        <mat-icon>place</mat-icon>
+                        <div class="result-text">
+                          <span class="name">{{ result.display_name.split(',')[0] }}</span>
+                          <span class="address">{{ getShortDisplayName(result.display_name) }}</span>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+                @if (pickupSearching) {
+                  <div class="search-loading">
+                    <mat-spinner diameter="20"></mat-spinner>
+                    <span>Searching...</span>
+                  </div>
+                }
+              </div>
+              @if (pickupLocation) {
+                <div class="selected-badge">
+                  <mat-icon>check_circle</mat-icon>
+                  Set
+                </div>
+              }
+            </div>
+
+            <!-- Dropoff Point -->
+            <div class="point-input" [class.active]="selectionMode === 'dropoff'" (click)="selectionMode = 'dropoff'">
+              <div class="point-badge dropoff">D</div>
+              <div class="input-wrapper">
+                <mat-form-field appearance="outline" class="search-field">
+                  <mat-icon matPrefix>search</mat-icon>
+                  <input matInput 
+                         [(ngModel)]="dropoffSearchQuery"
+                         (input)="onSearchInput('dropoff')"
+                         (focus)="onSearchFocus('dropoff')"
+                         (blur)="onSearchBlur('dropoff')"
+                         placeholder="Search drop-off location...">
+                  @if (dropoffSearchQuery) {
+                    <button mat-icon-button matSuffix (click)="clearSearch('dropoff', $event)">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  }
+                </mat-form-field>
+                <button mat-stroked-button class="use-location-btn" (click)="useCurrentLocation('dropoff')" [disabled]="gettingDropoffLocation">
+                  @if (gettingDropoffLocation) {
+                    <mat-spinner diameter="16"></mat-spinner>
+                  } @else {
+                    <mat-icon>my_location</mat-icon>
+                  }
+                  <span>{{ gettingDropoffLocation ? 'Getting location...' : 'Use Current Location' }}</span>
+                </button>
+                @if (showDropoffResults && dropoffSearchResults.length > 0) {
+                  <div class="search-results">
+                    @for (result of dropoffSearchResults; track result.place_id) {
+                      <div class="search-result-item" (mousedown)="selectSearchResult(result, 'dropoff', $event)">
+                        <mat-icon>place</mat-icon>
+                        <div class="result-text">
+                          <span class="name">{{ result.display_name.split(',')[0] }}</span>
+                          <span class="address">{{ getShortDisplayName(result.display_name) }}</span>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+                @if (dropoffSearching) {
+                  <div class="search-loading">
+                    <mat-spinner diameter="20"></mat-spinner>
+                    <span>Searching...</span>
+                  </div>
+                }
+              </div>
+              @if (dropoffLocation) {
+                <div class="selected-badge">
+                  <mat-icon>check_circle</mat-icon>
+                  Set
+                </div>
+              }
+            </div>
+
+            @if (pickupLat || dropoffLat) {
+              <button mat-button class="reset-btn" (click)="resetPoints()">
+                <mat-icon>refresh</mat-icon>
+                Reset Points
+              </button>
+            }
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Message Card -->
+        <mat-card class="message-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar>chat_bubble_outline</mat-icon>
+            <mat-card-title>Message to Rider</mat-card-title>
+            <mat-card-subtitle>Optional</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-form-field appearance="outline" class="message-field">
+              <textarea matInput 
+                        [(ngModel)]="message" 
+                        rows="3"
+                        maxlength="200"
+                        placeholder="Introduce yourself or add any notes..."></textarea>
+              <mat-hint align="end">{{ message.length }}/200</mat-hint>
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button mat-stroked-button class="cancel-btn" (click)="goBack()" [disabled]="sending">
+            <mat-icon>arrow_back</mat-icon>
+            Cancel
+          </button>
+          <button mat-raised-button 
+                  class="send-btn"
+                  [class.ready]="isValid()"
+                  [class.pulse]="isValid() && !sending"
+                  (click)="sendRequest()" 
+                  [disabled]="sending || !isValid()">
+            @if (sending) {
+              <ng-container>
+                <mat-spinner diameter="20"></mat-spinner>
+                <span>Sending Request...</span>
+              </ng-container>
+            } @else if (!pickupLat) {
+              <ng-container>
+                <mat-icon>touch_app</mat-icon>
+                <span>Set Pickup Point First</span>
+              </ng-container>
+            } @else {
+              <ng-container>
+                <mat-icon>send</mat-icon>
+                <span>Send Request</span>
+              </ng-container>
+            }
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Column: Map -->
+      <div class="map-column">
+        <div class="map-wrapper">
+          <div id="request-map" class="map-container"></div>
+          
+          @if (routeLoading) {
+            <div class="route-loading-overlay">
+              <mat-spinner diameter="36"></mat-spinner>
+              <span>Calculating route...</span>
+            </div>
+          }
+          
+          @if (!pickupLat && !dropoffLat) {
+            <div class="floating-instruction" @fadeSlide>
+              <mat-icon>touch_app</mat-icon>
+              <span>Tap on the map to set your <strong>{{ selectionMode }}</strong> point</span>
+            </div>
+          }
+
+          <div class="map-legend">
+            <div class="legend-item" matTooltip="Rider's start">
+              <span class="legend-marker origin">A</span>
+              <span class="legend-label">Origin</span>
+            </div>
+            <div class="legend-item" matTooltip="Rider's destination">
+              <span class="legend-marker dest">B</span>
+              <span class="legend-label">Destination</span>
+            </div>
+            @if (pickupLat) {
+              <div class="legend-item" matTooltip="Your pickup">
+                <span class="legend-marker pickup">P</span>
+                <span class="legend-label">Pickup</span>
+              </div>
+            }
+            @if (dropoffLat) {
+              <div class="legend-item" matTooltip="Your drop-off">
+                <span class="legend-marker dropoff">D</span>
+                <span class="legend-label">Drop-off</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <a class="nav-item" routerLink="/passenger">
+    <mat-icon>home</mat-icon>
+    <span>Home</span>
+  </a>
+  <a class="nav-item active" routerLink="/passenger/browse-rides">
+    <mat-icon>search</mat-icon>
+    <span>Find Ride</span>
+  </a>
+  <a class="nav-item" routerLink="/passenger/my-requests">
+    <mat-icon>pending_actions</mat-icon>
+    <span>Requests</span>
+  </a>
+  <a class="nav-item" (click)="goToProfile()">
+    <mat-icon>person</mat-icon>
+    <span>Profile</span>
+  </a>
+</nav>
