@@ -67,7 +67,7 @@ import * as L from 'leaflet';
                 </div>
                 <div class="stat-divider"></div>
                 <div class="stat-item">
-                  <span class="stat-value">{{ riderRating > 0 ? riderRating.toFixed(1) : '-' }}</span>
+                  <span class="stat-value">{{ riderRating > 0 ? (riderRating | number:'1.1-1') : '-' }}</span>
                   <span class="stat-label">Rating</span>
                 </div>
               </div>
@@ -75,24 +75,19 @@ import * as L from 'leaflet';
             <div class="welcome-decoration"></div>
           </div>
 
-          <!-- Quick Actions -->
-          <div class="quick-actions">
-            <button class="action-card primary" routerLink="/rider/post-ride">
-              <div class="action-icon">
-                <mat-icon>add_circle</mat-icon>
+          <!-- Share Ride CTA -->
+          <button class="share-ride-btn" routerLink="/rider/post-ride">
+            <div class="share-ride-content">
+              <div class="share-ride-icon">
+                <mat-icon>two_wheeler</mat-icon>
               </div>
-              <span class="action-label">Post New Ride</span>
-            </button>
-            <button class="action-card" (click)="activeTab = 'requests'">
-              <div class="action-icon" [class.has-badge]="pendingRequestsList.length > 0">
-                <mat-icon>person_add</mat-icon>
-                @if (pendingRequestsList.length > 0) {
-                  <span class="icon-badge">{{ pendingRequestsList.length }}</span>
-                }
+              <div class="share-ride-text">
+                <span class="share-ride-title">Share Your Ride</span>
+                <span class="share-ride-subtitle">Post your route & earn</span>
               </div>
-              <span class="action-label">View Requests</span>
-            </button>
-          </div>
+            </div>
+            <mat-icon class="share-ride-arrow">arrow_forward</mat-icon>
+          </button>
 
           <!-- Active Rides Section -->
           <div class="rides-section">
@@ -105,7 +100,7 @@ import * as L from 'leaflet';
                 <mat-icon>event_busy</mat-icon>
                 <p>No upcoming rides</p>
                 <button mat-stroked-button color="primary" routerLink="/rider/post-ride">
-                  Post your first ride
+                  Share your first ride
                 </button>
               </div>
             } @else {
@@ -138,28 +133,58 @@ import * as L from 'leaflet';
             }
           </div>
 
-          <!-- Stats Overview -->
-          <div class="stats-section">
-            <div class="section-title">
-              <mat-icon>insights</mat-icon>
-              <span>Your Stats</span>
+          <!-- Pending Requests Section -->
+          @if (pendingRequestsList.length > 0) {
+            <div class="pending-section">
+              <div class="section-title">
+                <mat-icon>person_add</mat-icon>
+                <span>Pending Requests</span>
+                <span class="count-badge">{{ pendingRequestsList.length }}</span>
+              </div>
+              <div class="pending-list">
+                @for (request of pendingRequestsList.slice(0, 3); track request.id) {
+                  <div class="pending-item">
+                    <div class="pending-main" (click)="showRequestDetails(request.id)">
+                      <div class="pending-avatar">
+                        @if (request.passengerPhoto) {
+                          <img [src]="request.passengerPhoto" alt="Passenger">
+                        } @else {
+                          <mat-icon>person</mat-icon>
+                        }
+                      </div>
+                      <div class="pending-content">
+                        <span class="pending-name">{{ request.passengerName }}</span>
+                        <div class="pending-route">
+                          <span class="route-pill pickup">{{ request.pickupLocation ? getMediumAddress(request.pickupLocation) : 'Ride origin' }}</span>
+                          <mat-icon class="route-arrow-icon">east</mat-icon>
+                          <span class="route-pill dropoff">{{ request.dropoffLocation ? getMediumAddress(request.dropoffLocation) : 'Ride dest' }}</span>
+                        </div>
+                      </div>
+                      <mat-icon class="chevron-icon">chevron_right</mat-icon>
+                    </div>
+                    <div class="pending-footer">
+                      <span class="pending-time">{{ formatRelativeTime(request.requestedAt) }}</span>
+                      <button class="accept-btn" (click)="acceptRequest(request); $event.stopPropagation()" [disabled]="processingRequest === request.id">
+                        @if (processingRequest === request.id && processingAction === 'accept') {
+                          <mat-icon class="spinning">sync</mat-icon>
+                          <span>Accepting...</span>
+                        } @else {
+                          <mat-icon>check_circle</mat-icon>
+                          <span>Accept</span>
+                        }
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+              @if (pendingRequestsList.length > 3) {
+                <button class="view-all-btn" (click)="activeTab = 'requests'">
+                  View all {{ pendingRequestsList.length }} requests
+                  <mat-icon>arrow_forward</mat-icon>
+                </button>
+              }
             </div>
-            <div class="stats-grid">
-              <div class="stat-card">
-                <div class="stat-value">{{ totalRides }}</div>
-                <div class="stat-label">Total Rides</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-value">{{ riderRating | number:'1.1-1' }}</div>
-                <div class="stat-label">Rating</div>
-                <mat-icon class="stat-icon">star</mat-icon>
-              </div>
-              <div class="stat-card">
-                <div class="stat-value">{{ pendingRequests }}</div>
-                <div class="stat-label">Pending</div>
-              </div>
-            </div>
-          </div>
+          }
         </div>
       }
 
@@ -435,6 +460,39 @@ import * as L from 'leaflet';
       }
     </div>
 
+    <!-- Confirmation Modal -->
+    @if (confirmingRequest) {
+      <div class="modal-overlay" (click)="cancelConfirm()">
+        <div class="confirm-modal" (click)="$event.stopPropagation()">
+          <div class="confirm-icon">
+            <mat-icon>person_add</mat-icon>
+          </div>
+          <h3 class="confirm-title">Accept Request?</h3>
+          <p class="confirm-message">Allow <strong>{{ confirmingRequest.passengerName }}</strong> to join your ride?</p>
+          <div class="confirm-details">
+            <div class="confirm-route">
+              <span class="route-label">Route:</span>
+              <span>{{ getShortAddress(confirmingRequest.rideOrigin) }} → {{ getShortAddress(confirmingRequest.rideDestination) }}</span>
+            </div>
+          </div>
+          <div class="confirm-actions">
+            <button class="confirm-btn cancel" (click)="cancelConfirm()">
+              Cancel
+            </button>
+            <button class="confirm-btn accept" (click)="confirmAccept()" [disabled]="processingRequest">
+              @if (processingRequest) {
+                <mat-icon class="spinning">sync</mat-icon>
+                Accepting...
+              } @else {
+                <mat-icon>check</mat-icon>
+                Accept
+              }
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
       <button class="nav-item" [class.active]="activeTab === 'rides'" (click)="activeTab = 'rides'">
@@ -671,6 +729,316 @@ import * as L from 'leaflet';
       border-radius: 50%;
     }
 
+    /* Pending Requests Section */
+    .pending-section {
+      margin-bottom: 24px;
+    }
+
+    .pending-section .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      color: #666;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .pending-section .section-title mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    .count-badge {
+      background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: auto;
+    }
+
+    .pending-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .pending-item {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    .pending-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .pending-main:active {
+      background: #f8f9fa;
+    }
+
+    .pending-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .pending-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .pending-avatar mat-icon {
+      color: white;
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+    }
+
+    .pending-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .pending-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .pending-route {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .route-pill {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 180px;
+    }
+
+    .route-pill.pickup {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .route-pill.dropoff {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .route-arrow-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+      color: #bbb;
+      flex-shrink: 0;
+    }
+
+    .chevron-icon {
+      color: #ccc;
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .pending-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: #f8f9fa;
+      border-top: 1px solid #eee;
+    }
+
+    .pending-time {
+      font-size: 12px;
+      color: #888;
+    }
+
+    .accept-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #034694, #0A56A4);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(3, 70, 148, 0.3);
+    }
+
+    .accept-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .accept-btn:not(:disabled):active {
+      transform: scale(0.95);
+    }
+
+    .accept-btn mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    .accept-btn mat-icon.spinning {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .view-all-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 10px;
+      padding: 10px;
+      background: transparent;
+      border: 1px dashed #ccc;
+      border-radius: 10px;
+      color: #034694;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s;
+    }
+
+    .view-all-btn:hover {
+      border-color: #034694;
+      background: rgba(3, 70, 148, 0.05);
+    }
+
+    .view-all-btn mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Share Ride CTA Button */
+    .share-ride-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, #034694 0%, #1565C0 50%, #0A56A4 100%);
+      background-size: 200% 200%;
+      animation: gradientMove 4s ease infinite;
+      border: none;
+      border-radius: 16px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(3, 70, 148, 0.35);
+      transition: all 0.3s;
+    }
+
+    @keyframes gradientMove {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .share-ride-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(3, 70, 148, 0.45);
+    }
+
+    .share-ride-btn:active {
+      transform: scale(0.98);
+    }
+
+    .share-ride-content {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .share-ride-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .share-ride-icon mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+
+    .share-ride-text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .share-ride-title {
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .share-ride-subtitle {
+      font-size: 13px;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+
+    .share-ride-arrow {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+      opacity: 0.8;
+      animation: bounceArrow 1.5s ease-in-out infinite;
+    }
+
+    @keyframes bounceArrow {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(5px); }
+    }
+
     /* Quick Actions */
     .quick-actions {
       display: grid;
@@ -700,6 +1068,13 @@ import * as L from 'leaflet';
     .action-card.primary {
       background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
       color: white;
+    }
+
+    .action-card.primary.full-width {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      justify-content: center;
+      padding: 16px 24px;
     }
 
     .action-card.primary .action-icon {
@@ -1671,6 +2046,156 @@ import * as L from 'leaflet';
     .nav-item.active mat-icon {
       color: #034694;
     }
+
+    /* Confirmation Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .confirm-modal {
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 340px;
+      width: 100%;
+      text-align: center;
+      animation: slideUp 0.3s ease;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    @keyframes slideUp {
+      from { 
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .confirm-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .confirm-icon mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      color: white;
+    }
+
+    .confirm-title {
+      margin: 0 0 8px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .confirm-message {
+      margin: 0 0 16px;
+      font-size: 15px;
+      color: #666;
+      line-height: 1.4;
+    }
+
+    .confirm-message strong {
+      color: #034694;
+    }
+
+    .confirm-details {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 20px;
+    }
+
+    .confirm-route {
+      font-size: 13px;
+      color: #555;
+    }
+
+    .route-label {
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .confirm-btn {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .confirm-btn.cancel {
+      background: #f5f5f5;
+      border: none;
+      color: #666;
+    }
+
+    .confirm-btn.cancel:active {
+      background: #eee;
+    }
+
+    .confirm-btn.accept {
+      background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
+      border: none;
+      color: white;
+      box-shadow: 0 4px 12px rgba(3, 70, 148, 0.3);
+    }
+
+    .confirm-btn.accept:disabled {
+      opacity: 0.7;
+    }
+
+    .confirm-btn.accept:not(:disabled):active {
+      transform: scale(0.98);
+    }
+
+    .confirm-btn mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    .confirm-btn mat-icon.spinning {
+      animation: spin 1s linear infinite;
+    }
   `]
 })
 export class RiderDashboardComponent implements OnInit, AfterViewChecked, OnDestroy {
@@ -1694,6 +2219,7 @@ export class RiderDashboardComponent implements OnInit, AfterViewChecked, OnDest
   // Processing state
   processingRequest: string | null = null;
   processingAction: 'accept' | 'reject' | null = null;
+  confirmingRequest: PendingRequestWithRide | null = null;
   
   // Map expansion state
   expandedRequestId: string | null = null;
@@ -1757,6 +2283,21 @@ export class RiderDashboardComponent implements OnInit, AfterViewChecked, OnDest
       this.expandedRequestId = requestId;
       this.mapInitialized = false;
     }
+  }
+
+  showRequestDetails(requestId: string): void {
+    // Switch to requests tab and expand this specific request
+    this.activeTab = 'requests';
+    // Cleanup any previously expanded map
+    if (this.expandedRequestId && this.expandedRequestId !== requestId) {
+      const existingMap = this.requestMaps.get(this.expandedRequestId);
+      if (existingMap) {
+        existingMap.remove();
+        this.requestMaps.delete(this.expandedRequestId);
+      }
+    }
+    this.expandedRequestId = requestId;
+    this.mapInitialized = false;
   }
 
   private initializeMap(requestId: string): void {
@@ -1918,6 +2459,17 @@ export class RiderDashboardComponent implements OnInit, AfterViewChecked, OnDest
   }
 
   acceptRequest(request: PendingRequestWithRide): void {
+    this.confirmingRequest = request;
+  }
+
+  cancelConfirm(): void {
+    this.confirmingRequest = null;
+  }
+
+  confirmAccept(): void {
+    if (!this.confirmingRequest) return;
+    
+    const request = this.confirmingRequest;
     this.processingRequest = request.id;
     this.processingAction = 'accept';
     
@@ -1927,6 +2479,7 @@ export class RiderDashboardComponent implements OnInit, AfterViewChecked, OnDest
           duration: 3000,
           panelClass: 'success-snackbar'
         });
+        this.confirmingRequest = null;
         this.loadPendingRequests();
         this.loadUpcomingRides();
         this.processingRequest = null;
@@ -1937,6 +2490,7 @@ export class RiderDashboardComponent implements OnInit, AfterViewChecked, OnDest
           duration: 3000,
           panelClass: 'error-snackbar'
         });
+        this.confirmingRequest = null;
         this.processingRequest = null;
         this.processingAction = null;
       }
@@ -1998,6 +2552,21 @@ export class RiderDashboardComponent implements OnInit, AfterViewChecked, OnDest
     if (!address) return '';
     const parts = address.split(',');
     return parts[0].trim().substring(0, 20) + (parts[0].length > 20 ? '...' : '');
+  }
+
+  getMediumAddress(address: string): string {
+    if (!address) return '';
+    const parts = address.split(',');
+    const firstPart = parts[0].trim();
+    const secondPart = parts[1]?.trim();
+    let result = firstPart.substring(0, 30);
+    if (secondPart) {
+      result += ', ' + secondPart.substring(0, 20);
+    }
+    if (result.length > 45) {
+      result = result.substring(0, 45) + '...';
+    }
+    return result;
   }
 
   formatDateTime(dateStr: string): string {
