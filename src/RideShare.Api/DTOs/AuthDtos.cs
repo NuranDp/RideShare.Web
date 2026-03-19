@@ -77,3 +77,9 @@ public class UpdateThemeRequest
 {
     public string Theme { get; set; } = "light";
 }
+
+public class FcmTokenRequest
+{
+    [Required]
+    public string Token { get; set; } = string.Empty;
+}

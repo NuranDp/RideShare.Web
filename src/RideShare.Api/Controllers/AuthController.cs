@@ -111,6 +111,23 @@ public class AuthController : ControllerBase
         return Ok(user);
     }
 
+    [Authorize]
+    [HttpPut("fcm-token")]
+    public async Task<IActionResult> UpdateFcmToken([FromBody] FcmTokenRequest request)
+    {
+        var userId = GetUserId();
+        if (userId == null) return Unauthorized();
+
+        var success = await _authService.UpdateFcmTokenAsync(userId.Value, request.Token);
+
+        if (!success)
+        {
+            return NotFound();
+        }
+
+        return Ok(new { message = "FCM token updated successfully" });
+    }
+
     private Guid? GetUserId()
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

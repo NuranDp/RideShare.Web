@@ -19,6 +19,7 @@ public interface IAuthService
     Task<UserDto?> UpdateProfileAsync(Guid userId, UpdateProfileRequest request);
     Task<UserDto?> UpdateEmergencyContactAsync(Guid userId, UpdateEmergencyContactRequest request);
     Task<UserDto?> UpdateThemeAsync(Guid userId, UpdateThemeRequest request);
+    Task<bool> UpdateFcmTokenAsync(Guid userId, string token);
 }
 
 public class AuthService : IAuthService
@@ -150,6 +151,18 @@ public class AuthService : IAuthService
         await _context.SaveChangesAsync();
 
         return MapToUserDto(user);
+    }
+
+    public async Task<bool> UpdateFcmTokenAsync(Guid userId, string token)
+    {
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) return false;
+
+        user.FcmToken = token;
+        user.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+        return true;
     }
 
     private string GenerateJwtToken(User user)

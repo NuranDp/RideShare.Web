@@ -11,6 +11,7 @@ public class User
     public UserRole Role { get; set; }
     public bool IsActive { get; set; } = true;
     public string ThemePreference { get; set; } = "light";
+    public string? FcmToken { get; set; }
 
     // Emergency Contact
     public string? EmergencyContactName { get; set; }
