@@ -15,6 +15,7 @@ A motorcycle-based ride-sharing platform where riders post their commute routes 
 | **Maps** | Leaflet.js with OpenStreetMap tiles |
 | **Geocoding** | Nominatim API for address search & reverse geocoding |
 | **Real-Time** | SignalR for live notifications & location tracking |
+| **Mobile** | PWA + Capacitor (Android) |
 
 ## Features
 
@@ -22,6 +23,7 @@ A motorcycle-based ride-sharing platform where riders post their commute routes 
 - **User Authentication**: JWT-based auth with role selection (Rider/Passenger)
 - **Role-Based Access Control**: Rider, Passenger, and Admin roles
 - **Profile Management**: Emergency contact info, profile photos
+- **Dark/Light Mode**: User-specific theme preference synced across devices
 
 ### Rider Features
 - **License Verification**: Submit license for admin approval
@@ -52,6 +54,13 @@ A motorcycle-based ride-sharing platform where riders post their commute routes 
 - **Live Location Tracking**: GPS updates every 5 seconds during rides
 - **ETA Calculations**: Estimated arrival time for passengers
 
+### PWA & Mobile Support
+- **Progressive Web App**: Install from browser to home screen
+- **Offline Caching**: Service worker for offline app shell
+- **Capacitor Android**: Native Android app wrapper
+- **Push Notifications**: FCM token support for native push
+- **Native Plugins**: Geolocation, Camera, Splash Screen
+
 ## Project Structure
 
 ```
@@ -69,6 +78,7 @@ ride-share/
 │   │   └── Entities/           # User, Ride, RiderProfile, etc.
 │   │
 │   └── RideShare.Web/          # Angular 19 frontend
+│       ├── android/            # Capacitor Android project
 │       └── src/app/
 │           ├── pages/          # Feature modules
 │           │   ├── admin/      # License review, dashboard
@@ -82,9 +92,19 @@ ride-share/
 │           │   ├── route-preview/
 │           │   ├── unified-route-map/
 │           │   ├── rating-dialog/
+│           │   ├── confirm-dialog/
 │           │   ├── notification-bell/
 │           │   └── notification-toast/
-│           └── services/       # API & SignalR services
+│           └── services/       # API & native services
+│               ├── auth.service.ts
+│               ├── ride.service.ts
+│               ├── notification.service.ts
+│               ├── theme.service.ts
+│               ├── platform.service.ts
+│               ├── push-notification.service.ts
+│               ├── native-location.service.ts
+│               ├── camera.service.ts
+│               └── app.service.ts
 │
 ├── database/
 │   ├── migrations/             # SQL migration scripts
@@ -196,6 +216,8 @@ The app will be available at `http://localhost:4200`
 | GET | `/api/auth/me` | Get current user profile |
 | PUT | `/api/auth/profile` | Update profile |
 | PUT | `/api/auth/emergency-contact` | Update emergency contact |
+| PUT | `/api/auth/theme` | Update theme preference (dark/light) |
+| PUT | `/api/auth/fcm-token` | Save FCM token for push notifications |
 
 ### Rider Profile
 | Method | Endpoint | Description |
@@ -339,6 +361,48 @@ After deployment, update the URLs:
 | `JwtSettings__Audience` | JWT audience | Yes |
 | `JwtSettings__ExpiryInDays` | Token expiration in days | Yes |
 | `ASPNETCORE_ENVIRONMENT` | Set to `Production` | Auto-set |
+
+## Mobile App (Android)
+
+### PWA Installation
+Users can install the app directly from the browser:
+1. Open the app URL in Chrome on mobile
+2. Tap the browser menu → "Add to Home Screen"
+3. The app will work offline and feel like a native app
+
+### Build Android APK (requires Android SDK)
+
+1. Build the Angular app:
+   ```bash
+   cd src/RideShare.Web
+   npm run build
+   ```
+
+2. Sync with Capacitor:
+   ```bash
+   npx cap sync android
+   ```
+
+3. Open in Android Studio:
+   ```bash
+   npx cap open android
+   ```
+
+4. Build APK from Android Studio or command line:
+   ```bash
+   cd android
+   ./gradlew assembleDebug
+   ```
+
+The APK will be at: `android/app/build/outputs/apk/debug/app-debug.apk`
+
+### Capacitor Plugins Included
+- `@capacitor/geolocation` - Native GPS
+- `@capacitor/push-notifications` - FCM push notifications
+- `@capacitor/camera` - Photo capture
+- `@capacitor/preferences` - Local storage
+- `@capacitor/splash-screen` - Native splash screen
+- `@capacitor/app` - App lifecycle & back button
 
 ## License
 

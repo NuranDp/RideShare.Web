@@ -1,6 +1,6 @@
 # RideShare Web - Angular Frontend
 
-Angular 19 frontend for the RideShare motorcycle ride-sharing platform.
+Angular 19 frontend for the RideShare motorcycle ride-sharing platform with PWA and Capacitor support for Android.
 
 ## Tech Stack
 
@@ -9,6 +9,8 @@ Angular 19 frontend for the RideShare motorcycle ride-sharing platform.
 - **Leaflet.js** for interactive maps
 - **SignalR** for real-time notifications & tracking
 - **RxJS** for reactive state management
+- **PWA** with service worker for offline support
+- **Capacitor 8** for native Android app
 
 ## Project Structure
 
@@ -26,6 +28,7 @@ src/app/
 │   ├── route-preview/      # Route visualization
 │   ├── unified-route-map/  # Combined route & tracking map
 │   ├── rating-dialog/      # Rating submission
+│   ├── confirm-dialog/     # Confirmation dialogs
 │   ├── notification-bell/  # Notification indicator
 │   └── notification-toast/ # Toast notifications
 ├── services/
@@ -34,6 +37,12 @@ src/app/
 │   ├── rider.service.ts          # Rider profile
 │   ├── admin.service.ts          # Admin operations
 │   ├── notification.service.ts   # SignalR notifications
+│   ├── theme.service.ts          # Dark/light mode
+│   ├── platform.service.ts       # Native platform detection
+│   ├── push-notification.service.ts  # FCM push notifications
+│   ├── native-location.service.ts    # Native GPS service
+│   ├── camera.service.ts         # Native camera access
+│   ├── app.service.ts            # App lifecycle & back button
 │   └── location-tracking.service.ts  # Live GPS tracking
 ├── guards/                 # Route guards
 ├── interceptors/           # HTTP interceptors (JWT)
@@ -63,6 +72,39 @@ ng build
 ```
 Build artifacts are stored in the `dist/` directory.
 
+## PWA Features
+
+The app includes full PWA support:
+- **Service Worker**: Caches app shell for offline access
+- **Web App Manifest**: Installable to home screen
+- **Theme Color**: Custom status bar color (#034694)
+- **Icons**: Multiple sizes for all devices
+
+### Install as PWA
+On mobile Chrome: Menu → "Add to Home Screen"
+
+## Android App (Capacitor)
+
+### Build Android
+```bash
+npm run build
+npx cap sync android
+npx cap open android
+```
+
+### Run on Device
+```bash
+npx cap run android
+```
+
+### Capacitor Plugins
+- `@capacitor/geolocation` - Native GPS
+- `@capacitor/push-notifications` - FCM
+- `@capacitor/camera` - Photo capture
+- `@capacitor/preferences` - Local storage
+- `@capacitor/splash-screen` - Splash screen
+- `@capacitor/app` - Lifecycle & back button
+
 ## Key Features
 
 ### Maps Integration (Leaflet.js)
@@ -79,6 +121,7 @@ Build artifacts are stored in the `dist/` directory.
 - Fully standalone Angular 19 components
 - Material Design theming
 - Responsive layouts
+- Dark/Light mode support (user-specific, synced via API)
 
 ## Configuration
 

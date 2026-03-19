@@ -399,6 +399,19 @@ CREATE TABLE Ratings (
 - [x] Angular: Admin login/route guard
 - [x] Angular: License review page
 - [x] Angular: Admin dashboard
+
+### Phase 5: Mobile & PWA Support ✅
+- [x] Dark/Light mode with user-specific preference
+- [x] Theme synced across devices via API
+- [x] PWA support with service worker
+- [x] Web app manifest for home screen install
+- [x] PWA icons for all device sizes
+- [x] Capacitor Android setup
+- [x] Native plugins (GPS, Camera, Push, Preferences)
+- [x] FCM token endpoint for push notifications
+- [x] Splash screen and app colors
+- [x] Custom Material confirm dialogs
+- [x] Dark mode styling for all Material components
 - [ ] Angular: User management page (future)
 - [ ] Angular: Ride management page (future)
 - [ ] Angular: Dashboard with stats (future)
