@@ -33,7 +33,7 @@
   font-size: 28px;
   width: 28px;
   height: 28px;
-  animation: passenger-wave 3s ease-in-out infinite;
+  animation: passenger-wave 8s ease-in-out infinite;
   position: relative;
   z-index: 1;
   flex-shrink: 0;
@@ -70,36 +70,92 @@
 }
 
 @keyframes passenger-wave {
+  /* Phase 1: Come from left, turn up, vanish */
   0% {
-    transform: translateX(-40px) rotate(0deg);
+    transform: translate(-15px, 0) rotate(0deg);
     opacity: 0;
   }
+  3% {
+    transform: translate(-10px, 0) rotate(0deg);
+    opacity: 1;
+  }
   10% {
+    transform: translate(0, 0) rotate(0deg);
     opacity: 1;
   }
-  30% {
-    transform: translateX(0px) rotate(0deg);
+  13% {
+    transform: translate(0, 0) rotate(-90deg);
     opacity: 1;
   }
-  40% {
-    transform: translateX(0px) rotate(-15deg);
+  20% {
+    transform: translate(0, -12px) rotate(-90deg);
+    opacity: 0;
   }
+  /* Phase 2: Come from top facing down, turn right, vanish */
+  25% {
+    transform: translate(0, -12px) rotate(90deg);
+    opacity: 0;
+  }
+  28% {
+    transform: translate(0, -8px) rotate(90deg);
+    opacity: 1;
+  }
+  35% {
+    transform: translate(0, 0) rotate(90deg);
+    opacity: 1;
+  }
+  38% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  45% {
+    transform: translate(12px, 0) rotate(0deg);
+    opacity: 0;
+  }
+  /* Phase 3: Come from right, turn down, vanish */
   50% {
-    transform: translateX(0px) rotate(15deg);
+    transform: translate(12px, 0) rotate(180deg);
+    opacity: 0;
+  }
+  53% {
+    transform: translate(8px, 0) rotate(180deg);
+    opacity: 1;
   }
   60% {
-    transform: translateX(0px) rotate(-10deg);
+    transform: translate(0, 0) rotate(180deg);
+    opacity: 1;
+  }
+  63% {
+    transform: translate(0, 0) rotate(90deg);
+    opacity: 1;
   }
   70% {
-    transform: translateX(0px) rotate(0deg);
+    transform: translate(0, 12px) rotate(90deg);
+    opacity: 0;
+  }
+  /* Phase 4: Come from bottom facing up, turn left, vanish */
+  75% {
+    transform: translate(0, 12px) rotate(-90deg);
+    opacity: 0;
+  }
+  78% {
+    transform: translate(0, 8px) rotate(-90deg);
     opacity: 1;
   }
   85% {
-    transform: translateX(25px) rotate(0deg);
+    transform: translate(0, 0) rotate(-90deg);
     opacity: 1;
   }
+  88% {
+    transform: translate(0, 0) rotate(-180deg);
+    opacity: 1;
+  }
+  95% {
+    transform: translate(-12px, 0) rotate(-180deg);
+    opacity: 0;
+  }
   100% {
-    transform: translateX(45px) rotate(0deg);
+    transform: translate(-15px, 0) rotate(0deg);
     opacity: 0;
   }
 }
