@@ -1,9 +1,4 @@
 <div class="page-container">
-  <!-- Fixed Back Button -->
-  <button mat-icon-button class="back-btn-fixed" routerLink="/passenger/browse-rides">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-
   <!-- Loading State -->
   @if (loading) {
     <div class="loading-container">
@@ -18,7 +13,7 @@
       <mat-icon>error_outline</mat-icon>
       <h2>Ride not found</h2>
       <p>{{ error }}</p>
-      <button mat-raised-button color="primary" (click)="goBack()">
+      <button mat-raised-button color="primary" routerLink="/passenger/browse-rides">
         <mat-icon>arrow_back</mat-icon>
         Go Back
       </button>
@@ -27,19 +22,6 @@
 
   <!-- Main Content -->
   @if (ride && !loading && !error) {
-    <!-- Page Header -->
-    <div class="page-header">
-      <div class="header-content">
-        <div class="header-icon">
-          <mat-icon>two_wheeler</mat-icon>
-        </div>
-        <div class="header-text">
-          <h1>Request to Join Ride</h1>
-          <p>Select your pickup & drop-off points on the map</p>
-        </div>
-      </div>
-    </div>
-
     <div class="content-wrapper">
       <!-- Left Column: Info & Controls -->
       <div class="info-column">
@@ -359,23 +341,3 @@
     </div>
   }
 </div>
-
-<!-- Bottom Navigation -->
-<nav class="bottom-nav">
-  <a class="nav-item" routerLink="/passenger">
-    <mat-icon>home</mat-icon>
-    <span>Home</span>
-  </a>
-  <a class="nav-item active" routerLink="/passenger/browse-rides">
-    <mat-icon>search</mat-icon>
-    <span>Find Ride</span>
-  </a>
-  <a class="nav-item" routerLink="/passenger/my-requests">
-    <mat-icon>pending_actions</mat-icon>
-    <span>Requests</span>
-  </a>
-  <a class="nav-item" (click)="goToProfile()">
-    <mat-icon>person</mat-icon>
-    <span>Profile</span>
-  </a>
-</nav>

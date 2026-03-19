@@ -8,7 +8,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { RideService } from '../../../services/ride.service';
 import { LocationTrackingService } from '../../../services/location-tracking.service';
-import { NotificationBellComponent } from '../../../components/notification-bell/notification-bell.component';
 import { RideLocation } from '../../../models/ride.model';
 import * as L from 'leaflet';
 
@@ -22,8 +21,7 @@ import * as L from 'leaflet';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule,
-    NotificationBellComponent
+    MatSnackBarModule
   ],
   templateUrl: './track-ride.component.html',
   styleUrls: ['./track-ride.component.scss']

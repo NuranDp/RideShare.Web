@@ -1,14 +1,3 @@
-<!-- Top App Bar -->
-<div class="top-bar">
-  <div class="top-bar-left">
-    <mat-icon class="logo-icon">{{ getTabIcon() }}</mat-icon>
-    <span class="app-title">{{ getTabTitle() }}</span>
-  </div>
-  <div class="top-bar-right">
-    <app-notification-bell></app-notification-bell>
-  </div>
-</div>
-
 <!-- Main Content Area -->
 <div class="content-area">
   <!-- Rides Tab -->
@@ -370,7 +359,7 @@
             <mat-icon class="menu-arrow">chevron_right</mat-icon>
           </div>
 
-          <div class="menu-item" matRipple routerLink="/rider/profile">
+          <div class="menu-item" matRipple routerLink="/rider/emergency-contact">
             <div class="menu-icon">
               <mat-icon>contact_phone</mat-icon>
             </div>
@@ -383,7 +372,7 @@
         </div>
 
         <div class="menu-section">
-          <div class="menu-item" matRipple routerLink="/rider/my-rides">
+          <div class="menu-item" matRipple routerLink="/rider/my-rides" [queryParams]="{tab: 'history'}">
             <div class="menu-icon">
               <mat-icon>history</mat-icon>
             </div>
@@ -394,7 +383,7 @@
             <mat-icon class="menu-arrow">chevron_right</mat-icon>
           </div>
 
-          <div class="menu-item" matRipple>
+          <div class="menu-item" matRipple routerLink="/rider/ratings">
             <div class="menu-icon">
               <mat-icon>star</mat-icon>
             </div>
@@ -453,23 +442,3 @@
     </div>
   </div>
 }
-
-<!-- Bottom Navigation -->
-<nav class="bottom-nav">
-  <button class="nav-item" [class.active]="activeTab === 'rides'" (click)="activeTab = 'rides'">
-    <mat-icon>home</mat-icon>
-    <span>Home</span>
-  </button>
-  <button class="nav-item" routerLink="/rider/my-rides">
-    <mat-icon>list_alt</mat-icon>
-    <span>My Rides</span>
-  </button>
-  <button class="nav-item" [class.active]="activeTab === 'requests'" (click)="activeTab = 'requests'">
-    <mat-icon [matBadge]="pendingRequestsList.length" matBadgeSize="small" matBadgeColor="warn" [matBadgeHidden]="pendingRequestsList.length === 0">person_add</mat-icon>
-    <span>Requests</span>
-  </button>
-  <button class="nav-item" [class.active]="activeTab === 'profile'" (click)="activeTab = 'profile'">
-    <mat-icon>person</mat-icon>
-    <span>Profile</span>
-  </button>
-</nav>

@@ -1,14 +1,3 @@
-<!-- Top Bar -->
-<div class="top-bar">
-  <div class="top-bar-left">
-    <mat-icon class="logo-icon">person_add</mat-icon>
-    <span class="app-title">Pending Requests</span>
-  </div>
-  <div class="top-bar-right">
-    <app-notification-bell></app-notification-bell>
-  </div>
-</div>
-
 <!-- Content -->
 <div class="content-area">
   @if (loadingRide) {
@@ -136,23 +125,3 @@
     }
   }
 </div>
-
-<!-- Bottom Navigation -->
-<nav class="bottom-nav">
-  <a class="nav-item" routerLink="/rider">
-    <mat-icon>home</mat-icon>
-    <span>Home</span>
-  </a>
-  <a class="nav-item active" routerLink="/rider/my-rides">
-    <mat-icon>two_wheeler</mat-icon>
-    <span>My Rides</span>
-  </a>
-  <a class="nav-item" (click)="goToRequests()">
-    <mat-icon>person_add</mat-icon>
-    <span>Requests</span>
-  </a>
-  <a class="nav-item" (click)="goToProfile()">
-    <mat-icon>person</mat-icon>
-    <span>Profile</span>
-  </a>
-</nav>

@@ -1,143 +1,199 @@
-<div class="profile-container">
-  <mat-card class="profile-card">
-    <mat-card-header>
-      <mat-icon mat-card-avatar>sports_motorsports</mat-icon>
-      <mat-card-title>Rider Profile</mat-card-title>
-      <mat-card-subtitle>Manage your rider information and license verification</mat-card-subtitle>
-    </mat-card-header>
-
-    <mat-card-content>
-      @if (loading()) {
-        <div class="loading-container">
-          <mat-spinner diameter="40"></mat-spinner>
-          <p>Loading profile...</p>
-        </div>
-      } @else {
-        <!-- Verification Status Banner -->
-        <div class="status-banner" [class]="getStatusClass()">
+<div class="profile-page">
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading profile...</p>
+    </div>
+  } @else {
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <mat-icon>sports_motorsports</mat-icon>
+      </div>
+      <div class="profile-info">
+        <h2>Rider Profile</h2>
+        <div class="verification-badge" [class]="getStatusClass()">
           @if (profile()?.isLicenseVerified) {
             <mat-icon>verified</mat-icon>
-            <span>You are a verified rider!</span>
+            <span>Verified Rider</span>
           } @else if (profile()?.licenseNumber) {
-            <mat-icon>hourglass_empty</mat-icon>
-            <span>Your license verification is pending review</span>
+            <mat-icon>schedule</mat-icon>
+            <span>Pending Verification</span>
           } @else {
             <mat-icon>info</mat-icon>
-            <span>Submit your license for verification to start giving rides</span>
+            <span>Not Verified</span>
           }
         </div>
+      </div>
+    </div>
 
-        <!-- Stats Section -->
-        @if (profile()?.isLicenseVerified) {
-          <div class="stats-section">
-            <div class="stat-item">
-              <span class="stat-value">{{ profile()?.totalRides || 0 }}</span>
-              <span class="stat-label">Rides Given</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-value">{{ profile()?.averageRating?.toFixed(1) || 'N/A' }}</span>
-              <span class="stat-label">Rating</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-value">{{ profile()?.totalRatings || 0 }}</span>
-              <span class="stat-label">Reviews</span>
+    <!-- Stats Section -->
+    @if (profile()?.isLicenseVerified) {
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon rides">
+            <mat-icon>two_wheeler</mat-icon>
+          </div>
+          <div class="stat-value">{{ profile()?.totalRides || 0 }}</div>
+          <div class="stat-label">Rides Given</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon rating">
+            <mat-icon>star</mat-icon>
+          </div>
+          <div class="stat-value">{{ profile()?.averageRating?.toFixed(1) || 'N/A' }}</div>
+          <div class="stat-label">Rating</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon reviews">
+            <mat-icon>rate_review</mat-icon>
+          </div>
+          <div class="stat-value">{{ profile()?.totalRatings || 0 }}</div>
+          <div class="stat-label">Reviews</div>
+        </div>
+      </div>
+    }
+
+    <!-- Verification Alert -->
+    @if (!profile()?.isLicenseVerified) {
+      <div class="alert-card" [class]="profile()?.licenseNumber ? 'pending' : 'info'">
+        <div class="alert-icon">
+          @if (profile()?.licenseNumber) {
+            <mat-icon>hourglass_top</mat-icon>
+          } @else {
+            <mat-icon>warning</mat-icon>
+          }
+        </div>
+        <div class="alert-content">
+          @if (profile()?.licenseNumber) {
+            <span class="alert-title">Verification Pending</span>
+            <span class="alert-desc">Your license is under review by admin</span>
+          } @else {
+            <span class="alert-title">Action Required</span>
+            <span class="alert-desc">Submit your license to start giving rides</span>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Motorcycle Section -->
+    <div class="section">
+      <div class="section-header">
+        <mat-icon>two_wheeler</mat-icon>
+        <span>Motorcycle Details</span>
+      </div>
+      <div class="section-card">
+        <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+          <div class="form-group">
+            <label>Model</label>
+            <div class="input-wrapper">
+              <mat-icon>directions_bike</mat-icon>
+              <input type="text" formControlName="motorcycleModel" placeholder="e.g., Honda CB150R">
             </div>
           </div>
-        }
-
-        <mat-divider></mat-divider>
-
-        <!-- Profile Form -->
-        <form [formGroup]="profileForm" (ngSubmit)="updateProfile()" class="profile-form">
-          <h3>Motorcycle Information</h3>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Motorcycle Model</mat-label>
-            <input matInput formControlName="motorcycleModel" placeholder="e.g., Honda CB150R">
-            <mat-icon matSuffix>two_wheeler</mat-icon>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>License Plate Number</mat-label>
-            <input matInput formControlName="plateNumber" placeholder="e.g., Dhaka Metro 12-3456">
-            <mat-icon matSuffix>pin</mat-icon>
-          </mat-form-field>
-
+          <div class="form-group">
+            <label>Plate Number</label>
+            <div class="input-wrapper">
+              <mat-icon>pin</mat-icon>
+              <input type="text" formControlName="plateNumber" placeholder="e.g., Dhaka Metro 12-3456">
+            </div>
+          </div>
           <button 
-            mat-raised-button 
-            color="primary" 
-            type="submit"
+            type="submit" 
+            class="save-btn"
             [disabled]="saving() || !profileForm.dirty || !profileForm.valid">
             @if (saving()) {
-              <mat-spinner diameter="20"></mat-spinner>
+              <mat-spinner diameter="18"></mat-spinner>
+              <span>Saving...</span>
             } @else {
               <mat-icon>save</mat-icon>
-              Save Profile
+              <span>Save Changes</span>
             }
           </button>
         </form>
+      </div>
+    </div>
 
-        <mat-divider></mat-divider>
-
-        <!-- License Submission Section -->
-        @if (!profile()?.isLicenseVerified) {
-          <form [formGroup]="licenseForm" (ngSubmit)="submitLicense()" class="license-form">
-            <h3>License Verification</h3>
-            <p class="form-description">
-              Submit your driving license details for verification. 
-              An admin will review and approve your request.
-            </p>
-
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>License Number</mat-label>
-              <input matInput formControlName="licenseNumber" placeholder="Enter your license number">
-              <mat-icon matSuffix>badge</mat-icon>
-              @if (licenseForm.get('licenseNumber')?.hasError('required')) {
-                <mat-error>License number is required</mat-error>
+    <!-- License Section -->
+    @if (!profile()?.isLicenseVerified) {
+      <div class="section">
+        <div class="section-header">
+          <mat-icon>badge</mat-icon>
+          <span>License Verification</span>
+        </div>
+        <div class="section-card">
+          <p class="section-desc">
+            Submit your driving license details for verification. An admin will review and approve your request.
+          </p>
+          <form [formGroup]="licenseForm" (ngSubmit)="submitLicense()">
+            <div class="form-group">
+              <label>License Number <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <mat-icon>badge</mat-icon>
+                <input type="text" formControlName="licenseNumber" placeholder="Enter your license number">
+              </div>
+              @if (licenseForm.get('licenseNumber')?.touched && licenseForm.get('licenseNumber')?.hasError('required')) {
+                <span class="error-msg">License number is required</span>
               }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>License Expiry Date</mat-label>
-              <input matInput type="date" formControlName="licenseExpiryDate">
-              <mat-icon matSuffix>event</mat-icon>
-              @if (licenseForm.get('licenseExpiryDate')?.hasError('required')) {
-                <mat-error>Expiry date is required</mat-error>
+            </div>
+            <div class="form-group">
+              <label>Expiry Date <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <mat-icon>event</mat-icon>
+                <input type="date" formControlName="licenseExpiryDate">
+              </div>
+              @if (licenseForm.get('licenseExpiryDate')?.touched && licenseForm.get('licenseExpiryDate')?.hasError('required')) {
+                <span class="error-msg">Expiry date is required</span>
               }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>License Image URL</mat-label>
-              <input matInput formControlName="licenseImageUrl" placeholder="URL to your license image">
-              <mat-icon matSuffix>image</mat-icon>
-              <mat-hint>Upload your image to a service and paste the URL here</mat-hint>
-              @if (licenseForm.get('licenseImageUrl')?.hasError('required')) {
-                <mat-error>License image URL is required</mat-error>
+            </div>
+            <div class="form-group">
+              <label>License Image URL <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <mat-icon>image</mat-icon>
+                <input type="text" formControlName="licenseImageUrl" placeholder="Paste image URL here">
+              </div>
+              <span class="hint-text">Upload your image to a service and paste the URL here</span>
+              @if (licenseForm.get('licenseImageUrl')?.touched && licenseForm.get('licenseImageUrl')?.hasError('required')) {
+                <span class="error-msg">License image URL is required</span>
               }
-            </mat-form-field>
-
+            </div>
             <button 
-              mat-raised-button 
-              color="accent" 
-              type="submit"
+              type="submit" 
+              class="submit-btn"
               [disabled]="submittingLicense() || !licenseForm.valid">
               @if (submittingLicense()) {
-                <mat-spinner diameter="20"></mat-spinner>
+                <mat-spinner diameter="18"></mat-spinner>
+                <span>Submitting...</span>
               } @else {
                 <mat-icon>upload</mat-icon>
-                Submit for Verification
+                <span>Submit for Verification</span>
               }
             </button>
           </form>
-        }
-      }
-    </mat-card-content>
-
-    <mat-card-actions>
-      <button mat-button routerLink="/rider">
-        <mat-icon>arrow_back</mat-icon>
-        Back to Dashboard
-      </button>
-    </mat-card-actions>
-  </mat-card>
+        </div>
+      </div>
+    } @else {
+      <!-- Verified License Info -->
+      <div class="section">
+        <div class="section-header">
+          <mat-icon>verified_user</mat-icon>
+          <span>License Information</span>
+        </div>
+        <div class="section-card verified">
+          <div class="info-row">
+            <span class="info-label">License Number</span>
+            <span class="info-value">{{ profile()?.licenseNumber }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Expiry Date</span>
+            <span class="info-value">{{ profile()?.licenseExpiryDate | date:'mediumDate' }}</span>
+          </div>
+          <div class="verified-badge">
+            <mat-icon>check_circle</mat-icon>
+            <span>License Verified</span>
+          </div>
+        </div>
+      </div>
+    }
+  }
 </div>

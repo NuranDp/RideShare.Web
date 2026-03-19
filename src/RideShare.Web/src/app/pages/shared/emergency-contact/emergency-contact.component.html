@@ -1,0 +1,105 @@
+<div class="emergency-page">
+  <!-- Info Card -->
+  <div class="info-card">
+    <div class="info-icon">
+      <mat-icon>health_and_safety</mat-icon>
+    </div>
+    <div class="info-content">
+      <span class="info-title">Stay Safe</span>
+      <span class="info-desc">Your emergency contact will be notified if there's an issue during your ride.</span>
+    </div>
+  </div>
+
+  <!-- Current Contact Display -->
+  @if (hasContact()) {
+    <div class="current-contact">
+      <div class="section-header">
+        <mat-icon>person</mat-icon>
+        <span>Current Emergency Contact</span>
+      </div>
+      <div class="contact-card">
+        <div class="contact-avatar">
+          <mat-icon>contact_emergency</mat-icon>
+        </div>
+        <div class="contact-info">
+          <span class="contact-name">{{ authService.currentUser()?.emergencyContact?.name || 'Not set' }}</span>
+          <span class="contact-relation">{{ authService.currentUser()?.emergencyContact?.relation || '' }}</span>
+          <span class="contact-phone">
+            <mat-icon>phone</mat-icon>
+            {{ authService.currentUser()?.emergencyContact?.phone || 'No phone' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Contact Form -->
+  <div class="section">
+    <div class="section-header">
+      <mat-icon>edit</mat-icon>
+      <span>{{ hasContact() ? 'Update Contact' : 'Add Emergency Contact' }}</span>
+    </div>
+    <div class="section-card">
+      <form [formGroup]="contactForm" (ngSubmit)="saveContact()">
+        <div class="form-group">
+          <label>Contact Name</label>
+          <div class="input-wrapper">
+            <mat-icon>person</mat-icon>
+            <input type="text" formControlName="name" placeholder="e.g., John Doe">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Phone Number</label>
+          <div class="input-wrapper">
+            <mat-icon>phone</mat-icon>
+            <input type="tel" formControlName="phone" placeholder="e.g., +880 1234-567890">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Relationship</label>
+          <div class="input-wrapper">
+            <mat-icon>family_restroom</mat-icon>
+            <input type="text" formControlName="relation" placeholder="e.g., Spouse, Parent, Friend">
+          </div>
+        </div>
+
+        <button 
+          type="submit" 
+          class="save-btn"
+          [disabled]="saving() || !contactForm.dirty">
+          @if (saving()) {
+            <mat-spinner diameter="18"></mat-spinner>
+            <span>Saving...</span>
+          } @else {
+            <mat-icon>save</mat-icon>
+            <span>Save Contact</span>
+          }
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tips Section -->
+  <div class="tips-section">
+    <div class="section-header">
+      <mat-icon>tips_and_updates</mat-icon>
+      <span>Tips</span>
+    </div>
+    <div class="tips-card">
+      <div class="tip-item">
+        <mat-icon>check_circle</mat-icon>
+        <span>Choose someone who is usually available</span>
+      </div>
+      <div class="tip-item">
+        <mat-icon>check_circle</mat-icon>
+        <span>Make sure they know they're your emergency contact</span>
+      </div>
+      <div class="tip-item">
+        <mat-icon>check_circle</mat-icon>
+        <span>Keep the phone number up to date</span>
+      </div>
+    </div>
+  </div>
+</div>

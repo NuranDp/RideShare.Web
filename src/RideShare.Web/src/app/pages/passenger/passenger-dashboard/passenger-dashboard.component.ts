@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
+import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { AuthService } from '../../../services/auth.service';
 import { RideService } from '../../../services/ride.service';
-import { NotificationBellComponent } from '../../../components/notification-bell/notification-bell.component';
 
 @Component({
   selector: 'app-passenger-dashboard',
@@ -18,8 +17,7 @@ import { NotificationBellComponent } from '../../../components/notification-bell
     MatButtonModule,
     MatIconModule,
     MatRippleModule,
-    MatBadgeModule,
-    NotificationBellComponent
+    MatBadgeModule
   ],
   templateUrl: './passenger-dashboard.component.html',
   styleUrls: ['./passenger-dashboard.component.scss']
@@ -40,10 +38,18 @@ export class PassengerDashboardComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private rideService: RideService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['tab'] === 'profile') {
+        this.activeTab = 'profile';
+      } else if (params['tab'] === 'home') {
+        this.activeTab = 'home';
+      }
+    });
     this.loadRequests();
     this.loadActivities();
   }

@@ -1,0 +1,81 @@
+<div class="ratings-page">
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading ratings...</p>
+    </div>
+  } @else {
+    <!-- Stats Header -->
+    <div class="stats-header">
+      <div class="rating-big">
+        <span class="rating-value">{{ averageRating() > 0 ? (averageRating() | number:'1.1-1') : '-' }}</span>
+        <div class="rating-stars">
+          @for (star of getStarArray(Math.round(averageRating())); track $index) {
+            <mat-icon [class.filled]="star === 1">star</mat-icon>
+          }
+        </div>
+        <span class="rating-count">Based on {{ totalRatings() }} reviews</span>
+      </div>
+      <div class="stats-row">
+        <div class="stat-item">
+          <mat-icon>two_wheeler</mat-icon>
+          <span class="stat-value">{{ totalRides() }}</span>
+          <span class="stat-label">Rides</span>
+        </div>
+        <div class="stat-item">
+          <mat-icon>rate_review</mat-icon>
+          <span class="stat-value">{{ totalRatings() }}</span>
+          <span class="stat-label">Reviews</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews List -->
+    <div class="reviews-section">
+      <div class="section-header">
+        <mat-icon>reviews</mat-icon>
+        <span>Passenger Reviews</span>
+      </div>
+
+      @if (ratings().length === 0) {
+        <div class="empty-state">
+          <mat-icon>star_border</mat-icon>
+          <p>No reviews yet</p>
+          <span class="empty-hint">Complete rides to receive ratings from passengers</span>
+        </div>
+      } @else {
+        <div class="reviews-list">
+          @for (rating of ratings(); track rating.id) {
+            <div class="review-card">
+              <div class="review-header">
+                <div class="reviewer-avatar">
+                  <mat-icon>person</mat-icon>
+                </div>
+                <div class="reviewer-info">
+                  <span class="reviewer-name">{{ rating.passengerName }}</span>
+                  <span class="review-date">{{ formatDate(rating.createdAt) }}</span>
+                </div>
+                <div class="review-score">
+                  <span class="score-value">{{ rating.score }}</span>
+                  <mat-icon class="star-icon">star</mat-icon>
+                </div>
+              </div>
+              <div class="review-stars">
+                @for (star of getStarArray(rating.score); track $index) {
+                  <mat-icon [class.filled]="star === 1">star</mat-icon>
+                }
+                <span class="rating-label">{{ getRatingLabel(rating.score) }}</span>
+              </div>
+              @if (rating.comment) {
+                <div class="review-comment">
+                  <mat-icon>format_quote</mat-icon>
+                  <p>{{ rating.comment }}</p>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

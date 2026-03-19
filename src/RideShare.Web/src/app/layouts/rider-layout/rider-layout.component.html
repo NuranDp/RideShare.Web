@@ -1,0 +1,40 @@
+<!-- Top App Bar -->
+<div class="top-bar" [class.has-page-title]="pageTitle">
+  <div class="top-bar-left">
+    <mat-icon class="logo-icon">two_wheeler</mat-icon>
+    <div class="title-stack">
+      <span class="app-title">RideShare</span>
+      @if (pageTitle) {
+        <span class="page-title">{{ pageTitle }}</span>
+      }
+    </div>
+  </div>
+  <div class="top-bar-right">
+    <app-notification-bell></app-notification-bell>
+  </div>
+</div>
+
+<!-- Main Content Area -->
+<main class="content-area">
+  <router-outlet></router-outlet>
+</main>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <a class="nav-item" routerLink="/rider" [queryParams]="{tab: 'rides'}" [class.active]="isHomeActive">
+    <mat-icon>home</mat-icon>
+    <span>Home</span>
+  </a>
+  <a class="nav-item" routerLink="/rider/post-ride" routerLinkActive="active">
+    <mat-icon>add_circle_outline</mat-icon>
+    <span>Post Ride</span>
+  </a>
+  <a class="nav-item" routerLink="/rider/my-rides" routerLinkActive="active">
+    <mat-icon>list_alt</mat-icon>
+    <span>My Rides</span>
+  </a>
+  <a class="nav-item" routerLink="/rider" [queryParams]="{tab: 'profile'}" [class.active]="isProfileActive">
+    <mat-icon>person</mat-icon>
+    <span>Profile</span>
+  </a>
+</nav>

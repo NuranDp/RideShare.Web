@@ -1,15 +1,4 @@
 <div class="history-container">
-  <div class="page-header">
-    <div>
-      <h1>Ride History</h1>
-      <p class="subtitle">Your past rides</p>
-    </div>
-    <button mat-raised-button color="primary" routerLink="/passenger/browse-rides">
-      <mat-icon>search</mat-icon>
-      Find a Ride
-    </button>
-  </div>
-
   @if (loading) {
     <div class="loading-container">
       <mat-spinner diameter="40"></mat-spinner>
@@ -119,23 +108,3 @@
     </button>
   </div>
 </div>
-
-<!-- Bottom Navigation -->
-<nav class="bottom-nav">
-  <a class="nav-item" routerLink="/passenger">
-    <mat-icon>home</mat-icon>
-    <span>Home</span>
-  </a>
-  <a class="nav-item" routerLink="/passenger/browse-rides">
-    <mat-icon>search</mat-icon>
-    <span>Find Ride</span>
-  </a>
-  <a class="nav-item" routerLink="/passenger/my-requests">
-    <mat-icon>pending_actions</mat-icon>
-    <span>Requests</span>
-  </a>
-  <a class="nav-item" (click)="goToProfile()">
-    <mat-icon>person</mat-icon>
-    <span>Profile</span>
-  </a>
-</nav>

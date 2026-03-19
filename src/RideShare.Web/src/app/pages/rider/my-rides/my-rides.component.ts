@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -8,7 +8,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRippleModule } from '@angular/material/core';
 import { RideService } from '../../../services/ride.service';
 import { Ride, RideStatus } from '../../../models/ride.model';
-import { NotificationBellComponent } from '../../../components/notification-bell/notification-bell.component';
 
 @Component({
   selector: 'app-my-rides',
@@ -20,8 +19,7 @@ import { NotificationBellComponent } from '../../../components/notification-bell
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatRippleModule,
-    NotificationBellComponent
+    MatRippleModule
   ],
   templateUrl: './my-rides.component.html',
   styleUrls: ['./my-rides.component.scss']
@@ -46,10 +44,18 @@ export class MyRidesComponent implements OnInit, OnDestroy {
   constructor(
     private rideService: RideService,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['tab'] === 'history') {
+        this.activeTab = 'history';
+      } else if (params['tab'] === 'active') {
+        this.activeTab = 'active';
+      }
+    });
     this.loadRides();
   }
 

@@ -1,15 +1,3 @@
-<!-- Top Bar -->
-<div class="top-bar">
-  <button class="back-btn" matRipple routerLink="/rider">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <div class="top-bar-title">
-    <h1>Post a Ride</h1>
-    <span class="subtitle">Share your commute</span>
-  </div>
-  <div class="top-bar-spacer"></div>
-</div>
-
 <!-- Main Content -->
 <div class="content-area">
   <form [formGroup]="rideForm" (ngSubmit)="onSubmit()">

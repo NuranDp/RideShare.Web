@@ -9,7 +9,6 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatChipsModule } from '@angular/material/chips';
 import { RideService } from '../../../services/ride.service';
 import { Ride, RideRequest } from '../../../models/ride.model';
-import { NotificationBellComponent } from '../../../components/notification-bell/notification-bell.component';
 import * as L from 'leaflet';
 
 @Component({
@@ -23,8 +22,7 @@ import * as L from 'leaflet';
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatRippleModule,
-    MatChipsModule,
-    NotificationBellComponent
+    MatChipsModule
   ],
   templateUrl: './ride-requests-page.component.html',
   styleUrls: ['./ride-requests-page.component.scss']

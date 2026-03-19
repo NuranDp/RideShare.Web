@@ -10,7 +10,6 @@ import { MatRippleModule } from '@angular/material/core';
 import { RideService } from '../../../services/ride.service';
 import { MyRideRequest, RequestStatus, CreateRatingRequest } from '../../../models/ride.model';
 import { RatingDialogComponent, RatingDialogData } from '../../../components/rating-dialog/rating-dialog.component';
-import { NotificationBellComponent } from '../../../components/notification-bell/notification-bell.component';
 
 @Component({
   selector: 'app-my-requests',
@@ -23,8 +22,7 @@ import { NotificationBellComponent } from '../../../components/notification-bell
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatDialogModule,
-    MatRippleModule,
-    NotificationBellComponent
+    MatRippleModule
   ],
   templateUrl: './my-requests.component.html',
   styleUrls: ['./my-requests.component.scss']

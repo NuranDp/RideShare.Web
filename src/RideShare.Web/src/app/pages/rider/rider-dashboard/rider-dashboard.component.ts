@@ -14,7 +14,6 @@ import { AuthService } from '../../../services/auth.service';
 import { RiderService } from '../../../services/rider.service';
 import { RideService } from '../../../services/ride.service';
 import { PendingRequestWithRide } from '../../../models/ride.model';
-import { NotificationBellComponent } from '../../../components/notification-bell/notification-bell.component';
 import * as L from 'leaflet';
 
 // Mobile-friendly Rider Dashboard with bottom navigation
@@ -33,8 +32,7 @@ import * as L from 'leaflet';
     MatDividerModule,
     MatBadgeModule,
     MatRippleModule,
-    MatSnackBarModule,
-    NotificationBellComponent
+    MatSnackBarModule
   ],
   templateUrl: './rider-dashboard.component.html',
   styleUrls: ['./rider-dashboard.component.scss']

@@ -1,14 +1,3 @@
-<!-- Top Bar -->
-<div class="top-bar">
-  <div class="top-bar-left">
-    <mat-icon class="logo-icon">pending_actions</mat-icon>
-    <span class="app-title">My Requests</span>
-  </div>
-  <div class="top-bar-right">
-    <app-notification-bell></app-notification-bell>
-  </div>
-</div>
-
 <!-- Tab Toggle -->
 <div class="tab-toggle-container">
   <div class="tab-toggle">
@@ -248,23 +237,3 @@
     </div>
   </ng-template>
 </div>
-
-<!-- Bottom Navigation -->
-<nav class="bottom-nav">
-  <a class="nav-item" routerLink="/passenger">
-    <mat-icon>home</mat-icon>
-    <span>Home</span>
-  </a>
-  <a class="nav-item" routerLink="/passenger/browse-rides">
-    <mat-icon>search</mat-icon>
-    <span>Find Ride</span>
-  </a>
-  <a class="nav-item active" routerLink="/passenger/my-requests">
-    <mat-icon>pending_actions</mat-icon>
-    <span>Requests</span>
-  </a>
-  <a class="nav-item" (click)="goToProfile()">
-    <mat-icon>person</mat-icon>
-    <span>Profile</span>
-  </a>
-</nav>

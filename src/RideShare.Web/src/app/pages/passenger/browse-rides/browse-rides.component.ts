@@ -13,7 +13,6 @@ import { RideService } from '../../../services/ride.service';
 import { RideListItem, RideSearchParams } from '../../../models/ride.model';
 import { RideMapComponent } from '../../../components/ride-map/ride-map.component';
 import { RoutePreviewComponent } from '../../../components/route-preview/route-preview.component';
-import { NotificationBellComponent } from '../../../components/notification-bell/notification-bell.component';
 
 @Component({
   selector: 'app-browse-rides',
@@ -30,8 +29,7 @@ import { NotificationBellComponent } from '../../../components/notification-bell
     MatSnackBarModule,
     MatRippleModule,
     RideMapComponent,
-    RoutePreviewComponent,
-    NotificationBellComponent
+    RoutePreviewComponent
   ],
   templateUrl: './browse-rides.component.html',
   styleUrls: ['./browse-rides.component.scss']

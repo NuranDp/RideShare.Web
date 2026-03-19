@@ -1,15 +1,9 @@
-<!-- Top Bar -->
-<div class="top-bar">
-  <div class="top-bar-left">
-    <mat-icon class="logo-icon">search</mat-icon>
-    <span class="app-title">Find a Ride</span>
-  </div>
-  <div class="top-bar-right">
-    <button class="view-toggle" (click)="toggleViewMode()">
-      <mat-icon>{{ viewMode === 'list' ? 'map' : 'view_list' }}</mat-icon>
-    </button>
-    <app-notification-bell></app-notification-bell>
-  </div>
+<!-- View Toggle -->
+<div class="view-toggle-bar">
+  <button class="view-toggle" (click)="toggleViewMode()">
+    <mat-icon>{{ viewMode === 'list' ? 'map' : 'view_list' }}</mat-icon>
+    <span>{{ viewMode === 'list' ? 'Map View' : 'List View' }}</span>
+  </button>
 </div>
 
 <!-- Search Section -->
@@ -201,23 +195,3 @@
     }
   }
 </div>
-
-<!-- Bottom Navigation -->
-<nav class="bottom-nav">
-  <a class="nav-item" routerLink="/passenger">
-    <mat-icon>home</mat-icon>
-    <span>Home</span>
-  </a>
-  <a class="nav-item active" routerLink="/passenger/browse-rides">
-    <mat-icon>search</mat-icon>
-    <span>Find Ride</span>
-  </a>
-  <a class="nav-item" routerLink="/passenger/my-requests">
-    <mat-icon>pending_actions</mat-icon>
-    <span>Requests</span>
-  </a>
-  <a class="nav-item" (click)="goToProfile()">
-    <mat-icon>person</mat-icon>
-    <span>Profile</span>
-  </a>
-</nav>
