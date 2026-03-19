@@ -113,6 +113,41 @@
   box-shadow: 0 2px 8px var(--shadow);
 }
 
+/* Dark mode input overrides for schedule fields */
+::ng-deep .schedule-item,
+::ng-deep .notes-card {
+  .mat-mdc-text-field-wrapper {
+    background-color: var(--bg-input) !important;
+  }
+  
+  .mat-mdc-form-field-flex {
+    background-color: transparent !important;
+  }
+  
+  input.mat-mdc-input-element,
+  textarea.mat-mdc-input-element {
+    color: var(--text-primary) !important;
+  }
+  
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: var(--border-color) !important;
+  }
+  
+  .mat-mdc-floating-label {
+    color: var(--text-secondary) !important;
+  }
+}
+
+:host-context(body.dark-theme) {
+  ::ng-deep input[type="time"],
+  ::ng-deep input[type="date"] {
+    color: var(--text-primary) !important;
+    color-scheme: dark;
+  }
+}
+
 .full-width {
   width: 100%;
 }

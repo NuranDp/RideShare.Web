@@ -91,6 +91,20 @@ body.dark-theme {
   --nav-bg: #1e293b;
   --nav-text: #94a3b8;
   --nav-active: #42A5F5;
+  
+  /* Material Input Overrides for Dark Mode */
+  --mdc-filled-text-field-input-text-color: #e2e8f0;
+  --mdc-outlined-text-field-input-text-color: #e2e8f0;
+  --mdc-filled-text-field-caret-color: #42A5F5;
+  --mdc-outlined-text-field-caret-color: #42A5F5;
+  --mdc-filled-text-field-label-text-color: #94a3b8;
+  --mdc-outlined-text-field-label-text-color: #94a3b8;
+  --mdc-filled-text-field-container-color: #334155;
+  --mdc-outlined-text-field-outline-color: #334155;
+  --mdc-filled-text-field-focus-label-text-color: #42A5F5;
+  --mdc-outlined-text-field-focus-label-text-color: #42A5F5;
+  --mdc-outlined-text-field-focus-outline-color: #42A5F5;
+  --mat-form-field-state-layer-color: transparent;
 }
 
 /* Box-sizing reset */
@@ -277,7 +291,10 @@ mat-card-subtitle {
   .mat-mdc-tab-body-content {
     overflow-x: hidden !important;
   }
-  
+}
+
+/* ========== DARK MODE MATERIAL OVERRIDES ========== */
+body.dark-theme {
   /* Dialog panel background */
   .mat-mdc-dialog-container .mdc-dialog__surface {
     background: var(--bg-card) !important;
@@ -344,5 +361,71 @@ mat-card-subtitle {
   
   .mat-calendar-arrow {
     fill: var(--text-primary);
+  }
+  
+  /* Material Input Text Color Override */
+  .mat-mdc-input-element,
+  .mdc-text-field__input,
+  input.mat-mdc-input-element,
+  textarea.mat-mdc-input-element {
+    color: var(--text-primary) !important;
+    caret-color: var(--primary) !important;
+  }
+  
+  /* Input placeholder */
+  .mat-mdc-input-element::placeholder,
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--text-muted) !important;
+    opacity: 1 !important;
+  }
+  
+  /* Form field wrapper background */
+  .mat-mdc-text-field-wrapper,
+  .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: var(--bg-input) !important;
+  }
+  
+  /* Outlined form field */
+  .mat-mdc-form-field-flex {
+    background-color: var(--bg-card) !important;
+  }
+  
+  /* Time and date inputs */
+  input[type="time"],
+  input[type="date"] {
+    color: var(--text-primary) !important;
+    color-scheme: dark;
+  }
+  
+  /* Select value text */
+  .mat-mdc-select-value-text {
+    color: var(--text-primary) !important;
+  }
+  
+  /* Form field label */
+  .mat-mdc-floating-label,
+  .mdc-floating-label {
+    color: var(--text-secondary) !important;
+  }
+  
+  /* Form field outline */
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: var(--border-color) !important;
+  }
+  
+  /* Focused form field */
+  .mat-mdc-form-field.mat-focused {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: var(--primary) !important;
+    }
+    
+    .mat-mdc-floating-label {
+      color: var(--primary) !important;
+    }
   }
 }
