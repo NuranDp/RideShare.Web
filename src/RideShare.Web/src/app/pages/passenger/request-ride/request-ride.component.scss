@@ -1,6 +1,6 @@
 .page-container {
   min-height: 100vh;
-  background: #f5f7fa;
+  background: var(--bg-primary);
 }
 
 /* Fixed Back Button */
@@ -9,13 +9,13 @@
   top: 16px;
   left: 16px;
   z-index: 1100;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  color: #333;
+  background: var(--bg-card);
+  box-shadow: 0 2px 8px var(--shadow);
+  color: var(--text-primary);
 }
 
 .back-btn-fixed:hover {
-  background: #f5f5f5;
+  background: var(--bg-secondary);
 }
 
 /* Loading & Error States */
@@ -26,7 +26,7 @@
   justify-content: center;
   min-height: 60vh;
   gap: 16px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .error-container mat-icon {
@@ -38,7 +38,7 @@
 
 .error-container h2 {
   margin: 0;
-  color: #333;
+  color: var(--text-primary);
 }
 
 /* Page Header */
@@ -165,13 +165,13 @@ mat-card-content {
 
 .point-info .label {
   font-size: 11px;
-  color: #999;
+  color: var(--text-muted);
   text-transform: uppercase;
 }
 
 .point-info .address {
   font-size: 14px;
-  color: #333;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
@@ -179,7 +179,7 @@ mat-card-content {
   display: flex;
   justify-content: center;
   padding-left: 4px;
-  color: #ccc;
+  color: var(--text-muted);
 }
 
 .route-connector mat-icon {
@@ -198,7 +198,7 @@ mat-card-content {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #e0e0e0;
+  background: var(--bg-secondary);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -213,7 +213,7 @@ mat-card-content {
 
 .rider-avatar mat-icon {
   font-size: 28px;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .rider-info {
@@ -224,7 +224,7 @@ mat-card-content {
   display: block;
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .rider-meta {
@@ -251,7 +251,7 @@ mat-card-content {
 
 .rides {
   font-size: 12px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .ride-badges {
@@ -305,18 +305,18 @@ mat-card-content {
   justify-content: center;
   gap: 8px;
   padding: 12px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--border);
   border-radius: 12px;
-  background: white;
+  background: var(--bg-card);
   cursor: pointer;
   transition: all 0.2s;
   font-size: 14px;
   font-weight: 500;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .mode-btn:hover {
-  background: #f5f5f5;
+  background: var(--bg-secondary);
 }
 
 .mode-btn.active.pickup {
@@ -424,10 +424,10 @@ mat-card-content {
   top: 100%;
   left: 0;
   right: 0;
-  background: white;
-  border: 1px solid #e0e0e0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow);
   max-height: 200px;
   overflow-y: auto;
   z-index: 1001;
@@ -551,12 +551,12 @@ mat-card-content {
   padding-top: 8px;
   position: sticky;
   bottom: 80px;
-  background: white;
+  background: var(--bg-card);
   padding: 16px;
   margin: -16px;
   margin-top: 8px;
   border-radius: 16px;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  box-shadow: var(--shadow);
   z-index: 10;
 }
 
@@ -785,8 +785,8 @@ mat-card-content {
   right: 0;
   display: flex;
   justify-content: space-around;
-  background: white;
-  border-top: 1px solid #eee;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
   padding: 8px 0;
   padding-bottom: max(8px, env(safe-area-inset-bottom));
   z-index: 100;

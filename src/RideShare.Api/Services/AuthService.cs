@@ -18,6 +18,7 @@ public interface IAuthService
     Task<UserDto?> GetCurrentUserAsync(Guid userId);
     Task<UserDto?> UpdateProfileAsync(Guid userId, UpdateProfileRequest request);
     Task<UserDto?> UpdateEmergencyContactAsync(Guid userId, UpdateEmergencyContactRequest request);
+    Task<UserDto?> UpdateThemeAsync(Guid userId, UpdateThemeRequest request);
 }
 
 public class AuthService : IAuthService
@@ -138,6 +139,19 @@ public class AuthService : IAuthService
         return MapToUserDto(user);
     }
 
+    public async Task<UserDto?> UpdateThemeAsync(Guid userId, UpdateThemeRequest request)
+    {
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) return null;
+
+        user.ThemePreference = request.Theme == "dark" ? "dark" : "light";
+        user.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        return MapToUserDto(user);
+    }
+
     private string GenerateJwtToken(User user)
     {
         var claims = new[]
@@ -173,6 +187,7 @@ public class AuthService : IAuthService
             ProfilePhotoUrl = user.ProfilePhotoUrl,
             Role = user.Role.ToString(),
             IsActive = user.IsActive,
+            ThemePreference = user.ThemePreference,
             EmergencyContact = new EmergencyContactDto
             {
                 Name = user.EmergencyContactName,

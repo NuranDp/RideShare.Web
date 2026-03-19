@@ -62,11 +62,11 @@ mat-dialog-content {
 
 /* Ride Summary Banner */
 .ride-summary-banner {
-  background: #f8f9fa;
+  background: var(--bg-secondary);
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 20px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--border);
 }
 
 .route-flow {
@@ -82,7 +82,7 @@ mat-dialog-content {
   gap: 6px;
   font-size: 14px;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
   flex: 1;
   min-width: 0;
 }
@@ -108,7 +108,7 @@ mat-dialog-content {
 }
 
 .route-arrow {
-  color: #9e9e9e;
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
@@ -175,7 +175,7 @@ mat-dialog-content {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #e0e0e0;
+  background: var(--bg-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -185,7 +185,7 @@ mat-dialog-content {
 .step-num {
   font-size: 14px;
   font-weight: 600;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .step.active .step-indicator {
@@ -218,7 +218,7 @@ mat-dialog-content {
 
 .step.active .step-label,
 .step.completed .step-label {
-  color: #333;
+  color: var(--text-primary);
 }
 
 .progress-line {
@@ -259,12 +259,12 @@ mat-dialog-content {
   padding: 8px 16px;
   border: 2px solid #e0e0e0;
   border-radius: 20px;
-  background: white;
+  background: var(--bg-card);
   cursor: pointer;
   transition: all 0.2s;
   font-size: 13px;
   font-weight: 500;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .mode-btn mat-icon {
@@ -293,7 +293,7 @@ mat-dialog-content {
 }
 
 .reset-btn {
-  color: #666;
+  color: var(--text-muted);
 }
 
 .map-wrapper {
@@ -446,7 +446,7 @@ mat-dialog-content {
   padding: 10px 12px;
   cursor: pointer;
   transition: background 0.2s;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border);
 }
 
 .search-result-item:last-child {
@@ -474,13 +474,13 @@ mat-dialog-content {
   display: block;
   font-size: 13px;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .result-address {
   display: block;
   font-size: 11px;
-  color: #666;
+  color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -492,7 +492,7 @@ mat-dialog-content {
   justify-content: center;
   gap: 8px;
   padding: 12px;
-  color: #666;
+  color: var(--text-muted);
   font-size: 12px;
 }
 
@@ -583,7 +583,7 @@ mat-dialog-content {
   display: block;
   font-size: 13px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .point-status {
@@ -655,7 +655,7 @@ mat-dialog-content {
   margin-bottom: 10px;
   font-size: 13px;
   font-weight: 500;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .section-label mat-icon {
@@ -718,7 +718,7 @@ mat-dialog-actions {
 }
 
 .cancel-btn {
-  color: #666;
+  color: var(--text-muted);
 }
 
 .send-btn {

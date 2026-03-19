@@ -1,7 +1,7 @@
 :host {
   display: block;
   padding: 16px;
-  background: #f5f7fa;
+  background: var(--bg-primary);
 }
 
 /* Page Header */
@@ -12,7 +12,7 @@
 .page-title {
   font-size: 24px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -23,10 +23,10 @@
 
 .tab-toggle {
   display: flex;
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px var(--shadow);
 }
 
 .tab-btn {
@@ -39,7 +39,7 @@
   border: none;
   border-radius: 12px;
   background: transparent;
-  color: #666;
+  color: var(--text-muted);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -67,7 +67,7 @@
 
 .tab-btn:not(.active) .tab-badge {
   background: #e0e0e0;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .tab-badge.secondary {
@@ -89,7 +89,7 @@
   align-items: center;
   justify-content: center;
   padding: 48px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .loading-state p {
@@ -102,7 +102,7 @@
   flex-direction: column;
   align-items: center;
   padding: 48px 24px;
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
   text-align: center;
 }
@@ -132,12 +132,12 @@
 .empty-state h3 {
   margin: 0 0 8px;
   font-size: 18px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .empty-state p {
   margin: 0 0 24px;
-  color: #666;
+  color: var(--text-muted);
   font-size: 14px;
 }
 
@@ -150,10 +150,10 @@
 
 /* Ride Card */
 .ride-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
   padding: 20px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 12px var(--shadow);
   position: relative;
   overflow: hidden;
 }
@@ -267,7 +267,7 @@
 .route-label {
   display: block;
   font-size: 11px;
-  color: #999;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -276,7 +276,7 @@
   display: block;
   font-size: 14px;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
   margin-top: 2px;
 }
 
@@ -306,14 +306,14 @@
 .route-text {
   font-size: 14px;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .arrow-icon {
   font-size: 18px;
   width: 18px;
   height: 18px;
-  color: #999;
+  color: var(--text-muted);
 }
 
 /* Ride Info */
@@ -323,7 +323,7 @@
   gap: 12px;
   margin-bottom: 16px;
   padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--border);
 }
 
 .info-item {
@@ -331,14 +331,14 @@
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .info-item mat-icon {
   font-size: 18px;
   width: 18px;
   height: 18px;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .info-item.notes {
@@ -421,8 +421,8 @@
 }
 
 .action-btn.outline {
-  background: #f5f7fa;
-  color: #333;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 .action-btn:active:not(:disabled) {
@@ -440,7 +440,7 @@
 
 /* Expanded Details */
 .expanded-details {
-  background: #f8f9fa;
+  background: var(--bg-secondary);
   border-radius: 12px;
   padding: 12px;
   margin-bottom: 12px;
@@ -464,7 +464,7 @@
   gap: 8px;
   padding: 6px 0;
   font-size: 13px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .detail-row mat-icon {

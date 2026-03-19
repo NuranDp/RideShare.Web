@@ -1,6 +1,6 @@
 :host {
   display: block;
-  background: #f5f7fa;
+  background: var(--bg-primary);
   min-height: 100%;
 }
 
@@ -20,7 +20,7 @@
     margin: 0;
     font-size: 22px;
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
   }
 }
 
@@ -28,19 +28,19 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: white;
+  background: var(--bg-card);
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px var(--shadow);
 
   mat-icon {
     font-size: 24px;
     width: 24px;
     height: 24px;
-    color: #333;
+    color: var(--text-primary);
   }
 }
 
@@ -101,9 +101,9 @@
   align-items: center;
   gap: 16px;
   padding: 20px;
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px var(--shadow);
 }
 
 .contact-avatar {
@@ -133,12 +133,12 @@
 .contact-name {
   font-size: 17px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .contact-relation {
   font-size: 13px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .contact-phone {
@@ -167,7 +167,7 @@
   gap: 8px;
   padding: 0 4px;
   margin-bottom: 10px;
-  color: #666;
+  color: var(--text-muted);
   font-size: 14px;
   font-weight: 500;
 
@@ -175,15 +175,15 @@
     font-size: 20px;
     width: 20px;
     height: 20px;
-    color: #1976d2;
+    color: var(--primary);
   }
 }
 
 .section-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px var(--shadow);
 }
 
 /* Form Styling */
@@ -194,7 +194,7 @@
     display: block;
     font-size: 13px;
     font-weight: 500;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 8px;
   }
 }
@@ -204,21 +204,21 @@
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  background: #f5f7fa;
+  background: var(--bg-input);
   border-radius: 12px;
   border: 2px solid transparent;
   transition: all 0.2s;
 
   &:focus-within {
-    background: white;
-    border-color: #1976d2;
+    background: var(--bg-card);
+    border-color: var(--primary);
   }
 
   mat-icon {
     font-size: 20px;
     width: 20px;
     height: 20px;
-    color: #999;
+    color: var(--text-muted);
     flex-shrink: 0;
   }
 
@@ -228,10 +228,10 @@
     outline: none;
     background: transparent;
     font-size: 15px;
-    color: #333;
+    color: var(--text-primary);
 
     &::placeholder {
-      color: #aaa;
+      color: var(--text-muted);
     }
   }
 }
@@ -277,10 +277,10 @@
 }
 
 .tips-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: var(--shadow);
 }
 
 .tip-item {
@@ -288,7 +288,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border);
 
   &:last-child {
     border-bottom: none;

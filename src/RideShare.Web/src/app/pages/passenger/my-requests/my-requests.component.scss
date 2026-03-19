@@ -1,7 +1,7 @@
 :host {
   display: block;
   padding: 16px;
-  background: #f5f7fa;
+  background: var(--bg-primary);
 }
 
 /* Page Header */
@@ -12,7 +12,7 @@
 .page-title {
   font-size: 24px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -23,10 +23,10 @@
 
 .tab-toggle {
   display: flex;
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px var(--shadow);
 }
 
 .tab-btn {
@@ -39,7 +39,7 @@
   border: none;
   border-radius: 12px;
   background: transparent;
-  color: #666;
+  color: var(--text-muted);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -67,7 +67,7 @@
 
 .tab-btn:not(.active) .tab-badge {
   background: #e0e0e0;
-  color: #666;
+  color: var(--text-muted);
 }
 
 /* Content Area */
@@ -85,14 +85,14 @@
   align-items: center;
   justify-content: center;
   padding: 48px 24px;
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
   text-align: center;
 }
 
 .loading-state p {
   margin-top: 16px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .empty-icon {
@@ -120,12 +120,12 @@
 .empty-state h3 {
   margin: 0 0 8px;
   font-size: 18px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .empty-state p {
   margin: 0 0 24px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 /* Requests List */
@@ -137,10 +137,10 @@
 
 /* Request Card */
 .request-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
   padding: 20px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 12px var(--shadow);
 }
 
 .status-border-pending {
@@ -228,12 +228,12 @@
 .rider-name {
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .rider-label {
   font-size: 12px;
-  color: #999;
+  color: var(--text-muted);
 }
 
 /* Route Section */
@@ -276,7 +276,7 @@
 .route-label {
   display: block;
   font-size: 11px;
-  color: #999;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -285,7 +285,7 @@
   display: block;
   font-size: 14px;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
   margin-top: 2px;
 }
 
@@ -302,7 +302,7 @@
 
 /* My Route Section */
 .my-route-section {
-  background: #f0f3ff;
+  background: var(--bg-secondary);
   border-radius: 12px;
   padding: 12px 16px;
   margin-bottom: 16px;
@@ -314,7 +314,7 @@
   gap: 6px;
   font-size: 13px;
   font-weight: 600;
-  color: #034694;
+  color: var(--primary);
   margin-bottom: 10px;
 }
 
@@ -329,7 +329,7 @@
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: #333;
+  color: var(--text-primary);
   margin: 6px 0;
 }
 
@@ -379,18 +379,18 @@
   align-items: flex-start;
   gap: 10px;
   padding: 12px;
-  background: #f5f7fa;
+  background: var(--bg-secondary);
   border-radius: 12px;
   margin-bottom: 16px;
   font-size: 13px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .message-section mat-icon {
   font-size: 18px;
   width: 18px;
   height: 18px;
-  color: #999;
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
@@ -423,7 +423,7 @@
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  color: #333;
+  color: var(--text-primary);
   margin: 6px 0;
 }
 

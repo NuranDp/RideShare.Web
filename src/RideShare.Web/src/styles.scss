@@ -1,10 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 
-/* ========== CHELSEA BLUE THEME VARIABLES ========== */
-:root {
+/* ========== THEME VARIABLES ========== */
+
+/* Light Theme (Default) */
+:root,
+body.light-theme {
   --primary-dark: #034694;
   --primary: #0A56A4;
   --primary-light: #1565C0;
+  --primary-lighter: #42A5F5;
   --primary-gradient: linear-gradient(135deg, #034694 0%, #0A56A4 50%, #1565C0 100%);
   --primary-gradient-simple: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
   --primary-shadow: rgba(3, 70, 148, 0.35);
@@ -12,18 +16,81 @@
   
   --success: #2e7d32;
   --success-light: #4caf50;
+  --success-bg: #e8f5e9;
   --warning: #f57c00;
   --warning-light: #ff9800;
+  --warning-bg: #fff3e0;
   --danger: #c62828;
   --danger-light: #f44336;
+  --danger-bg: #ffebee;
   
   --text-primary: #1e293b;
   --text-secondary: #64748b;
   --text-muted: #94a3b8;
+  --text-inverse: #ffffff;
   
-  --bg-primary: #f8fafc;
+  --bg-primary: #f5f7fa;
   --bg-secondary: #f1f5f9;
   --bg-card: #ffffff;
+  --bg-input: #f5f7fa;
+  --bg-hover: #f0f0f0;
+  
+  --border-color: #e2e8f0;
+  --border-light: #f0f0f0;
+  --border: #e2e8f0;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow: rgba(0, 0, 0, 0.08);
+  
+  --nav-bg: #ffffff;
+  --nav-text: #666666;
+  --nav-active: #034694;
+}
+
+/* Dark Theme */
+body.dark-theme {
+  --primary-dark: #1565C0;
+  --primary: #42A5F5;
+  --primary-light: #64B5F6;
+  --primary-lighter: #90CAF9;
+  --primary-gradient: linear-gradient(135deg, #1565C0 0%, #42A5F5 50%, #64B5F6 100%);
+  --primary-gradient-simple: linear-gradient(135deg, #1565C0 0%, #42A5F5 100%);
+  --primary-shadow: rgba(66, 165, 245, 0.35);
+  --primary-shadow-light: rgba(66, 165, 245, 0.15);
+  
+  --success: #4caf50;
+  --success-light: #81c784;
+  --success-bg: #1b3d1f;
+  --warning: #ff9800;
+  --warning-light: #ffb74d;
+  --warning-bg: #3d2e14;
+  --danger: #f44336;
+  --danger-light: #e57373;
+  --danger-bg: #3d1a1a;
+  
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-inverse: #1e293b;
+  
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: #1e293b;
+  --bg-input: #334155;
+  --bg-hover: #334155;
+  
+  --border-color: #334155;
+  --border-light: #475569;
+  --border: #334155;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow: rgba(0, 0, 0, 0.3);
+  
+  --nav-bg: #1e293b;
+  --nav-text: #94a3b8;
+  --nav-active: #42A5F5;
 }
 
 /* Box-sizing reset */

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet, ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { NotificationBellComponent } from '../../components/notification-bell/notification-bell.component';
+import { ThemeService } from '../../services/theme.service';
 import { Subscription, filter } from 'rxjs';
 
 @Component({
@@ -25,7 +26,7 @@ export class PassengerLayoutComponent implements OnInit, OnDestroy {
   pageTitle = '';
   private subscription = new Subscription();
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(private route: ActivatedRoute, private router: Router, public themeService: ThemeService) {}
 
   ngOnInit(): void {
     // Check initial state

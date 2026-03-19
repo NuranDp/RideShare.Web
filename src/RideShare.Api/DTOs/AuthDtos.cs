@@ -47,6 +47,7 @@ public class UserDto
     public string? ProfilePhotoUrl { get; set; }
     public string Role { get; set; } = string.Empty;
     public bool IsActive { get; set; }
+    public string ThemePreference { get; set; } = "light";
     public EmergencyContactDto? EmergencyContact { get; set; }
     public DateTime CreatedAt { get; set; }
 }
@@ -70,4 +71,9 @@ public class UpdateEmergencyContactRequest
     public string? Name { get; set; }
     public string? Phone { get; set; }
     public string? Relation { get; set; }
+}
+
+public class UpdateThemeRequest
+{
+    public string Theme { get; set; } = "light";
 }

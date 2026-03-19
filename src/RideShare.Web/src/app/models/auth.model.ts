@@ -6,6 +6,7 @@ export interface User {
   profilePhotoUrl?: string;
   role: 'Passenger' | 'Rider' | 'Admin';
   isActive: boolean;
+  themePreference?: 'light' | 'dark';
   emergencyContact?: EmergencyContact;
   createdAt: string;
 }

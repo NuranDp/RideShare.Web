@@ -1,7 +1,7 @@
 :host {
   display: block;
   padding: 16px;
-  background: #f5f5f5;
+  background: var(--bg-primary);
 }
 
 /* Page Header */
@@ -12,7 +12,7 @@
 .page-title {
   font-size: 24px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -29,7 +29,7 @@
   justify-content: center;
   gap: 12px;
   padding: 48px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .loading-state.small {
@@ -38,11 +38,11 @@
 
 /* Ride Summary Card */
 .ride-summary-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 14px;
   margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px var(--shadow);
 }
 
 .summary-label {
@@ -50,7 +50,7 @@
   align-items: center;
   gap: 6px;
   font-size: 11px;
-  color: #999;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 10px;
@@ -67,7 +67,7 @@
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
-  background: #f8f9fc;
+  background: var(--bg-secondary);
   border-radius: 10px;
 }
 
@@ -107,7 +107,7 @@
 
 .endpoint-text {
   font-size: 13px;
-  color: #333;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -124,20 +124,20 @@
 .empty-state {
   text-align: center;
   padding: 48px 24px;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .empty-state mat-icon {
   font-size: 56px;
   width: 56px;
   height: 56px;
-  color: #ccc;
+  color: var(--text-muted);
 }
 
 .empty-state p {
   margin: 12px 0 4px;
   font-size: 17px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .empty-subtitle {
@@ -152,11 +152,11 @@
 }
 
 .request-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  border-left: 4px solid #034694;
+  box-shadow: 0 2px 8px var(--shadow);
+  border-left: 4px solid var(--primary);
 }
 
 .request-card.processed {
@@ -200,12 +200,12 @@
 .passenger-name {
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .request-time {
   font-size: 12px;
-  color: #999;
+  color: var(--text-muted);
   margin-top: 2px;
 }
 
@@ -226,18 +226,18 @@
   align-items: flex-start;
   gap: 8px;
   padding: 10px 12px;
-  background: #f5f5f5;
+  background: var(--bg-secondary);
   border-radius: 10px;
   margin-bottom: 12px;
   font-size: 13px;
-  color: #555;
+  color: var(--text-secondary);
 }
 
 .message-box mat-icon {
   font-size: 16px;
   width: 16px;
   height: 16px;
-  color: #999;
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
@@ -280,7 +280,7 @@
   align-items: center;
   gap: 10px;
   padding: 10px;
-  background: white;
+  background: var(--bg-card);
   border-radius: 10px;
   min-width: 0;
 }
@@ -314,14 +314,14 @@
 
 .point-label {
   font-size: 10px;
-  color: #999;
+  color: var(--text-muted);
   text-transform: uppercase;
 }
 
 .point-location {
   font-size: 13px;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -341,10 +341,10 @@
   gap: 6px;
   width: 100%;
   padding: 10px;
-  background: #f8f9fc;
-  border: 1px dashed #ddd;
+  background: var(--bg-secondary);
+  border: 1px dashed var(--border);
   border-radius: 10px;
-  color: #034694;
+  color: var(--primary);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;

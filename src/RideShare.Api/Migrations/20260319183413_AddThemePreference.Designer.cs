@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RideShare.Api.Data;
@@ -11,9 +12,11 @@ using RideShare.Api.Data;
 namespace RideShare.Api.Migrations
 {
     [DbContext(typeof(RideShareDbContext))]
-    partial class RideShareDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260319183413_AddThemePreference")]
+    partial class AddThemePreference
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

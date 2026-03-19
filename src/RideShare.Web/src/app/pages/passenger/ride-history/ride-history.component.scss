@@ -13,11 +13,11 @@
 
 .page-header h1 {
   margin: 0;
-  color: #1976d2;
+  color: var(--primary);
 }
 
 .subtitle {
-  color: #666;
+  color: var(--text-muted);
   margin: 4px 0 0;
 }
 
@@ -26,7 +26,7 @@
   flex-direction: column;
   align-items: center;
   padding: 48px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .empty-state {
@@ -38,7 +38,7 @@
   font-size: 64px;
   width: 64px;
   height: 64px;
-  color: #ccc;
+  color: var(--text-muted);
 }
 
 .empty-state h3 {
@@ -46,7 +46,7 @@
 }
 
 .empty-state p {
-  color: #666;
+  color: var(--text-muted);
   margin-bottom: 24px;
 }
 
@@ -58,28 +58,28 @@
 }
 
 .stat-card {
-  background: white;
+  background: var(--bg-card);
   padding: 20px;
   border-radius: 8px;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px var(--shadow);
 }
 
 .stat-card mat-icon {
   font-size: 32px;
   width: 32px;
   height: 32px;
-  color: #1976d2;
+  color: var(--primary);
 }
 
 .stat-value {
   font-size: 32px;
   font-weight: bold;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .stat-label {
-  color: #666;
+  color: var(--text-muted);
   font-size: 14px;
 }
 
@@ -127,7 +127,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .detail-item mat-icon {
@@ -181,7 +181,7 @@
   align-items: center;
   gap: 4px;
   margin-top: 12px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .my-rating span {
@@ -192,7 +192,7 @@
   font-size: 20px;
   width: 20px;
   height: 20px;
-  color: #ccc;
+  color: var(--text-muted);
 }
 
 .rating-star.filled {
@@ -252,8 +252,8 @@
   right: 0;
   display: flex;
   justify-content: space-around;
-  background: white;
-  border-top: 1px solid #eee;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
   padding: 8px 0;
   padding-bottom: max(8px, env(safe-area-inset-bottom));
   z-index: 100;
@@ -265,7 +265,7 @@
   align-items: center;
   gap: 2px;
   padding: 6px 16px;
-  color: #999;
+  color: var(--text-muted);
   text-decoration: none;
   font-size: 11px;
   cursor: pointer;

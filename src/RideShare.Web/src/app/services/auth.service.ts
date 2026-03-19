@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
@@ -11,6 +11,7 @@ import {
   UpdateProfileRequest,
   UpdateEmergencyContactRequest
 } from '../models/auth.model';
+import { ThemeService } from './theme.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class AuthService {
   private readonly apiUrl = `${environment.apiUrl}/auth`;
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY = 'current_user';
+  private themeService = inject(ThemeService);
 
   private currentUserSignal = signal<User | null>(null);
   
@@ -41,6 +43,8 @@ export class AuthService {
       try {
         const user = JSON.parse(userJson) as User;
         this.currentUserSignal.set(user);
+        // Sync theme with user preference
+        this.themeService.syncUserTheme(user.themePreference);
       } catch {
         this.clearAuth();
       }
@@ -99,6 +103,8 @@ export class AuthService {
     localStorage.setItem(this.TOKEN_KEY, response.token);
     localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
     this.currentUserSignal.set(response.user);
+    // Sync theme with user preference
+    this.themeService.syncUserTheme(response.user.themePreference);
   }
 
   private clearAuth(): void {

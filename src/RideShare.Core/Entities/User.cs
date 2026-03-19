@@ -10,6 +10,7 @@ public class User
     public string? ProfilePhotoUrl { get; set; }
     public UserRole Role { get; set; }
     public bool IsActive { get; set; } = true;
+    public string ThemePreference { get; set; } = "light";
 
     // Emergency Contact
     public string? EmergencyContactName { get; set; }
