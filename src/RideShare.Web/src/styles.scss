@@ -254,27 +254,85 @@ mat-card-subtitle {
     max-width: 100vw !important;
     overflow-x: hidden !important;
   }
+}
 
-  /* Fix mat-card on mobile */
-  mat-card {
-    max-width: calc(100vw - 32px) !important;
-    overflow: hidden !important;
+/* ========== DARK MODE MATERIAL OVERRIDES ========== */
+
+/* Dark mode input text color fix */
+body.dark-theme {
+  /* Input text color */
+  .mat-mdc-input-element,
+  .mat-mdc-form-field input,
+  .mat-mdc-form-field textarea,
+  .mdc-text-field__input {
+    color: var(--text-primary) !important;
+    caret-color: var(--primary) !important;
   }
-
-  /* Fix mat-card-header layout */
-  .mat-mdc-card-header {
-    flex-wrap: wrap !important;
+  
+  /* Placeholder color */
+  .mat-mdc-form-field input::placeholder,
+  .mat-mdc-form-field textarea::placeholder {
+    color: var(--text-muted) !important;
   }
-
-  /* Truncated route fix */
-  .truncated-route {
-    white-space: normal !important;
-    word-break: break-word !important;
-    max-width: calc(100vw - 100px) !important;
+  
+  /* Form field label */
+  .mat-mdc-form-field .mdc-floating-label,
+  .mat-mdc-form-field .mat-mdc-floating-label {
+    color: var(--text-secondary) !important;
   }
-
-  /* Mat tab body */
-  .mat-mdc-tab-body-content {
-    overflow-x: hidden !important;
+  
+  /* Form field outline/underline */
+  .mat-mdc-form-field .mdc-notched-outline__leading,
+  .mat-mdc-form-field .mdc-notched-outline__notch,
+  .mat-mdc-form-field .mdc-notched-outline__trailing {
+    border-color: var(--border-color) !important;
+  }
+  
+  /* Focused state */
+  .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+  .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
+  .mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
+    border-color: var(--primary) !important;
+  }
+  
+  .mat-mdc-form-field.mat-focused .mdc-floating-label {
+    color: var(--primary) !important;
+  }
+  
+  /* Select dropdown */
+  .mat-mdc-select-value-text {
+    color: var(--text-primary) !important;
+  }
+  
+  .mat-mdc-select-arrow {
+    color: var(--text-secondary) !important;
+  }
+  
+  /* Autocomplete panel */
+  .mat-mdc-autocomplete-panel {
+    background: var(--bg-card) !important;
+  }
+  
+  .mat-mdc-option {
+    color: var(--text-primary) !important;
+  }
+  
+  .mat-mdc-option:hover {
+    background: var(--bg-hover) !important;
+  }
+  
+  /* Form field fill background */
+  .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: var(--bg-input) !important;
+  }
+  
+  /* Hint text */
+  .mat-mdc-form-field-hint {
+    color: var(--text-muted) !important;
+  }
+  
+  /* Error text */
+  .mat-mdc-form-field-error {
+    color: var(--danger) !important;
   }
 }
