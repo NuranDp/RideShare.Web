@@ -50,26 +50,36 @@
                 <span>{{ ride.status }}</span>
               </div>
 
-              <!-- Route Display -->
-              <div class="route-section">
-                <div class="route-point">
-                  <span class="marker origin">A</span>
-                  <div class="route-details">
-                    <span class="route-label">Pickup</span>
-                    <span class="route-address">{{ ride.origin }}</span>
-                  </div>
-                </div>
-                <div class="route-connector">
-                  <div class="connector-line"></div>
-                </div>
-                <div class="route-point">
-                  <span class="marker dest">B</span>
-                  <div class="route-details">
-                    <span class="route-label">Drop-off</span>
-                    <span class="route-address">{{ ride.destination }}</span>
-                  </div>
+              <!-- Route Display - Compact -->
+              <div class="route-section compact">
+                <div class="route-inline">
+                  <span class="marker small origin">A</span>
+                  <span class="route-text">{{ getShortAddress(ride.origin) }}</span>
+                  <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+                  <span class="marker small dest">B</span>
+                  <span class="route-text">{{ getShortAddress(ride.destination) }}</span>
                 </div>
               </div>
+
+              <!-- Expandable Details -->
+              @if (expandedRides.has(ride.id)) {
+                <div class="expanded-details">
+                  <div class="detail-row">
+                    <mat-icon class="origin-color">trip_origin</mat-icon>
+                    <span>{{ ride.origin }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon class="dest-color">location_on</mat-icon>
+                    <span>{{ ride.destination }}</span>
+                  </div>
+                  @if (ride.notes) {
+                    <div class="detail-row">
+                      <mat-icon>notes</mat-icon>
+                      <span>{{ ride.notes }}</span>
+                    </div>
+                  }
+                </div>
+              }
 
               <!-- Time & Info -->
               <div class="ride-info">
@@ -81,12 +91,6 @@
                   <mat-icon>sports_motorsports</mat-icon>
                   <span>{{ ride.helmetProvided ? 'Helmet provided' : 'No helmet' }}</span>
                 </div>
-                @if (ride.notes) {
-                  <div class="info-item notes">
-                    <mat-icon>notes</mat-icon>
-                    <span>{{ ride.notes }}</span>
-                  </div>
-                }
               </div>
 
               <!-- In Progress Status -->
@@ -96,6 +100,12 @@
                   <span>Live tracking active</span>
                 </div>
               }
+
+              <!-- Show More Button -->
+              <button class="show-more-btn" (click)="toggleExpand(ride.id)">
+                <mat-icon>{{ expandedRides.has(ride.id) ? 'expand_less' : 'expand_more' }}</mat-icon>
+                {{ expandedRides.has(ride.id) ? 'Show less' : 'Show details' }}
+              </button>
 
               <!-- Actions -->
               <div class="card-actions">

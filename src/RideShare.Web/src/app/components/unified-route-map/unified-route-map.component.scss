@@ -1,8 +1,8 @@
 .unified-route-map {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .location-inputs {
@@ -10,8 +10,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: #fafafa;
-  border-bottom: 1px solid #e0e0e0;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .location-input-row {
@@ -24,7 +24,7 @@
 }
 
 .location-input-row.active {
-  background: #e3f2fd;
+  background: var(--primary-shadow-light);
 }
 
 .location-marker {
@@ -56,6 +56,31 @@
   display: none;
 }
 
+/* Dark mode support for form fields */
+::ng-deep .search-field {
+  .mat-mdc-text-field-wrapper {
+    background-color: var(--bg-card) !important;
+  }
+  
+  .mat-mdc-form-field-flex {
+    background-color: var(--bg-card) !important;
+  }
+  
+  input.mat-mdc-input-element {
+    color: var(--text-primary) !important;
+  }
+  
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: var(--border-color) !important;
+  }
+  
+  .mat-mdc-form-field-icon-suffix {
+    color: var(--text-secondary);
+  }
+}
+
 .map-wrapper {
   position: relative;
   height: 350px;
@@ -72,7 +97,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255,255,255,0.9);
+  background: var(--bg-card);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -82,7 +107,7 @@
 }
 
 .map-loading span {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
@@ -90,19 +115,19 @@
   position: absolute;
   top: 12px;
   right: 12px;
-  background: white;
+  background: var(--bg-card);
   padding: 8px 16px;
   border-radius: 20px;
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow-md);
   z-index: 1000;
 }
 
 .route-loading span {
   font-size: 13px;
-  color: #1976d2;
+  color: var(--primary);
 }
 
 .map-hint {

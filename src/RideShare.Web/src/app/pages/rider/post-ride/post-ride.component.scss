@@ -75,7 +75,7 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
+  background: var(--primary-gradient-simple);
   color: white;
   display: flex;
   align-items: center;
@@ -150,7 +150,7 @@
 }
 
 .option-icon.active {
-  background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
+  background: var(--primary-gradient-simple);
 }
 
 .option-icon.active mat-icon {
@@ -183,14 +183,14 @@
 .toggle-track {
   width: 100%;
   height: 100%;
-  background: #e0e0e0;
+  background: var(--border-color);
   border-radius: 16px;
   position: relative;
   transition: background 0.3s;
 }
 
 .option-toggle.active .toggle-track {
-  background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
+  background: var(--primary-gradient-simple);
 }
 
 .toggle-thumb {
@@ -223,9 +223,9 @@
   align-items: center;
   gap: 12px;
   padding: 16px;
-  background: #fff8e1;
+  background: var(--warning-bg);
   border-radius: 12px;
-  color: #f57c00;
+  color: var(--warning);
   margin-top: 8px;
 }
 
@@ -255,7 +255,7 @@
   padding: 16px 24px;
   border: none;
   border-radius: 16px;
-  background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
+  background: var(--primary-gradient-simple);
   color: white;
   font-size: 16px;
   font-weight: 600;
@@ -268,8 +268,8 @@
 }
 
 .submit-btn:disabled {
-  background: #e0e0e0;
-  color: #999;
+  background: var(--bg-secondary);
+  color: var(--text-muted);
   cursor: not-allowed;
 }
 

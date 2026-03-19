@@ -6,8 +6,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRippleModule } from '@angular/material/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RideService } from '../../../services/ride.service';
 import { Ride, RideStatus } from '../../../models/ride.model';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../../components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-my-rides',
@@ -19,7 +21,8 @@ import { Ride, RideStatus } from '../../../models/ride.model';
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatRippleModule
+    MatRippleModule,
+    MatDialogModule
   ],
   templateUrl: './my-rides.component.html',
   styleUrls: ['./my-rides.component.scss']
@@ -45,7 +48,8 @@ export class MyRidesComponent implements OnInit, OnDestroy {
     private rideService: RideService,
     private snackBar: MatSnackBar,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -115,33 +119,63 @@ export class MyRidesComponent implements OnInit, OnDestroy {
   }
 
   cancelRide(ride: Ride): void {
-    if (confirm(`Are you sure you want to cancel this ride?`)) {
-      this.rideService.cancelRide(ride.id).subscribe({
-        next: () => {
-          this.snackBar.open('Ride cancelled', 'Close', { duration: 3000 });
-          this.loadRides();
-        },
-        error: () => {
-          this.snackBar.open('Failed to cancel ride', 'Close', { duration: 3000 });
-        }
-      });
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '340px',
+      maxWidth: '95vw',
+      data: {
+        title: 'Cancel Ride',
+        message: 'Are you sure you want to cancel this ride? This action cannot be undone.',
+        confirmText: 'Yes, Cancel',
+        cancelText: 'No, Keep',
+        confirmColor: 'warn',
+        icon: 'cancel'
+      } as ConfirmDialogData
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.rideService.cancelRide(ride.id).subscribe({
+          next: () => {
+            this.snackBar.open('Ride cancelled', 'Close', { duration: 3000 });
+            this.loadRides();
+          },
+          error: () => {
+            this.snackBar.open('Failed to cancel ride', 'Close', { duration: 3000 });
+          }
+        });
+      }
+    });
   }
 
   completeRide(ride: Ride): void {
-    if (confirm(`Mark this ride as completed?`)) {
-      this.stopLocationSharing();
-      
-      this.rideService.completeRide(ride.id).subscribe({
-        next: () => {
-          this.snackBar.open('Ride completed!', 'Close', { duration: 3000 });
-          this.loadRides();
-        },
-        error: () => {
-          this.snackBar.open('Failed to complete ride', 'Close', { duration: 3000 });
-        }
-      });
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '340px',
+      maxWidth: '95vw',
+      data: {
+        title: 'Complete Ride',
+        message: 'Mark this ride as completed? Make sure you have dropped off your passenger.',
+        confirmText: 'Yes, Complete',
+        cancelText: 'Not Yet',
+        confirmColor: 'primary',
+        icon: 'check_circle'
+      } as ConfirmDialogData
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.stopLocationSharing();
+        
+        this.rideService.completeRide(ride.id).subscribe({
+          next: () => {
+            this.snackBar.open('Ride completed!', 'Close', { duration: 3000 });
+            this.loadRides();
+          },
+          error: () => {
+            this.snackBar.open('Failed to complete ride', 'Close', { duration: 3000 });
+          }
+        });
+      }
+    });
   }
 
   startRide(ride: Ride): void {

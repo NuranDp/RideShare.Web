@@ -10,6 +10,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { RideService } from '../../../services/ride.service';
 import { MyRideRequest, RequestStatus, CreateRatingRequest } from '../../../models/ride.model';
 import { RatingDialogComponent, RatingDialogData } from '../../../components/rating-dialog/rating-dialog.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../../components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-my-requests',
@@ -90,17 +91,32 @@ export class MyRequestsComponent implements OnInit {
   }
 
   cancelRequest(request: MyRideRequest): void {
-    if (confirm('Are you sure you want to cancel this request?')) {
-      this.rideService.cancelMyRequest(request.id).subscribe({
-        next: () => {
-          this.snackBar.open('Request cancelled', 'Close', { duration: 3000 });
-          this.loadRequests();
-        },
-        error: () => {
-          this.snackBar.open('Failed to cancel request', 'Close', { duration: 3000 });
-        }
-      });
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '340px',
+      maxWidth: '95vw',
+      data: {
+        title: 'Cancel Request',
+        message: 'Are you sure you want to cancel this ride request?',
+        confirmText: 'Yes, Cancel',
+        cancelText: 'No, Keep',
+        confirmColor: 'warn',
+        icon: 'cancel'
+      } as ConfirmDialogData
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.rideService.cancelMyRequest(request.id).subscribe({
+          next: () => {
+            this.snackBar.open('Request cancelled', 'Close', { duration: 3000 });
+            this.loadRequests();
+          },
+          error: () => {
+            this.snackBar.open('Failed to cancel request', 'Close', { duration: 3000 });
+          }
+        });
+      }
+    });
   }
 
   rateRide(request: MyRideRequest): void {

@@ -2,6 +2,7 @@ h2 {
   display: flex;
   align-items: center;
   gap: 8px;
+  color: var(--text-primary);
 }
 
 h2 mat-icon {
@@ -17,6 +18,11 @@ h2 mat-icon {
 
 .ride-info p {
   margin: 4px 0;
+  color: var(--text-primary);
+}
+
+.ride-info strong {
+  color: var(--text-secondary);
 }
 
 .rating-stars {
