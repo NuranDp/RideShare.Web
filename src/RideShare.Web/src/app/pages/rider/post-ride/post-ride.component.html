@@ -89,18 +89,18 @@
         <span>Select both pickup and drop-off locations to continue</span>
       </div>
     }
-  </form>
-</div>
 
-<!-- Bottom Action Bar -->
-<div class="bottom-bar">
-  <button class="submit-btn" [disabled]="loading || !rideForm.valid || !originLocation || !destLocation"
-          (click)="onSubmit()">
-    @if (loading) {
-      <mat-spinner diameter="24" color="accent"></mat-spinner>
-    } @else {
-      <mat-icon>add_circle</mat-icon>
-      <span>Post Ride</span>
-    }
-  </button>
+    <!-- Submit Button -->
+    <div class="submit-section">
+      <button class="submit-btn" [disabled]="loading || !rideForm.valid || !originLocation || !destLocation"
+              (click)="onSubmit()">
+        @if (loading) {
+          <mat-spinner diameter="24" color="accent"></mat-spinner>
+        } @else {
+          <mat-icon>add_circle</mat-icon>
+          <span>Post Ride</span>
+        }
+      </button>
+    </div>
+  </form>
 </div>

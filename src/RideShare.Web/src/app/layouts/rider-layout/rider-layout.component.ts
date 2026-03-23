@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { NotificationBellComponent } from '../../components/notification-bell/notification-bell.component';
+import { RideRequestPopupComponent } from '../../components/ride-request-popup/ride-request-popup.component';
 import { ThemeService } from '../../services/theme.service';
 import { Subscription, filter } from 'rxjs';
 
@@ -15,7 +16,8 @@ import { Subscription, filter } from 'rxjs';
     RouterLink,
     RouterLinkActive,
     MatIconModule,
-    NotificationBellComponent
+    NotificationBellComponent,
+    RideRequestPopupComponent
   ],
   templateUrl: './rider-layout.component.html',
   styleUrls: ['./rider-layout.component.scss']

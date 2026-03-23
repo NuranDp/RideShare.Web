@@ -263,12 +263,8 @@
           </mat-card-content>
         </mat-card>
 
-        <!-- Action Buttons -->
+        <!-- Action Button -->
         <div class="action-buttons">
-          <button mat-stroked-button class="cancel-btn" (click)="goBack()" [disabled]="sending">
-            <mat-icon>arrow_back</mat-icon>
-            Cancel
-          </button>
           <button mat-raised-button 
                   class="send-btn"
                   [class.ready]="isValid()"
@@ -278,12 +274,12 @@
             @if (sending) {
               <ng-container>
                 <mat-spinner diameter="20"></mat-spinner>
-                <span>Sending Request...</span>
+                <span>Sending...</span>
               </ng-container>
             } @else if (!pickupLat) {
               <ng-container>
                 <mat-icon>touch_app</mat-icon>
-                <span>Set Pickup Point First</span>
+                <span>Set Pickup First</span>
               </ng-container>
             } @else {
               <ng-container>

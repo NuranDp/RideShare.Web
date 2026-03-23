@@ -47,6 +47,7 @@ src/app/
 │   ├── notification-toast/ # Toast notifications
 │   ├── rating-dialog/      # Rating submission
 │   ├── ride-map/           # Ride list map view
+│   ├── ride-request-popup/ # Popup card for new ride requests
 │   ├── route-preview/      # Route visualization
 │   └── unified-route-map/  # Combined route & tracking map
 ├── layouts/

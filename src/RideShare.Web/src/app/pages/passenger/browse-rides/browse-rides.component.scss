@@ -339,6 +339,10 @@
   font-weight: 500;
   color: var(--text-primary);
   margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
 }
 
 .route-connector {
@@ -371,61 +375,10 @@
   height: 16px;
 }
 
-/* Expanded Content */
-.expanded-content {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-  animation: slideDown 0.3s ease;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .route-preview {
   border-radius: 16px;
   overflow: hidden;
-  margin-bottom: 16px;
-}
-
-.request-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px 24px;
-  border: none;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
-  color: white;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.request-btn.full {
-  width: 100%;
-}
-
-.request-btn:active {
-  transform: scale(0.98);
-}
-
-/* Expand Indicator */
-.expand-indicator {
-  display: flex;
-  justify-content: center;
   margin-top: 12px;
-  color: #ccc;
 }
 
 /* Map View */
@@ -547,5 +500,213 @@
     right: 12px;
     bottom: 12px;
     padding: 16px;
+  }
+
+  .route-inline {
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+
+  .route-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+  }
+}
+
+/* Compact Route */
+.route-section.compact {
+  margin-bottom: 12px;
+}
+
+.route-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.marker.small {
+  width: 22px;
+  height: 22px;
+  font-size: 10px;
+}
+
+.route-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.arrow-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+}
+
+/* Ride Info */
+.ride-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.info-item mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+}
+
+/* Show More Button */
+.show-more-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border: none;
+  border-radius: 20px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.show-more-btn:hover {
+  background: var(--border);
+}
+
+.show-more-btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+/* Card Actions */
+.card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+/* Request Button */
+.request-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.request-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(3, 70, 148, 0.3);
+}
+
+.request-btn:active {
+  transform: scale(0.98);
+}
+
+.request-btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+/* Expanded Details */
+.expanded-details {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.detail-row mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.origin-color {
+  color: #4caf50 !important;
+}
+
+.dest-color {
+  color: #f44336 !important;
+}
+
+/* Dark Mode Overrides */
+:host-context(.dark-theme) {
+  .time-badge {
+    background: rgba(33, 150, 243, 0.15);
+    color: #64b5f6;
+  }
+
+  .map-card-route .route-point {
+    color: var(--text-primary);
+  }
+
+  .route-arrow {
+    color: var(--text-muted);
+  }
+
+  .meta-item {
+    color: var(--text-muted);
+  }
+
+  .meta-item mat-icon {
+    color: var(--text-muted);
+  }
+
+  .search-icon {
+    background: rgba(3, 70, 148, 0.2);
+    color: #4d8fcc;
   }
 }

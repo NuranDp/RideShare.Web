@@ -1,0 +1,129 @@
+@if (pendingPopups.length > 0) {
+  <div class="popup-overlay" (click)="dismissCurrentPopup()">
+    <div class="popup-card" (click)="$event.stopPropagation()" [@slideIn]>
+      <!-- Drag Handle -->
+      <div class="drag-handle"></div>
+      
+      <!-- Request Counter -->
+      @if (pendingPopups.length > 1) {
+        <div class="request-counter">
+          <button class="nav-btn" (click)="previousRequest()" [disabled]="currentIndex === 0">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <span class="counter-text">{{ currentIndex + 1 }} of {{ pendingPopups.length }} requests</span>
+          <button class="nav-btn" (click)="nextRequest()" [disabled]="currentIndex === pendingPopups.length - 1">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      }
+
+      <!-- Header -->
+      <div class="popup-header">
+        <div class="header-icon">
+          <mat-icon>person_add</mat-icon>
+        </div>
+        <div class="header-text">
+          <span class="header-title">New Ride Request</span>
+          <span class="header-time">{{ formatRelativeTime(currentRequest.requestedAt) }}</span>
+        </div>
+        <button class="close-btn" (click)="dismissCurrentPopup()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <!-- Passenger Info -->
+      <div class="passenger-section">
+        <div class="passenger-avatar">
+          @if (currentRequest.passengerPhoto) {
+            <img [src]="currentRequest.passengerPhoto" alt="Passenger">
+          } @else {
+            <mat-icon>person</mat-icon>
+          }
+        </div>
+        <div class="passenger-details">
+          <span class="passenger-name">{{ currentRequest.passengerName }}</span>
+          <span class="passenger-subtitle">wants to join your ride</span>
+        </div>
+      </div>
+
+      <!-- Route Comparison -->
+      <div class="route-section">
+        <!-- Your Ride -->
+        <div class="route-block your-route">
+          <div class="route-label">
+            <mat-icon>two_wheeler</mat-icon>
+            <span>Your Route</span>
+          </div>
+          <div class="route-points">
+            <div class="route-point">
+              <span class="point-marker origin">A</span>
+              <span class="point-text">{{ getShortAddress(currentRequest.rideOrigin) }}</span>
+            </div>
+            <div class="route-arrow">
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+            <div class="route-point">
+              <span class="point-marker dest">B</span>
+              <span class="point-text">{{ getShortAddress(currentRequest.rideDestination) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Passenger Journey -->
+        <div class="route-block passenger-route">
+          <div class="route-label">
+            <mat-icon>hail</mat-icon>
+            <span>Passenger Journey</span>
+          </div>
+          <div class="route-points">
+            <div class="route-point">
+              <span class="point-marker pickup">P</span>
+              <span class="point-text">{{ currentRequest.pickupLocation ? getShortAddress(currentRequest.pickupLocation) : 'At ride start' }}</span>
+            </div>
+            <div class="route-arrow">
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+            <div class="route-point">
+              <span class="point-marker dropoff">D</span>
+              <span class="point-text">{{ currentRequest.dropoffLocation ? getShortAddress(currentRequest.dropoffLocation) : 'At ride end' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message -->
+      @if (currentRequest.message) {
+        <div class="message-section">
+          <mat-icon>chat_bubble_outline</mat-icon>
+          <span>"{{ currentRequest.message }}"</span>
+        </div>
+      }
+
+      <!-- Actions -->
+      <div class="popup-actions">
+        <button class="action-btn view" matRipple (click)="viewDetails(currentRequest)">
+          <mat-icon>visibility</mat-icon>
+          <span>View Details</span>
+        </button>
+        <button class="action-btn reject" matRipple (click)="rejectRequest(currentRequest)" 
+                [disabled]="processingRequest === currentRequest.id">
+          @if (processingRequest === currentRequest.id && processingAction === 'reject') {
+            <mat-icon class="spinning">sync</mat-icon>
+          } @else {
+            <mat-icon>close</mat-icon>
+          }
+          <span>Decline</span>
+        </button>
+        <button class="action-btn accept" matRipple (click)="acceptRequest(currentRequest)"
+                [disabled]="processingRequest === currentRequest.id">
+          @if (processingRequest === currentRequest.id && processingAction === 'accept') {
+            <mat-icon class="spinning">sync</mat-icon>
+          } @else {
+            <mat-icon>check</mat-icon>
+          }
+          <span>Accept</span>
+        </button>
+      </div>
+    </div>
+  </div>
+}

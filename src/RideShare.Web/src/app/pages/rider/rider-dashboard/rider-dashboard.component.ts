@@ -77,10 +77,15 @@ export class RiderDashboardComponent implements OnInit, AfterViewChecked, OnDest
   ) {}
 
   ngOnInit(): void {
-    // Check for tab query param
+    // Check for tab and requestId query params
     this.route.queryParams.subscribe(params => {
       if (params['tab'] && ['rides', 'requests', 'profile'].includes(params['tab'])) {
         this.activeTab = params['tab'] as 'rides' | 'requests' | 'profile';
+      }
+      // Auto-expand specific request if requestId is provided
+      if (params['requestId']) {
+        this.expandedRequestId = params['requestId'];
+        this.mapInitialized = false;
       }
     });
     

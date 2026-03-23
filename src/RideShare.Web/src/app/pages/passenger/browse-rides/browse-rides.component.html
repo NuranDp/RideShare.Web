@@ -134,61 +134,78 @@
                   }
                 </div>
               </div>
-              <div class="helmet-badge" [class.provided]="ride.helmetProvided">
-                <mat-icon>{{ ride.helmetProvided ? 'check_circle' : 'cancel' }}</mat-icon>
-                <span>{{ ride.helmetProvided ? 'Helmet' : 'No helmet' }}</span>
+            </div>
+
+            <!-- Route Section - Compact -->
+            <div class="route-section compact">
+              <div class="route-inline">
+                <span class="marker small origin">A</span>
+                <span class="route-text">{{ getShortAddress(ride.origin) }}</span>
+                <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+                <span class="marker small dest">B</span>
+                <span class="route-text">{{ getShortAddress(ride.destination) }}</span>
               </div>
             </div>
 
-            <!-- Route Section -->
-            <div class="route-section">
-              <div class="route-point">
-                <span class="marker origin">A</span>
-                <div class="route-details">
-                  <span class="route-label">Pickup</span>
-                  <span class="route-address">{{ ride.origin }}</span>
+            <!-- Expandable Details -->
+            @if (expandedRideId === ride.id) {
+              <div class="expanded-details">
+                <div class="detail-row">
+                  <mat-icon class="origin-color">trip_origin</mat-icon>
+                  <span>{{ ride.origin }}</span>
+                </div>
+                <div class="detail-row">
+                  <mat-icon class="dest-color">location_on</mat-icon>
+                  <span>{{ ride.destination }}</span>
                 </div>
               </div>
-              <div class="route-connector">
-                <div class="connector-line"></div>
+            }
+
+            <!-- Ride Info -->
+            <div class="ride-info">
+              <div class="info-item">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ formatDateTime(ride.departureTime) }}</span>
               </div>
-              <div class="route-point">
-                <span class="marker dest">B</span>
-                <div class="route-details">
-                  <span class="route-label">Drop-off</span>
-                  <span class="route-address">{{ ride.destination }}</span>
-                </div>
+              <div class="info-item">
+                <mat-icon>sports_motorsports</mat-icon>
+                <span>{{ ride.helmetProvided ? 'Helmet provided' : 'No helmet' }}</span>
               </div>
             </div>
 
-            <!-- Time Badge -->
-            <div class="time-badge">
-              <mat-icon>schedule</mat-icon>
-              <span>{{ formatDateTime(ride.departureTime) }}</span>
+            <!-- Card Actions -->
+            <div class="card-actions">
+              <button class="show-more-btn" (click)="toggleExpand(ride.id); $event.stopPropagation()">
+                <mat-icon>{{ expandedRideId === ride.id ? 'expand_less' : 'expand_more' }}</mat-icon>
+                {{ expandedRideId === ride.id ? 'Less' : 'Details' }}
+              </button>
+              <button class="request-btn" (click)="requestRide(ride); $event.stopPropagation()">
+                <mat-icon>send</mat-icon>
+                Request to Join
+              </button>
             </div>
 
             <!-- Expanded Content -->
             @if (expandedRideId === ride.id) {
-              <div class="expanded-content">
-                @if (ride.originLat && ride.originLng && ride.destLat && ride.destLng) {
-                  <div class="route-preview">
-                    <app-route-preview
-                      [origin]="{ lat: ride.originLat, lng: ride.originLng, address: ride.origin }"
-                      [destination]="{ lat: ride.destLat, lng: ride.destLng, address: ride.destination }">
-                    </app-route-preview>
-                  </div>
-                }
-                <button class="request-btn full" (click)="requestRide(ride); $event.stopPropagation()">
-                  <mat-icon>send</mat-icon>
-                  Request to Join
-                </button>
+              <div class="expanded-details">
+                <div class="detail-row">
+                  <mat-icon class="origin-color">trip_origin</mat-icon>
+                  <span>{{ ride.origin }}</span>
+                </div>
+                <div class="detail-row">
+                  <mat-icon class="dest-color">location_on</mat-icon>
+                  <span>{{ ride.destination }}</span>
+                </div>
               </div>
+              @if (ride.originLat && ride.originLng && ride.destLat && ride.destLng) {
+                <div class="route-preview">
+                  <app-route-preview
+                    [origin]="{ lat: ride.originLat, lng: ride.originLng, address: ride.origin }"
+                    [destination]="{ lat: ride.destLat, lng: ride.destLng, address: ride.destination }">
+                  </app-route-preview>
+                </div>
+              }
             }
-
-            <!-- Expand Indicator -->
-            <div class="expand-indicator">
-              <mat-icon>{{ expandedRideId === ride.id ? 'expand_less' : 'expand_more' }}</mat-icon>
-            </div>
           </div>
         }
       </div>

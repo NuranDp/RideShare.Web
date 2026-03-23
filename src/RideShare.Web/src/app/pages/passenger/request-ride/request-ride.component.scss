@@ -91,7 +91,7 @@
   grid-template-columns: 400px 1fr;
   gap: 24px;
   padding: 24px;
-  padding-bottom: 100px;
+  padding-bottom: 24px;
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -107,6 +107,7 @@
 mat-card {
   border-radius: 16px !important;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08) !important;
+  background: white !important;
 }
 
 mat-card-header {
@@ -115,12 +116,20 @@ mat-card-header {
 
 mat-card-content {
   padding: 16px;
+  background: white;
+  border-radius: 0 0 16px 16px;
 }
 
 ::ng-deep .mat-mdc-card-avatar {
   background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
   color: white !important;
   border-radius: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 40px !important;
+  height: 40px !important;
+  font-size: 22px !important;
 }
 
 /* Ride Summary Card */
@@ -546,38 +555,12 @@ mat-card-content {
 
 /* Action Buttons */
 .action-buttons {
-  display: flex;
-  gap: 12px;
-  padding-top: 8px;
-  position: sticky;
-  bottom: 80px;
-  background: var(--bg-card);
-  padding: 16px;
-  margin: -16px;
-  margin-top: 8px;
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  z-index: 10;
-}
-
-.cancel-btn {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 0 16px;
-  height: 48px;
-  border-radius: 24px;
-}
-
-.cancel-btn mat-icon {
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
+  padding: 16px 0;
+  padding-bottom: 80px;
 }
 
 .send-btn {
-  flex: 1;
+  width: 100%;
   height: 52px;
   border-radius: 26px;
   background: #bdbdbd;
@@ -608,8 +591,14 @@ mat-card-content {
 
 .send-btn.ready {
   background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
+  color: white !important;
   cursor: pointer;
   box-shadow: 0 4px 20px rgba(3, 70, 148, 0.35);
+}
+
+.send-btn.ready mat-icon,
+.send-btn.ready span {
+  color: white !important;
 }
 
 .send-btn.ready:not(:disabled):hover {
@@ -749,7 +738,7 @@ mat-card-content {
   .content-wrapper {
     grid-template-columns: 1fr;
     padding: 16px;
-    padding-bottom: 100px;
+    padding-bottom: 120px;
   }
 
   .map-column {
@@ -774,6 +763,16 @@ mat-card-content {
   .back-btn-fixed {
     top: 12px;
     left: 12px;
+  }
+
+  .action-buttons {
+    padding: 12px 16px;
+    padding-bottom: 100px;
+  }
+
+  .send-btn {
+    height: 48px;
+    font-size: 14px;
   }
 }
 
@@ -813,4 +812,141 @@ mat-card-content {
 
 .nav-item.active {
   color: #034694;
+}
+
+/* Dark Mode Overrides */
+:host-context(.dark-theme) {
+  .badge.time {
+    background: rgba(255, 152, 0, 0.15);
+    color: #ffb74d;
+  }
+
+  .badge.helmet {
+    background: rgba(76, 175, 80, 0.15);
+    color: #81c784;
+  }
+
+  .badge.bike {
+    background: rgba(33, 150, 243, 0.15);
+    color: #64b5f6;
+  }
+
+  .mode-btn.active.pickup {
+    border-color: #9c27b0;
+    background: rgba(156, 39, 176, 0.15);
+    color: #ce93d8;
+  }
+
+  .mode-btn.active.dropoff {
+    border-color: #ff9800;
+    background: rgba(255, 152, 0, 0.15);
+    color: #ffb74d;
+  }
+
+  .point-input {
+    border-color: var(--border);
+  }
+
+  .point-input:hover {
+    background: var(--bg-secondary);
+  }
+
+  .point-input.active {
+    border-color: #4d8fcc;
+    background: rgba(3, 70, 148, 0.15);
+  }
+
+  .search-result-item {
+    border-bottom-color: var(--border);
+  }
+
+  .search-result-item:hover {
+    background: var(--bg-secondary);
+  }
+
+  .result-text .name {
+    color: var(--text-primary);
+  }
+
+  .result-text .address {
+    color: var(--text-muted);
+  }
+
+  .search-loading {
+    color: var(--text-muted);
+  }
+
+  .selected-badge {
+    background: rgba(76, 175, 80, 0.15);
+    color: #81c784;
+  }
+
+  .reset-btn {
+    color: var(--text-muted);
+  }
+
+  .use-location-btn {
+    color: #64b5f6;
+    border-color: #64b5f6;
+  }
+
+  .send-btn:disabled {
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+  }
+
+  .route-loading-overlay {
+    background: rgba(30, 30, 30, 0.85);
+  }
+
+  .route-loading-overlay span {
+    color: #64b5f6;
+  }
+
+  .map-legend {
+    background: rgba(30, 30, 30, 0.95);
+  }
+
+  .legend-label {
+    color: var(--text-muted);
+  }
+
+  .nav-item {
+    color: var(--text-muted);
+  }
+
+  .nav-item.active {
+    color: #4d8fcc;
+  }
+
+  /* Card styling for dark mode */
+  mat-card {
+    background: var(--bg-card) !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  mat-card-content {
+    background: var(--bg-card) !important;
+  }
+
+  mat-card-title {
+    color: var(--text-primary) !important;
+  }
+
+  mat-card-subtitle {
+    color: var(--text-muted) !important;
+  }
+
+  /* Route flow section */
+  .route-connector mat-icon {
+    color: var(--text-muted);
+  }
+
+  .rider-avatar {
+    background: var(--bg-secondary);
+  }
+
+  .rider-avatar mat-icon {
+    color: var(--text-muted);
+  }
 }
