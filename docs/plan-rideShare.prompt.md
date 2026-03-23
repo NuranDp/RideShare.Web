@@ -457,7 +457,7 @@ CREATE TABLE Ratings (
 ### Phase 5: Real-Time & Maps (Week 5) ✅
 - [x] Add rating system after ride completion
 - [x] Add real-time notifications (SignalR)
-- [x] Ride request popup cards for riders (shows passenger route details when notification arrives)
+- [x] Ride request popup cards for riders (bottom sheet with passenger route details, multi-request navigation, blurred background)
 - [x] Integrate Leaflet.js maps for:
   - Ride posting (origin/destination selection)
   - Browse rides (map view with markers)

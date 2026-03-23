@@ -51,7 +51,7 @@ A motorcycle-based ride-sharing platform where riders post their commute routes 
 
 ### Real-Time Features (SignalR)
 - **Instant Notifications**: Ride requests, status changes, acceptances
-- **Ride Request Popup Cards**: Instant popup with passenger route details when requests arrive
+- **Ride Request Popup Cards**: Bottom sheet popup with passenger route details, multi-request navigation (1 of N), blurred background, one-handed operation friendly
 - **Live Location Tracking**: GPS updates every 5 seconds during rides
 - **ETA Calculations**: Estimated arrival time for passengers
 
