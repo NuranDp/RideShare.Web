@@ -438,7 +438,7 @@ CREATE TABLE Ratings (
 - [x] Angular: Admin dashboard
 
 ### Phase 5: Mobile & PWA Support ✅
-- [x] Dark/Light mode with user-specific preference
+- [x] Dark/Light mode with user-specific preference (toggle switch in profile menu)
 - [x] Theme synced across devices via API
 - [x] PWA support with service worker
 - [x] Web app manifest for home screen install

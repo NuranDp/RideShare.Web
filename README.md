@@ -23,7 +23,7 @@ A motorcycle-based ride-sharing platform where riders post their commute routes 
 - **User Authentication**: JWT-based auth with role selection (Rider/Passenger)
 - **Role-Based Access Control**: Rider, Passenger, and Admin roles
 - **Profile Management**: Emergency contact info, profile photos
-- **Dark/Light Mode**: User-specific theme preference synced across devices
+- **Dark/Light Mode**: User-specific theme preference with toggle switch in profile menu, synced across devices
 
 ### Rider Features
 - **License Verification**: Submit license for admin approval
