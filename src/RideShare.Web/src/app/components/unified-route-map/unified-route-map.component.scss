@@ -48,6 +48,15 @@
   background: linear-gradient(135deg, #f44336, #c62828);
 }
 
+/* Location button (use current location) */
+.location-input-row > button.mat-mdc-icon-button {
+  color: var(--text-secondary) !important;
+  
+  mat-icon {
+    color: var(--text-secondary) !important;
+  }
+}
+
 .search-field {
   flex: 1;
 }
@@ -56,7 +65,7 @@
   display: none;
 }
 
-/* Dark mode support for form fields */
+/* Form field styling (all themes) */
 ::ng-deep .search-field {
   .mat-mdc-text-field-wrapper {
     background-color: var(--bg-card) !important;
@@ -76,8 +85,55 @@
     border-color: var(--border-color) !important;
   }
   
+  /* Label styling */
+  .mat-mdc-floating-label,
+  .mdc-floating-label {
+    color: var(--text-secondary) !important;
+  }
+  
+  /* Icon colors */
+  .mat-mdc-form-field-icon-prefix,
   .mat-mdc-form-field-icon-suffix {
-    color: var(--text-secondary);
+    color: var(--text-secondary) !important;
+    
+    mat-icon {
+      color: var(--text-secondary) !important;
+    }
+    
+    .mat-mdc-icon-button {
+      color: var(--text-secondary) !important;
+    }
+  }
+}
+
+/* Hide placeholder when not focused to prevent overlap with label */
+::ng-deep .search-field:not(.mat-focused) input::placeholder {
+  color: transparent !important;
+  opacity: 0 !important;
+}
+
+/* Show placeholder only when focused (label floats up) */
+::ng-deep .search-field.mat-focused input::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 0.7 !important;
+}
+
+/* Autocomplete panel styling */
+::ng-deep .mat-mdc-autocomplete-panel {
+  background: var(--bg-card) !important;
+  
+  .mat-mdc-option {
+    color: var(--text-primary) !important;
+    
+    mat-icon {
+      color: var(--text-secondary) !important;
+      margin-right: 8px;
+    }
+    
+    &:hover,
+    &.mat-mdc-option-active {
+      background: var(--bg-hover) !important;
+    }
   }
 }
 

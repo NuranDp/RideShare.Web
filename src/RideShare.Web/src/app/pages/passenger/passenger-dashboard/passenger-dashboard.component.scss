@@ -556,6 +556,18 @@
   color: var(--text-muted);
 }
 
+.toggle-switch {
+  font-size: 36px !important;
+  width: 36px !important;
+  height: 36px !important;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+
+.theme-toggle-item .toggle-switch {
+  color: var(--primary);
+}
+
 /* Action Buttons */
 .action-btn {
   display: inline-flex;

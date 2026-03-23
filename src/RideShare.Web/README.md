@@ -18,32 +18,48 @@ Angular 19 frontend for the RideShare motorcycle ride-sharing platform with PWA 
 src/app/
 ├── pages/
 │   ├── admin/              # Admin dashboard, license review
+│   │   ├── admin-dashboard/
+│   │   └── license-review/
 │   ├── rider/              # Post ride, my rides, profile
+│   │   ├── my-rides/
+│   │   ├── post-ride/
+│   │   ├── ride-requests-dialog/
+│   │   ├── ride-requests-page/
+│   │   ├── rider-dashboard/
+│   │   ├── rider-profile/
+│   │   └── rider-ratings/
 │   ├── passenger/          # Browse rides, track, requests
+│   │   ├── browse-rides/
+│   │   ├── my-requests/
+│   │   ├── passenger-dashboard/
+│   │   ├── request-ride/
+│   │   ├── request-ride-dialog/
+│   │   ├── ride-history/
+│   │   └── track-ride/
+│   ├── shared/             # Shared pages
+│   │   └── emergency-contact/
 │   ├── login/
 │   └── register/
 ├── components/
+│   ├── confirm-dialog/     # Confirmation dialogs
 │   ├── location-picker/    # Reusable map location selector
+│   ├── notification-bell/  # Notification indicator
+│   ├── notification-toast/ # Toast notifications
+│   ├── rating-dialog/      # Rating submission
 │   ├── ride-map/           # Ride list map view
 │   ├── route-preview/      # Route visualization
-│   ├── unified-route-map/  # Combined route & tracking map
-│   ├── rating-dialog/      # Rating submission
-│   ├── confirm-dialog/     # Confirmation dialogs
-│   ├── notification-bell/  # Notification indicator
-│   └── notification-toast/ # Toast notifications
+│   └── unified-route-map/  # Combined route & tracking map
+├── layouts/
+│   ├── passenger-layout/   # Passenger navigation layout
+│   └── rider-layout/       # Rider navigation layout
 ├── services/
+│   ├── admin.service.ts          # Admin operations
 │   ├── auth.service.ts           # Authentication
+│   ├── location-tracking.service.ts  # Live GPS tracking
+│   ├── notification.service.ts   # SignalR notifications
 │   ├── ride.service.ts           # Ride CRUD operations
 │   ├── rider.service.ts          # Rider profile
-│   ├── admin.service.ts          # Admin operations
-│   ├── notification.service.ts   # SignalR notifications
-│   ├── theme.service.ts          # Dark/light mode
-│   ├── platform.service.ts       # Native platform detection
-│   ├── push-notification.service.ts  # FCM push notifications
-│   ├── native-location.service.ts    # Native GPS service
-│   ├── camera.service.ts         # Native camera access
-│   ├── app.service.ts            # App lifecycle & back button
-│   └── location-tracking.service.ts  # Live GPS tracking
+│   └── theme.service.ts          # Dark/light mode
 ├── guards/                 # Route guards
 ├── interceptors/           # HTTP interceptors (JWT)
 └── models/                 # TypeScript interfaces

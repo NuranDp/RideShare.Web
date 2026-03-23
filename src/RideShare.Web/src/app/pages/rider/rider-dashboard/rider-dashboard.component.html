@@ -396,6 +396,19 @@
         </div>
 
         <div class="menu-section">
+          <div class="menu-item theme-toggle-item" matRipple (click)="themeService.toggleTheme()">
+            <div class="menu-icon">
+              <mat-icon>{{ themeService.isDark() ? 'dark_mode' : 'light_mode' }}</mat-icon>
+            </div>
+            <div class="menu-content">
+              <span class="menu-title">Dark Mode</span>
+              <span class="menu-subtitle">{{ themeService.isDark() ? 'On' : 'Off' }}</span>
+            </div>
+            <mat-icon class="toggle-switch">{{ themeService.isDark() ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+          </div>
+        </div>
+
+        <div class="menu-section">
           <div class="menu-item logout" matRipple (click)="logout()">
             <div class="menu-icon logout">
               <mat-icon>logout</mat-icon>

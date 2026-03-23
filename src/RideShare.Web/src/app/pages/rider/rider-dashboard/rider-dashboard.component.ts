@@ -13,6 +13,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AuthService } from '../../../services/auth.service';
 import { RiderService } from '../../../services/rider.service';
 import { RideService } from '../../../services/ride.service';
+import { ThemeService } from '../../../services/theme.service';
 import { PendingRequestWithRide } from '../../../models/ride.model';
 import * as L from 'leaflet';
 
@@ -69,6 +70,7 @@ export class RiderDashboardComponent implements OnInit, AfterViewChecked, OnDest
     public authService: AuthService,
     private riderService: RiderService,
     private rideService: RideService,
+    public themeService: ThemeService,
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar

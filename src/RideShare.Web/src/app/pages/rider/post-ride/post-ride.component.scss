@@ -127,6 +127,11 @@
   input.mat-mdc-input-element,
   textarea.mat-mdc-input-element {
     color: var(--text-primary) !important;
+    
+    &::placeholder {
+      color: var(--text-muted) !important;
+      opacity: 0.7;
+    }
   }
   
   .mdc-notched-outline__leading,
@@ -135,8 +140,24 @@
     border-color: var(--border-color) !important;
   }
   
-  .mat-mdc-floating-label {
+  /* Label styling */
+  .mat-mdc-floating-label,
+  .mdc-floating-label {
     color: var(--text-secondary) !important;
+  }
+  
+  /* Fix prefix/suffix icon colors */
+  .mat-mdc-form-field-icon-prefix,
+  .mat-mdc-form-field-icon-suffix {
+    color: var(--text-secondary) !important;
+    
+    mat-icon {
+      color: var(--text-secondary) !important;
+    }
+    
+    .mat-mdc-icon-button {
+      color: var(--text-secondary) !important;
+    }
   }
 }
 

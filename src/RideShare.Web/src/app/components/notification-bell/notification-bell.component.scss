@@ -2,6 +2,23 @@
   display: contents;
 }
 
+/* Notification Bell Button - Dark mode support */
+:host ::ng-deep .mat-mdc-icon-button {
+  color: var(--text-secondary) !important;
+  
+  .mat-icon {
+    color: var(--text-secondary) !important;
+  }
+  
+  &:hover {
+    color: var(--primary) !important;
+    
+    .mat-icon {
+      color: var(--primary) !important;
+    }
+  }
+}
+
 /* Header */
 .notification-header {
   display: flex;

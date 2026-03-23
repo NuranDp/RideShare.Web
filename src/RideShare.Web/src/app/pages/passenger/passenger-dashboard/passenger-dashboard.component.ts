@@ -7,6 +7,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { AuthService } from '../../../services/auth.service';
 import { RideService } from '../../../services/ride.service';
+import { ThemeService } from '../../../services/theme.service';
 
 @Component({
   selector: 'app-passenger-dashboard',
@@ -38,6 +39,7 @@ export class PassengerDashboardComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private rideService: RideService,
+    public themeService: ThemeService,
     private router: Router,
     private route: ActivatedRoute
   ) {}

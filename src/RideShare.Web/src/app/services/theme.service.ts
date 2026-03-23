@@ -78,6 +78,18 @@ export class ThemeService {
     
     const token = localStorage.getItem('auth_token');
     if (token) {
+      // Also update the user object in localStorage to keep it in sync
+      const userJson = localStorage.getItem('current_user');
+      if (userJson) {
+        try {
+          const user = JSON.parse(userJson);
+          user.themePreference = theme;
+          localStorage.setItem('current_user', JSON.stringify(user));
+        } catch {
+          // Ignore parse errors
+        }
+      }
+      
       this.http.put(`${this.apiUrl}/theme`, { theme }).subscribe({
         error: (err) => console.error('Failed to save theme preference:', err)
       });

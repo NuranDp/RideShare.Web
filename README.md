@@ -82,29 +82,48 @@ ride-share/
 │       └── src/app/
 │           ├── pages/          # Feature modules
 │           │   ├── admin/      # License review, dashboard
+│           │   │   ├── admin-dashboard/
+│           │   │   └── license-review/
 │           │   ├── rider/      # Post ride, my rides, profile
+│           │   │   ├── my-rides/
+│           │   │   ├── post-ride/
+│           │   │   ├── ride-requests-dialog/
+│           │   │   ├── ride-requests-page/
+│           │   │   ├── rider-dashboard/
+│           │   │   ├── rider-profile/
+│           │   │   └── rider-ratings/
 │           │   ├── passenger/  # Browse, track, requests
+│           │   │   ├── browse-rides/
+│           │   │   ├── my-requests/
+│           │   │   ├── passenger-dashboard/
+│           │   │   ├── request-ride/
+│           │   │   ├── request-ride-dialog/
+│           │   │   ├── ride-history/
+│           │   │   └── track-ride/
+│           │   ├── shared/     # Shared pages
+│           │   │   └── emergency-contact/
 │           │   ├── login/
 │           │   └── register/
 │           ├── components/     # Shared components
+│           │   ├── confirm-dialog/
 │           │   ├── location-picker/
+│           │   ├── notification-bell/
+│           │   ├── notification-toast/
+│           │   ├── rating-dialog/
 │           │   ├── ride-map/
 │           │   ├── route-preview/
-│           │   ├── unified-route-map/
-│           │   ├── rating-dialog/
-│           │   ├── confirm-dialog/
-│           │   ├── notification-bell/
-│           │   └── notification-toast/
-│           └── services/       # API & native services
+│           │   └── unified-route-map/
+│           ├── layouts/        # Layout components
+│           │   ├── passenger-layout/
+│           │   └── rider-layout/
+│           └── services/       # API services
+│               ├── admin.service.ts
 │               ├── auth.service.ts
-│               ├── ride.service.ts
+│               ├── location-tracking.service.ts
 │               ├── notification.service.ts
-│               ├── theme.service.ts
-│               ├── platform.service.ts
-│               ├── push-notification.service.ts
-│               ├── native-location.service.ts
-│               ├── camera.service.ts
-│               └── app.service.ts
+│               ├── ride.service.ts
+│               ├── rider.service.ts
+│               └── theme.service.ts
 │
 ├── database/
 │   ├── migrations/             # SQL migration scripts

@@ -428,4 +428,32 @@ body.dark-theme {
       color: var(--primary) !important;
     }
   }
+  
+  /* Form field icons (prefix/suffix) */
+  .mat-mdc-form-field-icon-prefix,
+  .mat-mdc-form-field-icon-suffix {
+    color: var(--text-secondary) !important;
+    
+    mat-icon {
+      color: var(--text-secondary) !important;
+    }
+    
+    .mat-mdc-icon-button {
+      color: var(--text-secondary) !important;
+      
+      mat-icon {
+        color: var(--text-secondary) !important;
+      }
+    }
+  }
+  
+  /* Hide placeholder when label is present and field is not focused */
+  .mat-mdc-form-field:not(.mat-focused) .mat-mdc-input-element::placeholder {
+    color: transparent !important;
+  }
+  
+  /* Show placeholder when focused */
+  .mat-mdc-form-field.mat-focused .mat-mdc-input-element::placeholder {
+    color: var(--text-muted) !important;
+  }
 }
