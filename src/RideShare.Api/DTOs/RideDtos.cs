@@ -45,6 +45,11 @@ public class RideDto
     public string Status { get; set; } = string.Empty;
     public int RequestCount { get; set; }
     public DateTime CreatedAt { get; set; }
+    // Accepted passenger info (for active rides)
+    public Guid? PassengerId { get; set; }
+    public string? PassengerName { get; set; }
+    public string? PassengerPhone { get; set; }
+    public string? PassengerPhoto { get; set; }
 }
 
 public class RideListDto

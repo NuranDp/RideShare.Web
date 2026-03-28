@@ -1,0 +1,94 @@
+<div class="ride-status-overlay">
+  <!-- Icon -->
+  <div class="status-icon-wrapper">
+    <div class="status-circle" [class]="data.type">
+      <mat-icon>{{ icon }}</mat-icon>
+    </div>
+    @if (data.type === 'started' || data.type === 'arrived') {
+      <div class="pulse-ring"></div>
+      <div class="pulse-ring delay"></div>
+    }
+  </div>
+
+  <h2 class="title">{{ title }}</h2>
+  <p class="subtitle">{{ subtitle }}</p>
+
+  <!-- Ride Report (completed only) -->
+  @if (data.type === 'completed') {
+    <div class="ride-report">
+      <!-- Stats row -->
+      <div class="report-stats">
+        @if (duration) {
+          <div class="stat-item">
+            <mat-icon>schedule</mat-icon>
+            <span class="stat-value">{{ duration }}</span>
+            <span class="stat-label">Duration</span>
+          </div>
+        }
+        @if (completionTime) {
+          <div class="stat-item">
+            <mat-icon>check_circle</mat-icon>
+            <span class="stat-value">{{ completionTime }}</span>
+            <span class="stat-label">Completed</span>
+          </div>
+        }
+      </div>
+
+      <!-- Route -->
+      <div class="route-summary">
+        <div class="route-point">
+          <span class="dot origin"></span>
+          <span class="address">{{ data.origin }}</span>
+        </div>
+        <div class="route-line"></div>
+        <div class="route-point">
+          <span class="dot dest"></span>
+          <span class="address">{{ data.destination }}</span>
+        </div>
+      </div>
+
+      <!-- Rider & vehicle info -->
+      <div class="rider-card">
+        <div class="rider-card-row">
+          <mat-icon>person</mat-icon>
+          <span class="rider-name">{{ data.riderName }}</span>
+        </div>
+        @if (data.vehicleModel || data.plateNumber) {
+          <div class="rider-card-row secondary">
+            <mat-icon>two_wheeler</mat-icon>
+            <span>{{ data.vehicleModel }}{{ data.vehicleModel && data.plateNumber ? ' · ' : '' }}{{ data.plateNumber }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <!-- Standard view for other types -->
+    <div class="route-summary">
+      <div class="route-point">
+        <span class="dot origin"></span>
+        <span class="address">{{ data.origin }}</span>
+      </div>
+      <div class="route-line"></div>
+      <div class="route-point">
+        <span class="dot dest"></span>
+        <span class="address">{{ data.destination }}</span>
+      </div>
+    </div>
+
+    <div class="rider-info">
+      <mat-icon>two_wheeler</mat-icon>
+      <span>{{ data.riderName }}</span>
+    </div>
+  }
+
+  <!-- Actions -->
+  <div class="actions">
+    <button class="btn-primary" [class]="data.type" (click)="primaryAction()">
+      <mat-icon>{{ actionIcon }}</mat-icon>
+      {{ actionLabel }}
+    </button>
+    <button class="btn-secondary" (click)="dismiss()">
+      Dismiss
+    </button>
+  </div>
+</div>

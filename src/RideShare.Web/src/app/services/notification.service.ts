@@ -1,5 +1,6 @@
 import { Injectable, signal, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { Subject } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
 import { AuthService } from './auth.service';
 
@@ -23,9 +24,15 @@ export class NotificationService {
   private notificationsSignal = signal<Notification[]>([]);
   private connectionStateSignal = signal<'disconnected' | 'connecting' | 'connected'>('disconnected');
   
+  // Type-specific notification streams for reactive UI updates
+  private rideNotification$ = new Subject<Notification>();
+  
   notifications = this.notificationsSignal.asReadonly();
   connectionState = this.connectionStateSignal.asReadonly();
   unreadCount = computed(() => this.notificationsSignal().filter(n => !n.read).length);
+  
+  /** Emits notifications relevant to ride status changes (accepted, started, completed, cancelled) */
+  onRideNotification$ = this.rideNotification$.asObservable();
   
   private authService = inject(AuthService);
 
@@ -71,6 +78,12 @@ export class NotificationService {
       };
       
       this.notificationsSignal.update(notifications => [newNotification, ...notifications]);
+      
+      // Emit ride-specific notifications for reactive UI
+      const rideTypes = ['request_accepted', 'request_rejected', 'ride_started', 'ride_completed', 'ride_cancelled', 'rider_arrived', 'ondemand_accepted', 'ondemand_expired'];
+      if (rideTypes.includes(newNotification.type)) {
+        this.rideNotification$.next(newNotification);
+      }
       
       // Show browser notification if supported and permitted
       this.showBrowserNotification(newNotification);

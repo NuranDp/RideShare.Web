@@ -25,6 +25,8 @@ A registered user who has a vehicle and offers rides to passengers.
 | UC-R8: View My Posted Rides | Dashboard of all rides I've posted |
 | UC-R9: Mark Ride Complete | Mark a ride as completed after trip |
 | UC-R10: View Ride History | See past completed/cancelled rides |
+| UC-R11: View Nearby On-Demand Requests | See on-demand requests from nearby passengers |
+| UC-R12: Accept On-Demand Request | Accept a nearby passenger's instant request |
 
 ### Actor 2: Passenger
 A registered user looking to find and join available rides.
@@ -42,6 +44,8 @@ A registered user looking to find and join available rides.
 | UC-P9: View Booked Rides | See confirmed upcoming rides |
 | UC-P10: Rate Rider | Rate rider after completing a ride |
 | UC-P11: View Ride History | See past completed rides |
+| UC-P12: Request On-Demand Ride | Uber-style instant pickup request |
+| UC-P13: Cancel On-Demand Request | Cancel a searching/pending request |
 
 ### Actor 3: Super Admin
 System administrator with full control over the platform.
@@ -79,12 +83,14 @@ ride-share/
 │   │   ├── Controllers/        # API endpoints
 │   │   │   ├── AdminController.cs
 │   │   │   ├── AuthController.cs
+│   │   │   ├── OnDemandController.cs
 │   │   │   ├── RiderController.cs
 │   │   │   └── RidesController.cs
 │   │   ├── DTOs/               # Data transfer objects
 │   │   ├── Services/           # Business logic
 │   │   │   ├── AuthService.cs
 │   │   │   ├── NotificationService.cs
+│   │   │   ├── OnDemandService.cs
 │   │   │   ├── RiderService.cs
 │   │   │   └── RideService.cs
 │   │   ├── Data/               # DbContext
@@ -104,7 +110,9 @@ ride-share/
 │           │   │   ├── admin-dashboard/
 │           │   │   └── license-review/
 │           │   ├── rider/      # Post ride, my rides, profile
+│           │   │   ├── active-ride/
 │           │   │   ├── my-rides/
+│           │   │   ├── nearby-requests/
 │           │   │   ├── post-ride/
 │           │   │   ├── ride-requests-dialog/
 │           │   │   ├── ride-requests-page/
@@ -115,6 +123,7 @@ ride-share/
 │           │   │   ├── browse-rides/
 │           │   │   ├── my-requests/
 │           │   │   ├── passenger-dashboard/
+│           │   │   ├── request-ondemand/
 │           │   │   ├── request-ride/
 │           │   │   ├── request-ride-dialog/
 │           │   │   ├── ride-history/
@@ -128,9 +137,12 @@ ride-share/
 │           │   ├── location-picker/
 │           │   ├── notification-bell/
 │           │   ├── notification-toast/
+│           │   ├── ondemand-request-popup/
 │           │   ├── rating-dialog/
+│           │   ├── ride-accepted-dialog/
 │           │   ├── ride-map/
 │           │   ├── ride-request-popup/
+│           │   ├── ride-status-dialog/
 │           │   ├── route-preview/
 │           │   └── unified-route-map/
 │           ├── layouts/        # Layout components
@@ -227,6 +239,17 @@ ride-share/
 - **Passenger Dashboard**: My requests, booked rides, ride history
 - **Admin Dashboard**: User management, ride oversight, platform stats
 
+### 6. On-Demand Ride Flow (Uber-Style)
+- Passenger requests an instant pickup with pickup & drop-off coordinates
+- Request broadcast to all nearby verified riders within configurable radius (default 10 km)
+- Riders see the request card in `nearby-requests/` with distance, route info, and passenger details
+- First rider to accept wins; request instantly moves to `Accepted` state
+- A real `Ride` entity is automatically created on acceptance
+- Passenger gets `ondemand_accepted` SignalR notification and is redirected to live tracking
+- Request expires automatically after 15 minutes if no rider accepts (`ondemand_expired` notification)
+- Accepted resume guard: only resume an accepted on-demand request if accepted within the last 2 hours
+- Request status lifecycle: `Searching → Accepted → Completed | Cancelled | Expired`
+
 ---
 
 ## Database Schema
@@ -293,6 +316,7 @@ CREATE TABLE Rides (
     CurrentLat FLOAT,
     CurrentLng FLOAT,
     LastLocationUpdate DATETIME2,
+    ArrivalNotified BIT DEFAULT 0,  -- Prevents duplicate rider_arrived notifications
     CreatedAt DATETIME2 DEFAULT GETUTCDATE(),
     UpdatedAt DATETIME2
 );
@@ -315,6 +339,28 @@ CREATE TABLE RideRequests (
     DropoffLng FLOAT,
     CreatedAt DATETIME2 DEFAULT GETUTCDATE(),
     UpdatedAt DATETIME2
+);
+```
+
+### OnDemandRequests Table
+```sql
+CREATE TABLE OnDemandRequests (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    PassengerId UNIQUEIDENTIFIER NOT NULL FOREIGN KEY REFERENCES Users(Id),
+    PickupLocation NVARCHAR(255) NOT NULL,
+    PickupLat FLOAT NOT NULL,
+    PickupLng FLOAT NOT NULL,
+    DropoffLocation NVARCHAR(255) NOT NULL,
+    DropoffLat FLOAT NOT NULL,
+    DropoffLng FLOAT NOT NULL,
+    RequestedTime DATETIME2 NOT NULL,
+    ExpiresAt DATETIME2 NOT NULL,           -- Auto-expire after 15 mins
+    Status NVARCHAR(20) DEFAULT 'Searching', -- Searching, Accepted, Cancelled, Expired, Completed
+    AcceptedRiderId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Users(Id),
+    AcceptedAt DATETIME2,
+    RideId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Rides(Id),  -- Created on acceptance
+    Message NVARCHAR(500),
+    CreatedAt DATETIME2 DEFAULT GETUTCDATE()
 );
 ```
 
@@ -385,7 +431,16 @@ CREATE TABLE Ratings (
 | `/hubs/location` | `UpdateLocation` | Rider broadcasts GPS position |
 | `/hubs/location` | `JoinRideTracking` | Passenger joins ride tracking |
 | `/hubs/notifications` | `ReceiveNotification` | Real-time notifications |
-
+### On-Demand Rides
+| Method | Endpoint | Description |
+|--------|----------|--------------|
+| POST | `/api/on-demand/request` | Create on-demand request (Passenger) |
+| GET | `/api/on-demand/my-requests` | Get my on-demand requests (Passenger) |
+| GET | `/api/on-demand/request/{id}` | Get a specific request |
+| DELETE | `/api/on-demand/request/{id}` | Cancel on-demand request (Passenger) |
+| GET | `/api/on-demand/nearby` | Get nearby requests (Rider, ?lat=&lng=&radiusKm=) |
+| POST | `/api/on-demand/request/{id}/accept` | Accept a request (verified Rider) |
+| GET | `/api/on-demand/my-accepted` | Get rider's accepted request history |
 ### Admin
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -471,7 +526,23 @@ CREATE TABLE Ratings (
   - Route visualization
 - [x] Pickup/Drop-off point selection for passengers
 
-### Phase 6: Polish (Ongoing)
+### Phase 6: On-Demand Ride Flow ✅
+- [x] `OnDemandRequest` entity with status lifecycle (Searching → Accepted → Completed/Cancelled/Expired)
+- [x] `OnDemandController` with create, cancel, nearby, accept endpoints
+- [x] `OnDemandService` — request creation, nearby query (Haversine), first-accept race, expiry logic
+- [x] Auto-create `Ride` entity on acceptance
+- [x] `ondemand_accepted` and `ondemand_expired` SignalR notifications
+- [x] Angular: `request-ondemand/` — step-by-step passenger request flow (pickup → drop-off → confirm → searching → accepted)
+- [x] Angular: `nearby-requests/` — rider page with distance-sorted on-demand cards
+- [x] Angular: `ondemand-request-popup/` — bottom sheet popup for riders (mirrors ride-request-popup style)
+- [x] Angular: `ride-accepted-dialog/` — shown to passenger on acceptance (rider details + map)
+- [x] Angular: `ride-status-dialog/` — ride state changes (started/completed/cancelled/arrived)
+- [x] Angular: `active-ride/` — rider's in-progress ride view with live location sharing
+- [x] Auto-fix stale accepted requests in `GetMyRequestsAsync` (linked ride already done)
+- [x] Resume guard: only resume Accepted on-demand if `acceptedAt` within 2 hours
+- [x] On-demand status synced to `Completed`/`Cancelled` when linked ride finishes
+
+### Phase 7: Polish (Ongoing)
 - [ ] Mobile responsiveness
 - [ ] Email notifications
 - [ ] Admin user management page

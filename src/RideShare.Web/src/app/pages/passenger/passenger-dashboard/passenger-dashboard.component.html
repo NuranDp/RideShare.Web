@@ -17,97 +17,241 @@
         <div class="welcome-wave"></div>
       </div>
 
-      <!-- Quick Actions -->
-      <div class="quick-actions">
-        <button class="action-card primary" routerLink="/passenger/browse-rides">
-          <div class="action-icon">
-            <mat-icon>search</mat-icon>
-          </div>
-          <span class="action-label">Find a Ride</span>
-        </button>
-        <button class="action-card" routerLink="/passenger/my-requests">
-          <div class="action-icon">
-            <mat-icon>pending_actions</mat-icon>
-          </div>
-          <span class="action-label">My Requests</span>
-          @if (pendingCount > 0) {
-            <span class="action-badge">{{ pendingCount }}</span>
+      <!-- Home Tab Strip -->
+      <div class="home-tab-strip">
+        <button class="home-tab-btn" [class.active]="activeHomeTab === 'find'" (click)="setHomeTab('find')">
+          <mat-icon>search</mat-icon>
+          <span>Find Rides</span>
+          @if (upcomingRides.length > 0) {
+            <span class="home-tab-badge">{{ upcomingRides.length }}</span>
           }
+        </button>
+        <button class="home-tab-btn" [class.active]="activeHomeTab === 'request'" (click)="setHomeTab('request')">
+          <mat-icon>hail</mat-icon>
+          <span>Request Ride</span>
         </button>
       </div>
 
-      <!-- Active Rides Section -->
-      <div class="section">
-        <div class="section-title">
-          <mat-icon>schedule</mat-icon>
-          <span>Upcoming Rides</span>
-        </div>
-        @if (upcomingRides.length === 0) {
-          <div class="empty-state">
-            <mat-icon>event_busy</mat-icon>
-            <p>No upcoming rides</p>
-            <button class="action-btn outline" routerLink="/passenger/browse-rides">
-              <mat-icon>search</mat-icon>
-              Find a Ride
-            </button>
+      <!-- Find Rides Tab -->
+      @if (activeHomeTab === 'find') {
+        <!-- Upcoming Rides Section -->
+        <div class="section">
+          <div class="section-title">
+            <mat-icon>schedule</mat-icon>
+            <span>Upcoming Rides</span>
           </div>
-        } @else {
-          <div class="rides-list">
-            @for (ride of upcomingRides; track ride.id) {
-              <div class="ride-card" matRipple [routerLink]="ride.rideStatus === 'InProgress' ? ['/passenger/track-ride', ride.rideId] : null">
-                <div class="ride-route">
-                  <div class="route-point">
-                    <span class="marker origin">A</span>
-                    <span class="location">{{ getShortAddress(ride.origin) }}</span>
+          @if (upcomingRides.length === 0) {
+            <div class="empty-state">
+              <mat-icon>event_busy</mat-icon>
+              <p>No upcoming rides</p>
+              <button class="action-btn outline" routerLink="/passenger/browse-rides">
+                <mat-icon>search</mat-icon>
+                Find a Ride
+              </button>
+            </div>
+          } @else {
+            <div class="rides-list">
+              @for (ride of upcomingRides; track ride.id) {
+                <div class="ride-card" matRipple>
+                  <div class="ride-route">
+                    <div class="route-point">
+                      <span class="marker origin">A</span>
+                      <span class="location">{{ getShortAddress(ride.origin) }}</span>
+                    </div>
+                    <mat-icon class="route-arrow">arrow_forward</mat-icon>
+                    <div class="route-point">
+                      <span class="marker dest">B</span>
+                      <span class="location">{{ getShortAddress(ride.destination) }}</span>
+                    </div>
                   </div>
-                  <mat-icon class="route-arrow">arrow_forward</mat-icon>
-                  <div class="route-point">
-                    <span class="marker dest">B</span>
-                    <span class="location">{{ getShortAddress(ride.destination) }}</span>
+                  <div class="ride-meta">
+                    <span class="ride-time">
+                      <mat-icon>schedule</mat-icon>
+                      {{ formatDateTime(ride.departureTime) }}
+                    </span>
+                    <span class="ride-status" [class]="ride.status.toLowerCase()">
+                      {{ ride.status }}
+                    </span>
                   </div>
                 </div>
-                <div class="ride-meta">
-                  <span class="ride-time">
-                    <mat-icon>schedule</mat-icon>
-                    {{ formatDateTime(ride.departureTime) }}
-                  </span>
-                  <span class="ride-status" [class]="ride.status.toLowerCase()">
-                    {{ ride.rideStatus === 'InProgress' ? 'In Progress' : ride.status }}
-                  </span>
-                </div>
-                @if (ride.rideStatus === 'InProgress') {
-                  <div class="live-badge">
-                    <div class="pulse-dot"></div>
-                    <span>Live Tracking</span>
-                  </div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Browse Rides CTA -->
+        <button class="find-rides-cta" routerLink="/passenger/browse-rides">
+          <div class="cta-icon">
+            <mat-icon>directions_bike</mat-icon>
+          </div>
+          <div class="cta-text">
+            <span class="cta-title">Browse Available Rides</span>
+            <span class="cta-subtitle">Find a rider going your way</span>
+          </div>
+          <mat-icon class="cta-arrow">arrow_forward</mat-icon>
+        </button>
+
+        <!-- My Requests shortcut -->
+        <button class="find-rides-cta secondary" routerLink="/passenger/my-requests">
+          <div class="cta-icon secondary">
+            <mat-icon>pending_actions</mat-icon>
+          </div>
+          <div class="cta-text">
+            <span class="cta-title">My Requests</span>
+            <span class="cta-subtitle">
+              @if (pendingCount > 0) { {{ pendingCount }} pending · } {{ acceptedCount }} accepted
+            </span>
+          </div>
+          @if (pendingCount > 0) {
+            <span class="cta-badge">{{ pendingCount }}</span>
+          }
+          <mat-icon class="cta-arrow">arrow_forward</mat-icon>
+        </button>
+
+        <!-- Stats Section -->
+        <div class="section">
+          <div class="section-title">
+            <mat-icon>insights</mat-icon>
+            <span>Your Stats</span>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value">{{ totalRides }}</div>
+              <div class="stat-label">Total Rides</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">{{ pendingCount }}</div>
+              <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">{{ acceptedCount }}</div>
+              <div class="stat-label">Accepted</div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Request Ride Tab -->
+      @if (activeHomeTab === 'request') {
+        <div class="ride-request-panel">
+
+          <!-- Booking Card: two input fields -->
+          <div class="booking-card">
+            <div class="booking-header">
+              <mat-icon>hail</mat-icon>
+              <span>Request an On-Demand Ride</span>
+            </div>
+
+            <!-- Pickup Row -->
+            <div class="booking-row" [class.row-active]="activeInput === 'pickup'">
+              <div class="route-node pickup"></div>
+              <input
+                class="booking-input"
+                type="text"
+                placeholder="Pickup location"
+                [(ngModel)]="pickupAddress"
+                (input)="onPickupInputChange($event)"
+                (focus)="activeInput = 'pickup'"
+                (blur)="onInputBlur()">
+              @if (pickupLat) {
+                <button class="clear-btn-sm" type="button" (click)="clearPickup()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              } @else {
+                <button class="clear-btn-sm gps-btn" type="button" (click)="useCurrentLocation('pickup')" title="Use my location">
+                  <mat-icon>my_location</mat-icon>
+                </button>
+              }
+            </div>
+
+            <div class="node-connector">
+              <div class="connector-dots"></div>
+            </div>
+
+            <!-- Dropoff Row -->
+            <div class="booking-row" [class.row-active]="activeInput === 'dropoff'" [class.row-disabled]="!pickupLat">
+              <div class="route-node dropoff"></div>
+              <input
+                class="booking-input"
+                type="text"
+                placeholder="Where are you going?"
+                [(ngModel)]="dropoffAddress"
+                (input)="onDropoffInputChange($event)"
+                (focus)="activeInput = 'dropoff'"
+                (blur)="onInputBlur()"
+                [disabled]="!pickupLat">
+              @if (dropoffLat) {
+                <button class="clear-btn-sm" type="button" (click)="clearDropoff()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              } @else if (pickupLat) {
+                <button class="clear-btn-sm gps-btn" type="button" (click)="useCurrentLocation('dropoff')" title="Use my location">
+                  <mat-icon>my_location</mat-icon>
+                </button>
+              }
+            </div>
+
+            <!-- Search Suggestions -->
+            @if (searchResults.length > 0) {
+              <div class="suggestions-panel">
+                @for (r of searchResults; track r.place_id) {
+                  <button class="suggestion-row" type="button" (mousedown)="selectResult(r)">
+                    <mat-icon class="sug-ico">place</mat-icon>
+                    <div class="sug-lines">
+                      <span class="sug-main">{{ getResultName(r) }}</span>
+                      <span class="sug-sub">{{ r.display_name }}</span>
+                    </div>
+                  </button>
                 }
               </div>
             }
           </div>
-        }
-      </div>
 
-      <!-- Stats Section -->
-      <div class="section">
-        <div class="section-title">
-          <mat-icon>insights</mat-icon>
-          <span>Your Stats</span>
+          <!-- Always-visible map -->
+          <div class="request-map-card">
+            <!-- Mode Switcher Overlay -->
+            <div class="map-mode-overlay">
+              <button class="mode-tab" [class.active]="mapMode === 'pickup'"
+                      (click)="setMapMode('pickup')">
+                <div class="mode-node pickup"></div>
+                <span>{{ pickupLat ? 'Pickup ✓' : 'Set Pickup' }}</span>
+              </button>
+              <button class="mode-tab" [class.active]="mapMode === 'dropoff'"
+                      (click)="setMapMode('dropoff')" [disabled]="!pickupLat">
+                <div class="mode-node dropoff"></div>
+                <span>{{ dropoffLat ? 'Dropoff ✓' : 'Set Dropoff' }}</span>
+              </button>
+            </div>
+            <div id="request-ride-map" class="request-ride-map"></div>
+            @if (routeDistance) {
+              <div class="route-distance-chip">
+                <mat-icon>straighten</mat-icon>
+                <span>{{ routeDistance }}</span>
+              </div>
+            }
+          </div>
+
+          @if (pickupLat && dropoffLat) {
+            <button class="request-now-btn" (click)="requestRideNow()">
+              <mat-icon>hail</mat-icon>
+              <span>Request Ride Now</span>
+              <mat-icon class="btn-arrow">arrow_forward</mat-icon>
+            </button>
+          }
+
+          <!-- My Requests shortcut -->
+          <button class="find-rides-cta secondary" style="margin-top: 16px" routerLink="/passenger/my-requests">
+            <div class="cta-icon secondary">
+              <mat-icon>history</mat-icon>
+            </div>
+            <div class="cta-text">
+              <span class="cta-title">Ride History</span>
+              <span class="cta-subtitle">View your past requests</span>
+            </div>
+            <mat-icon class="cta-arrow">arrow_forward</mat-icon>
+          </button>
         </div>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-value">{{ totalRides }}</div>
-            <div class="stat-label">Total Rides</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value">{{ pendingCount }}</div>
-            <div class="stat-label">Pending</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value">{{ acceptedCount }}</div>
-            <div class="stat-label">Accepted</div>
-          </div>
-        </div>
-      </div>
+      }
     </div>
   }
 

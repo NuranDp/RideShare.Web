@@ -31,6 +31,8 @@ A motorcycle-based ride-sharing platform where riders post their commute routes 
 - **Ride Posting**: Create rides with interactive map location selection
 - **Request Management**: Accept/reject passenger requests
 - **Live Location Sharing**: Share real-time location during active rides
+- **Active Ride View**: Dedicated in-progress ride page with live tracking controls
+- **On-Demand Requests**: Browse and accept nearby Uber-style passenger requests
 
 ### Passenger Features
 - **Browse Rides**: List view and interactive map view
@@ -38,6 +40,7 @@ A motorcycle-based ride-sharing platform where riders post their commute routes 
 - **Pickup/Drop-off Selection**: Interactive step-by-step map UI
 - **Live Tracking**: Track rider's location in real-time during ride
 - **Rating System**: Rate riders after completing trips
+- **On-Demand Ride Request**: Uber-style instant pickup — request a ride and nearby verified riders accept
 
 ### Admin Features
 - **License Review**: Approve/reject rider license submissions
@@ -52,8 +55,10 @@ A motorcycle-based ride-sharing platform where riders post their commute routes 
 ### Real-Time Features (SignalR)
 - **Instant Notifications**: Ride requests, status changes, acceptances
 - **Ride Request Popup Cards**: Bottom sheet popup with passenger route details, multi-request navigation (1 of N), blurred background, one-handed operation friendly
+- **On-Demand Request Popup**: Bottom sheet for riders showing nearby instant requests with distance and route info
 - **Live Location Tracking**: GPS updates every 5 seconds during rides
 - **ETA Calculations**: Estimated arrival time for passengers
+- **Notification Types**: `request_accepted`, `request_rejected`, `ride_started`, `ride_completed`, `ride_cancelled`, `rider_arrived`, `ondemand_accepted`, `ondemand_expired`
 
 ### PWA & Mobile Support
 - **Progressive Web App**: Install from browser to home screen
@@ -86,7 +91,9 @@ ride-share/
 │           │   │   ├── admin-dashboard/
 │           │   │   └── license-review/
 │           │   ├── rider/      # Post ride, my rides, profile
+│           │   │   ├── active-ride/
 │           │   │   ├── my-rides/
+│           │   │   ├── nearby-requests/
 │           │   │   ├── post-ride/
 │           │   │   ├── ride-requests-dialog/
 │           │   │   ├── ride-requests-page/
@@ -97,6 +104,7 @@ ride-share/
 │           │   │   ├── browse-rides/
 │           │   │   ├── my-requests/
 │           │   │   ├── passenger-dashboard/
+│           │   │   ├── request-ondemand/
 │           │   │   ├── request-ride/
 │           │   │   ├── request-ride-dialog/
 │           │   │   ├── ride-history/
@@ -110,9 +118,12 @@ ride-share/
 │           │   ├── location-picker/
 │           │   ├── notification-bell/
 │           │   ├── notification-toast/
+│           │   ├── ondemand-request-popup/
 │           │   ├── rating-dialog/
+│           │   ├── ride-accepted-dialog/
 │           │   ├── ride-map/
 │           │   ├── ride-request-popup/
+│           │   ├── ride-status-dialog/
 │           │   ├── route-preview/
 │           │   └── unified-route-map/
 │           ├── layouts/        # Layout components
@@ -205,8 +216,11 @@ The app will be available at `http://localhost:4200`
 5. **Manage Requests** → View incoming requests in My Rides
    - See passenger's pickup & drop-off points on the map
    - Accept or reject each request
-6. **Start Ride** → Begin live location sharing with passenger
-7. **Complete Ride** → Mark ride as finished
+6. **Nearby On-Demand** → View and accept Uber-style instant passenger requests
+   - Filter by proximity (within 10 km by default)
+   - First to accept wins; a ride is auto-created
+7. **Start Ride** → Begin live location sharing with passenger
+8. **Complete Ride** → Mark ride as finished
 
 ### 🚶 For Passengers
 1. **Register** as a "Passenger"
@@ -221,6 +235,15 @@ The app will be available at `http://localhost:4200`
 5. **Track Requests** → Monitor status in My Requests
 6. **Track Ride** → Once accepted, watch rider's live location during the trip
 7. **Rate Rider** → Submit rating after ride completion
+
+#### On-Demand (Uber-Style) Flow
+1. Tap **Request On-Demand Ride** from the passenger dashboard
+2. **Set Pickup** → Click map or search to set your pickup point
+3. **Set Drop-off** → Click map or search to set your destination
+4. **Confirm** → Review the request and submit
+5. **Searching** → Request is broadcast to nearby verified riders (expires in 15 min)
+6. **Accepted** → A rider accepted; you receive a notification with rider details and are redirected to live tracking
+7. **Track Ride** → Watch the rider's real-time location on the map
 
 ### 👨‍💼 For Admins
 1. **Login** with admin credentials
@@ -269,7 +292,16 @@ The app will be available at `http://localhost:4200`
 | PUT | `/api/rides/requests/{id}/reject` | Reject request |
 | PUT | `/api/rides/requests/{id}/cancel` | Cancel request |
 | GET | `/api/rides/my-requests` | Get my requests (Passenger) |
-
+### On-Demand Rides
+| Method | Endpoint | Description |
+|--------|----------|--------------|
+| POST | `/api/on-demand/request` | Create on-demand request (Passenger) |
+| GET | `/api/on-demand/my-requests` | Get my on-demand requests (Passenger) |
+| GET | `/api/on-demand/request/{id}` | Get a specific request |
+| DELETE | `/api/on-demand/request/{id}` | Cancel on-demand request (Passenger) |
+| GET | `/api/on-demand/nearby` | Get nearby requests (Rider, `?lat=&lng=&radiusKm=`) |
+| POST | `/api/on-demand/request/{id}/accept` | Accept a request (verified Rider) |
+| GET | `/api/on-demand/my-accepted` | Get rider's accepted request history |
 ### Ratings
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -289,6 +321,8 @@ The app will be available at `http://localhost:4200`
 |-----|---------|
 | `/hubs/notifications` | Real-time notifications |
 | `/hubs/location` | Live ride tracking |
+
+**Notification event names**: `request_accepted`, `request_rejected`, `ride_started`, `ride_completed`, `ride_cancelled`, `rider_arrived`, `ondemand_accepted`, `ondemand_expired`
 
 ## Map Features
 

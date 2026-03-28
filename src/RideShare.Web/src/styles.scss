@@ -529,3 +529,42 @@ body.dark-theme {
     }
   }
 }
+
+/* Nearby Request Dialog - Bottom Sheet Style */
+.nearby-request-dialog {
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+  }
+
+  .mat-mdc-dialog-surface {
+    border-radius: 24px 24px 0 0 !important;
+    overflow: hidden;
+  }
+}
+
+.cdk-overlay-pane.nearby-request-dialog {
+  max-width: 100vw !important;
+  width: 100% !important;
+  position: fixed !important;
+  bottom: 0 !important;
+  margin: 0 !important;
+}
+
+/* Backdrop blur for nearby request dialog */
+.cdk-overlay-backdrop.cdk-overlay-dark-backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Ride Notification Dialog */
+.ride-notification-dialog {
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+  }
+
+  .mat-mdc-dialog-surface {
+    border-radius: 24px !important;
+    overflow: hidden;
+  }
+}

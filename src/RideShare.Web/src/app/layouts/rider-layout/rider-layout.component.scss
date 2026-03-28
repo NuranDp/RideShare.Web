@@ -224,6 +224,7 @@
   color: var(--nav-text);
   text-decoration: none;
   transition: color 0.2s;
+  position: relative;
 }
 
 .nav-item mat-icon {
@@ -244,3 +245,26 @@
 .nav-item.active mat-icon {
   color: var(--nav-active);
 }
+
+// Green dot indicator when there is an active ride
+.active-dot {
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4CAF50;
+  box-shadow: 0 0 0 2px var(--surface, #fff);
+  animation: activePulse 2s ease-in-out infinite;
+}
+
+@keyframes activePulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--surface, #fff), 0 0 0 4px rgba(76,175,80,0.3); }
+  50% { box-shadow: 0 0 0 2px var(--surface, #fff), 0 0 0 6px rgba(76,175,80,0); }
+}
+
+.active-icon {
+  color: #4CAF50 !important;
+}
+

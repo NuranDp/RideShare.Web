@@ -20,6 +20,7 @@ public class Ride
     public double? CurrentLng { get; set; }
     public DateTime? LocationUpdatedAt { get; set; }
     public DateTime? StartedAt { get; set; }
+    public bool ArrivalNotified { get; set; } = false;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }

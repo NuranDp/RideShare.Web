@@ -1,0 +1,124 @@
+@if (pendingPopups.length > 0) {
+  <div class="popup-overlay" (click)="dismissCurrentPopup()">
+    <div class="popup-card" (click)="$event.stopPropagation()" [@slideIn]>
+      <!-- Drag Handle -->
+      <div class="drag-handle"></div>
+      
+      <!-- Request Counter -->
+      @if (pendingPopups.length > 1) {
+        <div class="request-counter">
+          <button class="nav-btn" (click)="previousRequest()" [disabled]="currentIndex === 0">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <span class="counter-text">{{ currentIndex + 1 }} of {{ pendingPopups.length }} requests</span>
+          <button class="nav-btn" (click)="nextRequest()" [disabled]="currentIndex === pendingPopups.length - 1">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      }
+
+      <!-- Header with Timer -->
+      <div class="popup-header ondemand">
+        <div class="header-icon pulse">
+          <mat-icon>hail</mat-icon>
+        </div>
+        <div class="header-text">
+          <span class="header-title">New Ride Request</span>
+          <span class="header-subtitle">On-demand pickup</span>
+        </div>
+        <div class="timer-badge" [class.urgent]="currentCountdown < 60">
+          <mat-icon>timer</mat-icon>
+          <span>{{ formatCountdown(currentCountdown) }}</span>
+        </div>
+        <button class="close-btn" (click)="dismissCurrentPopup()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <!-- Passenger Info -->
+      <div class="passenger-section">
+        <div class="passenger-avatar">
+          @if (currentRequest.passengerPhoto) {
+            <img [src]="currentRequest.passengerPhoto" alt="Passenger">
+          } @else {
+            <mat-icon>person</mat-icon>
+          }
+        </div>
+        <div class="passenger-details">
+          <span class="passenger-name">{{ currentRequest.passengerName }}</span>
+          <span class="passenger-subtitle">needs a ride now</span>
+        </div>
+        <div class="distance-badge">
+          <mat-icon>near_me</mat-icon>
+          <span>{{ currentRequest.distanceKm }} km away</span>
+        </div>
+      </div>
+
+      <!-- Route Section (Single - Passenger Journey) -->
+      <div class="route-section">
+        <div class="route-block">
+          <div class="route-label">
+            <mat-icon>route</mat-icon>
+            <span>Trip Details</span>
+          </div>
+          <div class="journey-visual">
+            <!-- Pickup -->
+            <div class="journey-point">
+              <div class="point-marker pickup">
+                <mat-icon>my_location</mat-icon>
+              </div>
+              <div class="point-content">
+                <span class="point-label">Pickup</span>
+                <span class="point-text">{{ getShortAddress(currentRequest.pickupLocation) }}</span>
+              </div>
+            </div>
+            
+            <!-- Route Line -->
+            <div class="route-line">
+              <div class="line-dashed"></div>
+              @if (currentRequest.estimatedRouteKm) {
+                <span class="route-distance">~{{ currentRequest.estimatedRouteKm | number:'1.1-1' }} km</span>
+              }
+            </div>
+            
+            <!-- Dropoff -->
+            <div class="journey-point">
+              <div class="point-marker dropoff">
+                <mat-icon>location_on</mat-icon>
+              </div>
+              <div class="point-content">
+                <span class="point-label">Dropoff</span>
+                <span class="point-text">{{ getShortAddress(currentRequest.dropoffLocation) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message -->
+      @if (currentRequest.message) {
+        <div class="message-section">
+          <mat-icon>chat_bubble_outline</mat-icon>
+          <span>"{{ currentRequest.message }}"</span>
+        </div>
+      }
+
+      <!-- Actions -->
+      <div class="popup-actions">
+        <button class="action-btn dismiss" matRipple (click)="dismissCurrentPopup()">
+          <mat-icon>close</mat-icon>
+          <span>Dismiss</span>
+        </button>
+        <button class="action-btn accept" matRipple (click)="acceptRequest(currentRequest)"
+                [disabled]="processingRequest === currentRequest.id">
+          @if (processingRequest === currentRequest.id && processingAction === 'accept') {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            <mat-icon>check</mat-icon>
+          }
+          <span>{{ processingRequest === currentRequest.id ? 'Accepting...' : 'Accept Ride' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+}

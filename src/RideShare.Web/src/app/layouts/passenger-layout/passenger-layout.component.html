@@ -19,6 +19,39 @@
   <router-outlet></router-outlet>
 </main>
 
+@if (activeRide) {
+  <div
+    #activeRideCard
+    class="active-ride-global"
+    [class.dragging]="dragging"
+    [style.transform]="'translate(' + dragOffsetX + 'px, ' + dragOffsetY + 'px)'"
+    (pointerdown)="onCardPointerDown($event)">
+    <div class="drag-handle-wrap">
+      <div class="drag-handle"></div>
+    </div>
+
+    <div class="active-ride-content">
+      <div class="active-ride-left">
+        <div class="active-dot"></div>
+        <div class="active-text">
+          <span class="active-label">Ride In Progress</span>
+          <span class="active-route">{{ getShortAddress(activeRide.origin) }} to {{ getShortAddress(activeRide.destination) }}</span>
+        </div>
+      </div>
+
+      <div class="active-actions">
+        <button class="ghost-btn" type="button" (click)="resetCardPosition(); $event.stopPropagation()">
+          <mat-icon>center_focus_strong</mat-icon>
+        </button>
+        <button class="track-btn" type="button" (click)="goToActiveRide(); $event.stopPropagation()">
+          <mat-icon>navigation</mat-icon>
+          <span>Track</span>
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
 <!-- Bottom Navigation -->
 <nav class="bottom-nav">
   <a class="nav-item" routerLink="/passenger" [queryParams]="{tab: 'home'}" [class.active]="isHomeActive">

@@ -20,6 +20,11 @@ export interface Ride {
   status: RideStatus;
   createdAt: string;
   requestCount: number;
+  // Accepted passenger info (for active rides)
+  passengerId?: string;
+  passengerName?: string;
+  passengerPhone?: string;
+  passengerPhoto?: string;
 }
 
 export interface RideListItem {

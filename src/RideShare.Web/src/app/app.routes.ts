@@ -50,6 +50,14 @@ export const routes: Routes = [
       {
         path: 'ratings',
         loadComponent: () => import('./pages/rider/rider-ratings/rider-ratings.component').then(m => m.RiderRatingsComponent)
+      },
+      {
+        path: 'nearby-requests',
+        loadComponent: () => import('./pages/rider/nearby-requests/nearby-requests.component').then(m => m.NearbyRequestsComponent)
+      },
+      {
+        path: 'active-ride/:id',
+        loadComponent: () => import('./pages/rider/active-ride/active-ride.component').then(m => m.ActiveRideComponent)
       }
     ]
   },
@@ -82,6 +90,10 @@ export const routes: Routes = [
       {
         path: 'track-ride/:id',
         loadComponent: () => import('./pages/passenger/track-ride/track-ride.component').then(m => m.TrackRideComponent)
+      },
+      {
+        path: 'request-ondemand',
+        loadComponent: () => import('./pages/passenger/request-ondemand/request-ondemand.component').then(m => m.RequestOnDemandComponent)
       },
       {
         path: 'emergency-contact',

@@ -94,6 +94,7 @@ public class RideService : IRideService
             .Include(r => r.Rider)
                 .ThenInclude(u => u.RiderProfile)
             .Include(r => r.Requests)
+                .ThenInclude(req => req.Passenger)
             .FirstOrDefaultAsync(r => r.Id == rideId);
 
         if (ride == null) return null;
@@ -162,6 +163,7 @@ public class RideService : IRideService
             .Include(r => r.Rider)
                 .ThenInclude(u => u.RiderProfile)
             .Include(r => r.Requests)
+                .ThenInclude(req => req.Passenger)
             .Where(r => r.RiderId == riderId)
             .OrderByDescending(r => r.CreatedAt)
             .ToListAsync();
@@ -213,6 +215,14 @@ public class RideService : IRideService
             request.UpdatedAt = DateTime.UtcNow;
         }
 
+        // Mark linked on-demand request as cancelled
+        var onDemandRequest = await _context.OnDemandRequests
+            .FirstOrDefaultAsync(r => r.RideId == rideId && r.Status == OnDemandRequestStatus.Accepted);
+        if (onDemandRequest != null)
+        {
+            onDemandRequest.Status = OnDemandRequestStatus.Cancelled;
+        }
+
         await _context.SaveChangesAsync();
 
         // Notify accepted passenger about cancellation
@@ -220,6 +230,7 @@ public class RideService : IRideService
         {
             await _notificationService.SendRideCancelledNotificationAsync(
                 acceptedRequest.PassengerId,
+                ride.Id,
                 ride.Rider.FullName,
                 ride.Origin,
                 ride.Destination);
@@ -255,6 +266,14 @@ public class RideService : IRideService
             riderProfile.UpdatedAt = DateTime.UtcNow;
         }
 
+        // Mark linked on-demand request as completed
+        var onDemandRequest = await _context.OnDemandRequests
+            .FirstOrDefaultAsync(r => r.RideId == rideId && r.Status == OnDemandRequestStatus.Accepted);
+        if (onDemandRequest != null)
+        {
+            onDemandRequest.Status = OnDemandRequestStatus.Completed;
+        }
+
         await _context.SaveChangesAsync();
 
         // Notify passenger about ride completion
@@ -262,9 +281,14 @@ public class RideService : IRideService
         {
             await _notificationService.SendRideCompletedNotificationAsync(
                 acceptedRequest.PassengerId,
+                ride.Id,
                 ride.Rider.FullName,
                 ride.Origin,
-                ride.Destination);
+                ride.Destination,
+                ride.StartedAt,
+                ride.UpdatedAt,
+                riderProfile?.MotorcycleModel,
+                riderProfile?.PlateNumber);
         }
 
         return true;
@@ -307,6 +331,8 @@ public class RideService : IRideService
     public async Task<bool> UpdateRideLocationAsync(Guid rideId, Guid riderId, double lat, double lng)
     {
         var ride = await _context.Rides
+            .Include(r => r.Rider)
+            .Include(r => r.Requests)
             .FirstOrDefaultAsync(r => r.Id == rideId && r.RiderId == riderId && r.Status == RideStatus.InProgress);
         
         if (ride == null) return false;
@@ -320,7 +346,51 @@ public class RideService : IRideService
         // Broadcast location to all tracking passengers
         await _notificationService.BroadcastLocationUpdateAsync(rideId, lat, lng);
 
+        // Check if rider has arrived at pickup point (within ~100 meters)
+        if (!ride.ArrivalNotified)
+        {
+            var acceptedRequest = ride.Requests.FirstOrDefault(r => r.Status == RideRequestStatus.Accepted);
+            if (acceptedRequest != null)
+            {
+                // Use passenger's custom pickup if set, otherwise ride origin
+                double? pickupLat = acceptedRequest.PickupLat ?? ride.OriginLat;
+                double? pickupLng = acceptedRequest.PickupLng ?? ride.OriginLng;
+                string pickupLocation = acceptedRequest.PickupLocation ?? ride.Origin;
+
+                if (pickupLat.HasValue && pickupLng.HasValue)
+                {
+                    double distance = CalculateDistanceMeters(lat, lng, pickupLat.Value, pickupLng.Value);
+                    if (distance <= 100) // Within 100 meters
+                    {
+                        ride.ArrivalNotified = true;
+                        await _context.SaveChangesAsync();
+
+                        await _notificationService.SendRiderArrivedNotificationAsync(
+                            acceptedRequest.PassengerId,
+                            ride.Id,
+                            ride.Rider.FullName,
+                            pickupLocation);
+                    }
+                }
+            }
+        }
+
         return true;
+    }
+
+    /// <summary>
+    /// Calculate distance between two GPS coordinates in meters using Haversine formula
+    /// </summary>
+    private static double CalculateDistanceMeters(double lat1, double lng1, double lat2, double lng2)
+    {
+        const double R = 6371000; // Earth's radius in meters
+        double dLat = (lat2 - lat1) * Math.PI / 180;
+        double dLng = (lng2 - lng1) * Math.PI / 180;
+        double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                   Math.Cos(lat1 * Math.PI / 180) * Math.Cos(lat2 * Math.PI / 180) *
+                   Math.Sin(dLng / 2) * Math.Sin(dLng / 2);
+        double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+        return R * c;
     }
 
     public async Task<RideLocationDto?> GetRideLocationAsync(Guid rideId)
@@ -499,6 +569,7 @@ public class RideService : IRideService
         var request = await _context.RideRequests
             .Include(rr => rr.Ride)
                 .ThenInclude(r => r.Rider)
+                    .ThenInclude(u => u.RiderProfile)
             .FirstOrDefaultAsync(rr => rr.Id == requestId && rr.Ride.RiderId == riderId);
 
         if (request == null) return false;
@@ -524,12 +595,20 @@ public class RideService : IRideService
 
         await _context.SaveChangesAsync();
 
-        // Send notification to accepted passenger
+        // Send notification to accepted passenger with full ride details
         await _notificationService.SendRequestAcceptedNotificationAsync(
             request.PassengerId,
+            request.RideId,
             request.Ride.Rider.FullName,
+            request.Ride.Rider.Phone ?? "",
             request.Ride.Origin,
-            request.Ride.Destination);
+            request.Ride.Destination,
+            request.Ride.OriginLat,
+            request.Ride.OriginLng,
+            request.Ride.DestLat,
+            request.Ride.DestLng,
+            request.Ride.Rider.RiderProfile?.MotorcycleModel,
+            request.Ride.Rider.RiderProfile?.PlateNumber);
 
         // Send rejection notifications to other passengers
         foreach (var other in otherRequests)
@@ -742,6 +821,9 @@ public class RideService : IRideService
 
     private static RideDto MapToRideDto(Ride ride)
     {
+        // Find the accepted passenger (if any)
+        var acceptedRequest = ride.Requests?.FirstOrDefault(r => r.Status == RideRequestStatus.Accepted);
+        
         return new RideDto
         {
             Id = ride.Id,
@@ -764,7 +846,12 @@ public class RideService : IRideService
             Notes = ride.Notes,
             Status = ride.Status.ToString(),
             RequestCount = ride.Requests?.Count ?? 0,
-            CreatedAt = ride.CreatedAt
+            CreatedAt = ride.CreatedAt,
+            // Accepted passenger info
+            PassengerId = acceptedRequest?.PassengerId,
+            PassengerName = acceptedRequest?.Passenger?.FullName,
+            PassengerPhone = acceptedRequest?.Passenger?.Phone,
+            PassengerPhoto = acceptedRequest?.Passenger?.ProfilePhotoUrl
         };
     }
 

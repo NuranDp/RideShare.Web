@@ -1,0 +1,224 @@
+<div class="page-container">
+  <!-- Map Background -->
+  <div class="map-container" #mapContainer></div>
+
+  <!-- Bottom Sheet -->
+  <div class="bottom-sheet" [class.expanded]="step === 'confirm' || step === 'searching' || step === 'accepted'">
+    <!-- Drag Handle -->
+    <div class="drag-handle"></div>
+
+    <!-- Step 1: Pickup -->
+    @if (step === 'pickup') {
+      <div class="step-content">
+        <h2 class="step-title">
+          <mat-icon>my_location</mat-icon>
+          Where should we pick you up?
+        </h2>
+        
+        <app-location-picker
+          placeholder="Enter pickup location"
+          label="Pickup"
+          (locationSelected)="onPickupSelected($event)">
+        </app-location-picker>
+
+        <button class="continue-btn" 
+                [disabled]="!pickupLocation"
+                (click)="nextStep()">
+          <span>Continue</span>
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+    }
+
+    <!-- Step 2: Dropoff -->
+    @if (step === 'dropoff') {
+      <div class="step-content">
+        <button class="back-btn" (click)="prevStep()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        
+        <h2 class="step-title">
+          <mat-icon>place</mat-icon>
+          Where are you going?
+        </h2>
+
+        <div class="selected-pickup">
+          <div class="pickup-marker">P</div>
+          <span>{{ pickupLocation }}</span>
+        </div>
+        
+        <app-location-picker
+          placeholder="Enter dropoff location"
+          label="Dropoff"
+          (locationSelected)="onDropoffSelected($event)">
+        </app-location-picker>
+
+        <button class="continue-btn" 
+                [disabled]="!dropoffLocation"
+                (click)="nextStep()">
+          <span>Continue</span>
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+    }
+
+    <!-- Step 3: Confirm -->
+    @if (step === 'confirm') {
+      <div class="step-content confirm-step">
+        <button class="back-btn" (click)="prevStep()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        
+        <h2 class="step-title">
+          <mat-icon>check_circle</mat-icon>
+          Confirm your ride
+        </h2>
+
+        <div class="route-summary">
+          <div class="route-point">
+            <div class="point-marker pickup">P</div>
+            <div class="point-info">
+              <span class="label">Pickup</span>
+              <span class="address">{{ pickupLocation }}</span>
+            </div>
+          </div>
+          <div class="route-line"></div>
+          <div class="route-point">
+            <div class="point-marker dropoff">D</div>
+            <div class="point-info">
+              <span class="label">Dropoff</span>
+              <span class="address">{{ dropoffLocation }}</span>
+            </div>
+          </div>
+        </div>
+
+        @if (getEstimatedDistance()) {
+          <div class="distance-info">
+            <mat-icon>straighten</mat-icon>
+            <span>Estimated distance: {{ getEstimatedDistance() }}</span>
+          </div>
+        }
+
+        <mat-form-field appearance="outline" class="message-field">
+          <mat-label>Message to rider (optional)</mat-label>
+          <textarea matInput 
+                    [(ngModel)]="message" 
+                    placeholder="Any special instructions..."
+                    rows="2"></textarea>
+        </mat-form-field>
+
+        <button class="request-btn" 
+                [disabled]="submitting"
+                (click)="submitRequest()">
+          @if (submitting) {
+            <mat-spinner diameter="20"></mat-spinner>
+            <span>Finding riders...</span>
+          } @else {
+            <mat-icon>search</mat-icon>
+            <span>Request Ride</span>
+          }
+        </button>
+      </div>
+    }
+
+    <!-- Step 4: Searching -->
+    @if (step === 'searching') {
+      <div class="step-content searching-step">
+        <div class="searching-animation">
+          <div class="pulse-ring"></div>
+          <div class="pulse-ring delay"></div>
+          <mat-icon class="search-icon">two_wheeler</mat-icon>
+        </div>
+        
+        <h2 class="step-title">Looking for nearby riders...</h2>
+        <p class="step-subtitle">Please wait while we find a rider for you</p>
+
+        <div class="timer-badge">
+          <mat-icon>timer</mat-icon>
+          <span>Expires in {{ formatTime(remainingTime) }}</span>
+        </div>
+
+        <div class="route-mini">
+          <div class="route-point">
+            <span class="marker">P</span>
+            <span class="text">{{ pickupLocation }}</span>
+          </div>
+          <mat-icon>arrow_forward</mat-icon>
+          <div class="route-point">
+            <span class="marker drop">D</span>
+            <span class="text">{{ dropoffLocation }}</span>
+          </div>
+        </div>
+
+        <button class="cancel-btn" (click)="cancelRequest()">
+          <mat-icon>close</mat-icon>
+          Cancel Request
+        </button>
+      </div>
+    }
+
+    <!-- Step 5: Accepted -->
+    @if (step === 'accepted' && activeRequest) {
+      <div class="step-content accepted-step">
+        <div class="success-icon">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        
+        <h2 class="step-title">Rider Found!</h2>
+        <p class="step-subtitle">Your rider is on the way</p>
+
+        <div class="rider-card">
+          <div class="rider-avatar">
+            @if (activeRequest.riderPhoto) {
+              <img [src]="activeRequest.riderPhoto" alt="Rider">
+            } @else {
+              <mat-icon>person</mat-icon>
+            }
+          </div>
+          <div class="rider-info">
+            <span class="rider-name">{{ activeRequest.riderName }}</span>
+            <div class="rider-meta">
+              @if (activeRequest.riderRating) {
+                <span class="rating">
+                  <mat-icon>star</mat-icon>
+                  {{ activeRequest.riderRating.toFixed(1) }}
+                </span>
+              }
+              @if (activeRequest.motorcycleModel) {
+                <span class="bike">
+                  <mat-icon>two_wheeler</mat-icon>
+                  {{ activeRequest.motorcycleModel }}
+                </span>
+              }
+            </div>
+            @if (activeRequest.plateNumber) {
+              <span class="plate">{{ activeRequest.plateNumber }}</span>
+            }
+          </div>
+          @if (activeRequest.riderPhone) {
+            <button class="call-btn" (click)="callRider()">
+              <mat-icon>call</mat-icon>
+            </button>
+          }
+        </div>
+
+        <div class="route-mini">
+          <div class="route-point">
+            <span class="marker">P</span>
+            <span class="text">{{ pickupLocation }}</span>
+          </div>
+          <mat-icon>arrow_forward</mat-icon>
+          <div class="route-point">
+            <span class="marker drop">D</span>
+            <span class="text">{{ dropoffLocation }}</span>
+          </div>
+        </div>
+
+        <button class="track-btn" (click)="goToTracking()">
+          <mat-icon>location_on</mat-icon>
+          Track Rider
+        </button>
+      </div>
+    }
+  </div>
+</div>

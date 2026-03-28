@@ -29,6 +29,8 @@ export class NotificationBellComponent {
       case 'request_rejected': return 'cancel';
       case 'ride_cancelled': return 'event_busy';
       case 'ride_completed': return 'done_all';
+      case 'ride_started': return 'navigation';
+      case 'rider_arrived': return 'place';
       case 'new_rating': return 'star';
       default: return 'notifications';
     }
@@ -41,6 +43,8 @@ export class NotificationBellComponent {
       case 'request_rejected': return 'icon-rejected';
       case 'ride_cancelled': return 'icon-cancelled';
       case 'ride_completed': return 'icon-completed';
+      case 'ride_started': return 'icon-started';
+      case 'rider_arrived': return 'icon-arrived';
       case 'new_rating': return 'icon-rating';
       default: return 'icon-default';
     }

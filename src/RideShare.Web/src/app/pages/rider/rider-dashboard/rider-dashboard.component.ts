@@ -10,11 +10,18 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatRippleModule } from '@angular/material/core';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms';
+import { NearbyRequestDialogComponent } from '../nearby-requests/nearby-request-dialog.component';
 import { AuthService } from '../../../services/auth.service';
 import { RiderService } from '../../../services/rider.service';
 import { RideService } from '../../../services/ride.service';
 import { ThemeService } from '../../../services/theme.service';
+import { OnDemandService } from '../../../services/on-demand.service';
 import { PendingRequestWithRide } from '../../../models/ride.model';
+import { NearbyRequest } from '../../../models/on-demand.model';
 import * as L from 'leaflet';
 
 // Mobile-friendly Rider Dashboard with bottom navigation
@@ -25,6 +32,7 @@ import * as L from 'leaflet';
   imports: [
     CommonModule,
     RouterLink,
+    FormsModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -33,7 +41,11 @@ import * as L from 'leaflet';
     MatDividerModule,
     MatBadgeModule,
     MatRippleModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatSlideToggleModule,
+    MatProgressSpinnerModule,
+    MatDialogModule,
+    NearbyRequestDialogComponent
   ],
   templateUrl: './rider-dashboard.component.html',
   styleUrls: ['./rider-dashboard.component.scss']
@@ -56,6 +68,16 @@ export class RiderDashboardComponent implements OnInit, AfterViewChecked, OnDest
   activities: any[] = [];
   pendingRequestsList: PendingRequestWithRide[] = [];
   
+  // Nearby Requests (On-demand)
+  isNearbyActive = false;
+  nearbyRequests: NearbyRequest[] = [];
+  nearbyLoading = false;
+  acceptingNearbyId: string | null = null;
+  currentLat = 0;
+  currentLng = 0;
+  private nearbyRefreshInterval: any;
+  private locationWatchId: number | null = null;
+  
   // Processing state
   processingRequest: string | null = null;
   processingAction: 'accept' | 'reject' | null = null;
@@ -71,9 +93,11 @@ export class RiderDashboardComponent implements OnInit, AfterViewChecked, OnDest
     private riderService: RiderService,
     private rideService: RideService,
     public themeService: ThemeService,
+    private onDemandService: OnDemandService,
     private router: Router,
     private route: ActivatedRoute,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -88,6 +112,14 @@ export class RiderDashboardComponent implements OnInit, AfterViewChecked, OnDest
         this.mapInitialized = false;
       }
     });
+    
+    // Restore nearby availability state from localStorage
+    const storedAvailable = localStorage.getItem('riderAvailable') === 'true';
+    if (storedAvailable) {
+      this.isNearbyActive = true;
+      this.onDemandService.setAvailable(true);
+      this.getCurrentLocation();
+    }
     
     this.loadRiderProfile();
     this.loadUpcomingRides();
@@ -105,6 +137,152 @@ export class RiderDashboardComponent implements OnInit, AfterViewChecked, OnDest
     // Cleanup all maps
     this.requestMaps.forEach(map => map.remove());
     this.requestMaps.clear();
+    
+    // Cleanup nearby requests
+    if (this.nearbyRefreshInterval) {
+      clearInterval(this.nearbyRefreshInterval);
+    }
+    if (this.locationWatchId !== null) {
+      navigator.geolocation.clearWatch(this.locationWatchId);
+    }
+  }
+
+  // Nearby Requests Methods
+  toggleNearbyAvailability(): void {
+    this.isNearbyActive = !this.isNearbyActive;
+    this.onDemandService.setAvailable(this.isNearbyActive);
+
+    if (this.isNearbyActive) {
+      this.getCurrentLocation();
+      this.snackBar.open('You are now available for nearby ride requests', 'OK', { duration: 2000 });
+    } else {
+      if (this.nearbyRefreshInterval) {
+        clearInterval(this.nearbyRefreshInterval);
+      }
+      if (this.locationWatchId !== null) {
+        navigator.geolocation.clearWatch(this.locationWatchId);
+        this.locationWatchId = null;
+      }
+      this.nearbyRequests = [];
+      this.snackBar.open('You are now offline for nearby requests', 'OK', { duration: 2000 });
+    }
+  }
+
+  private getCurrentLocation(): void {
+    if (!navigator.geolocation) {
+      this.snackBar.open('Geolocation is not supported', 'OK', { duration: 3000 });
+      return;
+    }
+
+    this.nearbyLoading = true;
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.currentLat = position.coords.latitude;
+        this.currentLng = position.coords.longitude;
+        // Store in localStorage for popup component
+        localStorage.setItem('riderCurrentLat', this.currentLat.toString());
+        localStorage.setItem('riderCurrentLng', this.currentLng.toString());
+        this.loadNearbyRequests();
+        this.startNearbyRefresh();
+      },
+      () => {
+        this.nearbyLoading = false;
+        this.snackBar.open('Could not get your location. Please enable GPS.', 'OK', { duration: 3000 });
+        this.isNearbyActive = false;
+      },
+      { enableHighAccuracy: true }
+    );
+
+    // Watch for position changes
+    this.locationWatchId = navigator.geolocation.watchPosition(
+      (position) => {
+        this.currentLat = position.coords.latitude;
+        this.currentLng = position.coords.longitude;
+        // Update localStorage
+        localStorage.setItem('riderCurrentLat', this.currentLat.toString());
+        localStorage.setItem('riderCurrentLng', this.currentLng.toString());
+      },
+      () => {},
+      { enableHighAccuracy: true, maximumAge: 10000 }
+    );
+  }
+
+  private startNearbyRefresh(): void {
+    // Auto-refresh every 10 seconds
+    this.nearbyRefreshInterval = setInterval(() => {
+      if (this.isNearbyActive && this.currentLat && this.currentLng) {
+        this.loadNearbyRequests();
+      }
+    }, 10000);
+  }
+
+  loadNearbyRequests(): void {
+    if (!this.currentLat || !this.currentLng) return;
+
+    this.onDemandService.getNearbyRequests(this.currentLat, this.currentLng, 10).subscribe({
+      next: (response) => {
+        this.nearbyRequests = response.requests;
+        this.nearbyLoading = false;
+      },
+      error: () => {
+        this.nearbyLoading = false;
+      }
+    });
+  }
+
+  openNearbyRequestDialog(request: NearbyRequest): void {
+    const dialogRef = this.dialog.open(NearbyRequestDialogComponent, {
+      data: { request },
+      panelClass: ['nearby-request-dialog'],
+      width: '100%',
+      maxWidth: '100vw',
+      position: { bottom: '0' },
+      hasBackdrop: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.accepted) {
+        this.acceptNearbyRequest(request);
+      }
+    });
+  }
+
+  acceptNearbyRequest(request: NearbyRequest): void {
+    this.acceptingNearbyId = request.id;
+    
+    this.onDemandService.acceptRequest(request.id).subscribe({
+      next: (result) => {
+        this.acceptingNearbyId = null;
+        this.snackBar.open('Request accepted! Contact the passenger.', 'OK', { duration: 3000 });
+        // Remove from list
+        this.nearbyRequests = this.nearbyRequests.filter(r => r.id !== request.id);
+        // Navigate to ride details
+        if (result?.rideId) {
+          this.router.navigate(['/rider/active-ride', result.rideId]);
+        }
+      },
+      error: (err) => {
+        this.acceptingNearbyId = null;
+        const msg = err.error?.message || 'Failed to accept request';
+        this.snackBar.open(msg, 'OK', { duration: 3000 });
+        this.loadNearbyRequests();
+      }
+    });
+  }
+
+  getNearbyTimeRemaining(expiresAt: string): string {
+    const expiry = new Date(expiresAt);
+    const now = new Date();
+    const diffMs = expiry.getTime() - now.getTime();
+    
+    if (diffMs <= 0) return 'Expired';
+    
+    const mins = Math.floor(diffMs / 60000);
+    const secs = Math.floor((diffMs % 60000) / 1000);
+    
+    if (mins > 0) return `${mins}m ${secs}s`;
+    return `${secs}s`;
   }
 
   toggleRequestDetails(requestId: string): void {

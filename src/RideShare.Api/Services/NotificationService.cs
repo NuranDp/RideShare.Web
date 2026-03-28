@@ -7,13 +7,19 @@ public interface INotificationService
 {
     Task SendNotificationAsync(Guid userId, NotificationDto notification);
     Task SendRideRequestNotificationAsync(Guid riderId, string passengerName, string origin, string destination);
-    Task SendRequestAcceptedNotificationAsync(Guid passengerId, string riderName, string origin, string destination);
+    Task SendRequestAcceptedNotificationAsync(Guid passengerId, Guid rideId, string riderName, string riderPhone, string origin, string destination, double? originLat, double? originLng, double? destLat, double? destLng, string? vehicleModel, string? plateNumber);
     Task SendRequestRejectedNotificationAsync(Guid passengerId, string riderName, string origin, string destination);
-    Task SendRideCancelledNotificationAsync(Guid passengerId, string riderName, string origin, string destination);
-    Task SendRideCompletedNotificationAsync(Guid passengerId, string riderName, string origin, string destination);
+    Task SendRideCancelledNotificationAsync(Guid passengerId, Guid rideId, string riderName, string origin, string destination);
+    Task SendRideCompletedNotificationAsync(Guid passengerId, Guid rideId, string riderName, string origin, string destination, DateTime? startedAt = null, DateTime? completedAt = null, string? vehicleModel = null, string? plateNumber = null);
     Task SendNewRatingNotificationAsync(Guid riderId, int rating, string passengerName);
     Task SendRideStartedNotificationAsync(Guid passengerId, Guid rideId, string riderName, string origin, string destination);
+    Task SendRiderArrivedNotificationAsync(Guid passengerId, Guid rideId, string riderName, string pickupLocation);
     Task BroadcastLocationUpdateAsync(Guid rideId, double lat, double lng);
+    
+    // On-demand (Uber-style) notifications
+    Task SendOnDemandRequestNotificationAsync(Guid requestId, string passengerName, string pickup, string dropoff, double pickupLat, double pickupLng);
+    Task SendOnDemandAcceptedNotificationAsync(Guid passengerId, Guid rideId, string riderName, string motorcycleModel, string pickup, string dropoff, string? riderPhone = null, string? plateNumber = null);
+    Task SendOnDemandExpiredNotificationAsync(Guid passengerId, string pickup, string dropoff);
 }
 
 public class NotificationDto
@@ -94,18 +100,26 @@ public class NotificationService : INotificationService
         await SendNotificationAsync(riderId, notification);
     }
 
-    public async Task SendRequestAcceptedNotificationAsync(Guid passengerId, string riderName, string origin, string destination)
+    public async Task SendRequestAcceptedNotificationAsync(Guid passengerId, Guid rideId, string riderName, string riderPhone, string origin, string destination, double? originLat, double? originLng, double? destLat, double? destLng, string? vehicleModel, string? plateNumber)
     {
         var notification = new NotificationDto
         {
             Type = "request_accepted",
-            Title = "Request Accepted! 🎉",
+            Title = "Request Accepted! \ud83c\udf89",
             Message = $"{riderName} accepted your request for the ride from {origin} to {destination}",
             Data = new Dictionary<string, object>
             {
+                { "rideId", rideId.ToString() },
                 { "riderName", riderName },
+                { "riderPhone", riderPhone ?? "" },
                 { "origin", origin },
-                { "destination", destination }
+                { "destination", destination },
+                { "originLat", originLat ?? 0 },
+                { "originLng", originLng ?? 0 },
+                { "destLat", destLat ?? 0 },
+                { "destLng", destLng ?? 0 },
+                { "vehicleModel", vehicleModel ?? "" },
+                { "plateNumber", plateNumber ?? "" }
             }
         };
 
@@ -130,7 +144,7 @@ public class NotificationService : INotificationService
         await SendNotificationAsync(passengerId, notification);
     }
 
-    public async Task SendRideCancelledNotificationAsync(Guid passengerId, string riderName, string origin, string destination)
+    public async Task SendRideCancelledNotificationAsync(Guid passengerId, Guid rideId, string riderName, string origin, string destination)
     {
         var notification = new NotificationDto
         {
@@ -139,6 +153,7 @@ public class NotificationService : INotificationService
             Message = $"{riderName} cancelled the ride from {origin} to {destination}",
             Data = new Dictionary<string, object>
             {
+                { "rideId", rideId.ToString() },
                 { "riderName", riderName },
                 { "origin", origin },
                 { "destination", destination }
@@ -148,7 +163,7 @@ public class NotificationService : INotificationService
         await SendNotificationAsync(passengerId, notification);
     }
 
-    public async Task SendRideCompletedNotificationAsync(Guid passengerId, string riderName, string origin, string destination)
+    public async Task SendRideCompletedNotificationAsync(Guid passengerId, Guid rideId, string riderName, string origin, string destination, DateTime? startedAt = null, DateTime? completedAt = null, string? vehicleModel = null, string? plateNumber = null)
     {
         var notification = new NotificationDto
         {
@@ -157,9 +172,14 @@ public class NotificationService : INotificationService
             Message = $"Your ride with {riderName} from {origin} to {destination} has been completed. Don't forget to rate!",
             Data = new Dictionary<string, object>
             {
+                { "rideId", rideId.ToString() },
                 { "riderName", riderName },
                 { "origin", origin },
-                { "destination", destination }
+                { "destination", destination },
+                { "startedAt", startedAt?.ToString("o") ?? "" },
+                { "completedAt", (completedAt ?? DateTime.UtcNow).ToString("o") },
+                { "vehicleModel", vehicleModel ?? "" },
+                { "plateNumber", plateNumber ?? "" }
             }
         };
 
@@ -182,5 +202,88 @@ public class NotificationService : INotificationService
         };
 
         await SendNotificationAsync(riderId, notification);
+    }
+    public async Task SendRiderArrivedNotificationAsync(Guid passengerId, Guid rideId, string riderName, string pickupLocation)
+    {
+        var notification = new NotificationDto
+        {
+            Type = "rider_arrived",
+            Title = "Rider Has Arrived! \ud83d\udccd",
+            Message = $"{riderName} has arrived at {pickupLocation}. Please meet your rider.",
+            Data = new Dictionary<string, object>
+            {
+                { "rideId", rideId.ToString() },
+                { "riderName", riderName },
+                { "pickupLocation", pickupLocation }
+            }
+        };
+
+        await SendNotificationAsync(passengerId, notification);
+    }
+    // On-demand (Uber-style) notifications
+    public async Task SendOnDemandRequestNotificationAsync(Guid requestId, string passengerName, string pickup, string dropoff, double pickupLat, double pickupLng)
+    {
+        var notification = new NotificationDto
+        {
+            Type = "ondemand_request",
+            Title = "New Ride Request Nearby! 🚕",
+            Message = $"{passengerName} needs a ride from {pickup} to {dropoff}",
+            Data = new Dictionary<string, object>
+            {
+                { "requestId", requestId.ToString() },
+                { "passengerName", passengerName },
+                { "pickup", pickup },
+                { "dropoff", dropoff },
+                { "pickupLat", pickupLat },
+                { "pickupLng", pickupLng }
+            }
+        };
+
+        // Broadcast to all riders (they filter by distance on client)
+        await _notificationHub.Clients.Group("riders").SendAsync("ReceiveNotification", notification);
+    }
+
+    public async Task SendOnDemandAcceptedNotificationAsync(Guid passengerId, Guid rideId, string riderName, string motorcycleModel, string pickup, string dropoff, string? riderPhone = null, string? plateNumber = null)
+    {
+        var data = new Dictionary<string, object>
+        {
+            { "rideId", rideId.ToString() },
+            { "riderName", riderName },
+            { "motorcycleModel", motorcycleModel },
+            { "pickup", pickup },
+            { "dropoff", dropoff }
+        };
+
+        if (!string.IsNullOrEmpty(riderPhone))
+            data["riderPhone"] = riderPhone;
+        if (!string.IsNullOrEmpty(plateNumber))
+            data["plateNumber"] = plateNumber;
+
+        var notification = new NotificationDto
+        {
+            Type = "ondemand_accepted",
+            Title = "Rider Found! \ud83c\udf89",
+            Message = $"{riderName} is on the way with {motorcycleModel}",
+            Data = data
+        };
+
+        await SendNotificationAsync(passengerId, notification);
+    }
+
+    public async Task SendOnDemandExpiredNotificationAsync(Guid passengerId, string pickup, string dropoff)
+    {
+        var notification = new NotificationDto
+        {
+            Type = "ondemand_expired",
+            Title = "Request Expired",
+            Message = $"No riders available for your ride from {pickup} to {dropoff}. Please try again.",
+            Data = new Dictionary<string, object>
+            {
+                { "pickup", pickup },
+                { "dropoff", dropoff }
+            }
+        };
+
+        await SendNotificationAsync(passengerId, notification);
     }
 }

@@ -173,21 +173,21 @@
 /* Floating Info Card */
 .info-card {
   position: fixed;
-  bottom: 70px;
-  left: 16px;
-  right: 16px;
+  bottom: 64px;
+  left: 12px;
+  right: 12px;
   background: var(--bg-card);
-  border-radius: 20px;
-  box-shadow: 0 -4px 20px var(--shadow);
-  padding: 12px 16px 16px;
+  border-radius: 16px;
+  box-shadow: 0 -3px 14px var(--shadow);
+  padding: 10px 12px 12px;
   z-index: 1000;
   transition: all 0.3s ease;
-  max-height: 200px;
+  max-height: 176px;
   overflow: hidden;
 }
 
 .info-card.expanded {
-  max-height: 450px;
+  max-height: 400px;
 }
 
 .card-handle {
@@ -195,19 +195,19 @@
   height: 4px;
   background: var(--border);
   border-radius: 2px;
-  margin: 0 auto 12px;
+  margin: 0 auto 8px;
 }
 
 /* Rider Header */
 .rider-header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .rider-avatar {
-  width: 48px;
-  height: 48px;
+  width: 42px;
+  height: 42px;
   background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
   border-radius: 50%;
   display: flex;
@@ -217,9 +217,9 @@
 }
 
 .rider-avatar mat-icon {
-  font-size: 26px;
-  width: 26px;
-  height: 26px;
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
 }
 
 .rider-info {
@@ -229,7 +229,7 @@
 }
 
 .rider-name {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -238,7 +238,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--primary);
   font-weight: 500;
   margin-top: 2px;
@@ -253,7 +253,7 @@
 .quick-actions {
   display: flex;
   gap: 8px;
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
 .quick-actions .action-btn {
@@ -262,9 +262,10 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 10px 16px;
-  border-radius: 12px;
-  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  min-height: 40px;
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
@@ -277,18 +278,18 @@
 }
 
 .quick-actions .action-btn mat-icon {
-  font-size: 18px;
-  width: 18px;
-  height: 18px;
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
 }
 
 .status-badge {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 12px;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 14px;
+  font-size: 11px;
   font-weight: 500;
 }
 

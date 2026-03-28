@@ -125,6 +125,140 @@
   padding-bottom: 80px;
 }
 
+/* Global active ride floating card */
+.active-ride-global {
+  position: fixed;
+  left: 12px;
+  width: min(420px, calc(100vw - 24px));
+  bottom: calc(70px + env(safe-area-inset-bottom));
+  background: linear-gradient(135deg, #0b4ea2 0%, #1f75d1 100%);
+  color: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 22px rgba(3, 70, 148, 0.28);
+  z-index: 120;
+  touch-action: pan-y;
+  user-select: none;
+  transition: transform 0.22s ease;
+  cursor: grab;
+}
+
+.active-ride-global.dragging {
+  transition: none;
+  cursor: grabbing;
+}
+
+.drag-handle-wrap {
+  display: flex;
+  justify-content: center;
+  padding-top: 6px;
+  cursor: grab;
+  touch-action: none;
+}
+
+.drag-handle {
+  width: 34px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.active-ride-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px 12px;
+}
+
+.active-ride-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.active-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #9effa3;
+  box-shadow: 0 0 0 0 rgba(158, 255, 163, 0.8);
+  animation: activePulseGlobal 1.5s infinite;
+  flex-shrink: 0;
+}
+
+.active-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.active-label {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.active-route {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.active-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ghost-btn,
+.track-btn {
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ghost-btn {
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.18);
+  color: white;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.track-btn {
+  gap: 4px;
+  padding: 8px 10px;
+  background: white;
+  color: #0b4ea2;
+  font-size: 12px;
+  font-weight: 700;
+
+  mat-icon {
+    font-size: 17px;
+    width: 17px;
+    height: 17px;
+  }
+}
+
+@keyframes activePulseGlobal {
+  0% { box-shadow: 0 0 0 0 rgba(158, 255, 163, 0.75); }
+  70% { box-shadow: 0 0 0 8px rgba(158, 255, 163, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(158, 255, 163, 0); }
+}
+
 /* Bottom Navigation */
 .bottom-nav {
   position: fixed;

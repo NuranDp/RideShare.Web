@@ -1,0 +1,192 @@
+<!-- Availability Toggle -->
+<div class="availability-toggle">
+  <div class="toggle-content" [class.available]="isAvailable">
+    <div class="toggle-icon">
+      <mat-icon>{{ isAvailable ? 'wifi_tethering' : 'wifi_off' }}</mat-icon>
+    </div>
+    <div class="toggle-text">
+      <span class="toggle-status">{{ isAvailable ? 'Online' : 'Offline' }}</span>
+      <span class="toggle-hint">{{ isAvailable ? 'Receiving requests' : 'Tap to go online' }}</span>
+    </div>
+    <mat-slide-toggle 
+      [checked]="isAvailable" 
+      (change)="toggleAvailability()"
+      color="primary">
+    </mat-slide-toggle>
+  </div>
+</div>
+
+<!-- Tab Toggle -->
+<div class="tab-toggle-container">
+  <div class="tab-toggle">
+    <button class="tab-btn" [class.active]="activeTab === 'active'" (click)="activeTab = 'active'">
+      <mat-icon>wifi_tethering</mat-icon>
+      <span>Active</span>
+      @if (requests.length > 0) {
+        <span class="tab-badge">{{ requests.length }}</span>
+      }
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'history'" (click)="switchToHistory()">
+      <mat-icon>history</mat-icon>
+      <span>History</span>
+      @if (acceptedRequests.length > 0) {
+        <span class="tab-badge secondary">{{ acceptedRequests.length }}</span>
+      }
+    </button>
+  </div>
+</div>
+
+<!-- Content Area -->
+<div class="content-area">
+  <!-- Active Tab -->
+  @if (activeTab === 'active') {
+    @if (!isAvailable) {
+      <div class="empty-state">
+        <div class="empty-icon offline">
+          <mat-icon>wifi_off</mat-icon>
+        </div>
+        <h3>You're Offline</h3>
+        <p>Toggle "Online" above to start receiving ride requests from nearby passengers.</p>
+      </div>
+    } @else if (loading && requests.length === 0) {
+      <div class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Searching for nearby requests...</p>
+      </div>
+    } @else if (!isRiderVerified) {
+      <div class="empty-state">
+        <div class="empty-icon warning">
+          <mat-icon>verified_user</mat-icon>
+        </div>
+        <h3>License Not Verified</h3>
+        <p>Your license needs to be verified before you can accept ride requests.</p>
+        <button class="action-btn primary" routerLink="/rider/profile">
+          <mat-icon>account_circle</mat-icon>
+          Go to Profile
+        </button>
+      </div>
+    } @else if (requests.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">
+          <mat-icon>search_off</mat-icon>
+        </div>
+        <h3>No Requests Nearby</h3>
+        <p>There are no ride requests within 10 km of your location. We'll notify you when one appears.</p>
+        <button class="action-btn outline" (click)="refreshRequests()" [disabled]="loading">
+          <mat-icon [class.spinning]="loading">refresh</mat-icon>
+          Refresh
+        </button>
+      </div>
+    } @else {
+      <div class="requests-list">
+        @for (request of requests; track request.id) {
+          <div class="request-card" matRipple (click)="openRequestDialog(request)">
+            <!-- Status Badge -->
+            <div class="status-badge badge-active">
+              <mat-icon>wifi_tethering</mat-icon>
+              <span>Active</span>
+            </div>
+
+            <!-- Passenger Header -->
+            <div class="request-header">
+              <div class="passenger-avatar">
+                @if (request.passengerPhoto) {
+                  <img [src]="request.passengerPhoto" alt="Passenger">
+                } @else {
+                  <mat-icon>person</mat-icon>
+                }
+              </div>
+              <div class="passenger-info">
+                <span class="passenger-name">{{ request.passengerName }}</span>
+                <span class="request-time">
+                  <mat-icon>near_me</mat-icon>
+                  {{ request.distanceKm }} km away
+                </span>
+              </div>
+              <div class="timer-chip">
+                <mat-icon>timer</mat-icon>
+                {{ getTimeRemaining(request.expiresAt) }}
+              </div>
+            </div>
+
+            <!-- Route Display -->
+            <div class="route-section">
+              <div class="route-inline">
+                <span class="marker small pickup">P</span>
+                <span class="route-text">{{ getShortAddress(request.pickupLocation) }}</span>
+                <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+                <span class="marker small dropoff">D</span>
+                <span class="route-text">{{ getShortAddress(request.dropoffLocation) }}</span>
+              </div>
+            </div>
+
+            <!-- Tap to view hint -->
+            <div class="tap-hint">
+              <mat-icon>touch_app</mat-icon>
+              <span>Tap to view details & accept</span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <!-- History Tab -->
+  @if (activeTab === 'history') {
+    @if (historyLoading) {
+      <div class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading history...</p>
+      </div>
+    } @else if (acceptedRequests.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">
+          <mat-icon>history</mat-icon>
+        </div>
+        <h3>No History Yet</h3>
+        <p>On-demand rides you accept will appear here.</p>
+      </div>
+    } @else {
+      <div class="requests-list">
+        @for (request of acceptedRequests; track request.id) {
+          <div class="request-card history" [class]="'status-border-' + request.status.toLowerCase()">
+            <!-- Status Badge -->
+            <div class="status-badge" [class]="'badge-' + request.status.toLowerCase()">
+              <mat-icon>{{ getStatusIcon(request.status) }}</mat-icon>
+              <span>{{ request.status }}</span>
+            </div>
+
+            <!-- Passenger Header -->
+            <div class="request-header">
+              <div class="passenger-avatar">
+                @if (request.passengerPhoto) {
+                  <img [src]="request.passengerPhoto" alt="Passenger">
+                } @else {
+                  <mat-icon>person</mat-icon>
+                }
+              </div>
+              <div class="passenger-info">
+                <span class="passenger-name">{{ request.passengerName }}</span>
+                <span class="request-time">
+                  <mat-icon>schedule</mat-icon>
+                  {{ formatDateTime(request.acceptedAt || request.createdAt) }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Route Display -->
+            <div class="route-section">
+              <div class="route-inline">
+                <span class="marker small pickup">P</span>
+                <span class="route-text">{{ getShortAddress(request.pickupLocation) }}</span>
+                <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+                <span class="marker small dropoff">D</span>
+                <span class="route-text">{{ getShortAddress(request.dropoffLocation) }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

@@ -14,6 +14,7 @@ public class RideShareDbContext : DbContext
     public DbSet<Ride> Rides => Set<Ride>();
     public DbSet<RideRequest> RideRequests => Set<RideRequest>();
     public DbSet<Rating> Ratings => Set<Rating>();
+    public DbSet<OnDemandRequest> OnDemandRequests => Set<OnDemandRequest>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -120,6 +121,36 @@ public class RideShareDbContext : DbContext
 
             // One rating per passenger per ride
             entity.HasIndex(e => new { e.RideId, e.PassengerId }).IsUnique();
+        });
+
+        // OnDemandRequest configuration (Uber-style passenger-initiated requests)
+        modelBuilder.Entity<OnDemandRequest>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
+            entity.Property(e => e.PickupLocation).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.DropoffLocation).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.Status).HasConversion<string>().HasMaxLength(20);
+            entity.Property(e => e.Message).HasMaxLength(500);
+
+            entity.HasOne(e => e.Passenger)
+                .WithMany()
+                .HasForeignKey(e => e.PassengerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.AcceptedRider)
+                .WithMany()
+                .HasForeignKey(e => e.AcceptedRiderId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(e => e.Ride)
+                .WithMany()
+                .HasForeignKey(e => e.RideId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Index for finding nearby requests
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.ExpiresAt);
         });
 
         // Seed admin user with static values (required by EF Core for seeding)

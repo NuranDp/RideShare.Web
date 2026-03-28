@@ -16,12 +16,12 @@
 
 .popup-card {
   background: var(--bg-card);
-  border-radius: 24px 24px 0 0;
+  border-radius: 20px 20px 0 0;
   width: 100%;
   max-width: 100%;
-  max-height: 85vh;
+  max-height: 78vh;
   overflow-y: auto;
-  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 -6px 28px rgba(0, 0, 0, 0.26);
   animation: slideUp 0.3s ease;
 }
 
@@ -38,15 +38,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 8px 16px;
+  gap: 10px;
+  padding: 6px 12px;
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
 }
 
 .nav-btn {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   border: none;
   background: var(--bg-card);
@@ -68,14 +68,14 @@
   }
 
   mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
   }
 }
 
 .counter-text {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--primary);
 }
@@ -100,25 +100,25 @@
 .popup-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
+  gap: 10px;
+  padding: 12px 16px;
   background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
   color: white;
 }
 
 .header-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
 
   mat-icon {
-    font-size: 24px;
-    width: 24px;
-    height: 24px;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
   }
 }
 
@@ -129,12 +129,12 @@
 }
 
 .header-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
 }
 
 .header-time {
-  font-size: 12px;
+  font-size: 11px;
   opacity: 0.8;
 }
 
@@ -166,14 +166,14 @@
 .passenger-section {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px 20px;
+  gap: 10px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--border-color);
 }
 
 .passenger-avatar {
-  width: 50px;
-  height: 50px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: var(--primary-gradient-simple);
   display: flex;
@@ -188,9 +188,9 @@
   }
 
   mat-icon {
-    font-size: 28px;
-    width: 28px;
-    height: 28px;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
     color: white;
   }
 }
@@ -201,28 +201,28 @@
 }
 
 .passenger-name {
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .passenger-subtitle {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-muted);
 }
 
 /* Route Section */
 .route-section {
-  padding: 16px 20px;
+  padding: 12px 16px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
 }
 
 .route-block {
   background: var(--bg-secondary);
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: 10px;
+  padding: 10px;
 }
 
 .route-label {
@@ -233,7 +233,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 
   mat-icon {
     font-size: 16px;
@@ -294,7 +294,7 @@
 }
 
 .point-text {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
@@ -317,9 +317,9 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  padding: 0 20px 16px;
+  padding: 0 16px 12px;
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 12px;
   font-style: italic;
 
   mat-icon {
@@ -334,8 +334,8 @@
 /* Actions */
 .popup-actions {
   display: flex;
-  gap: 10px;
-  padding: 16px 20px;
+  gap: 8px;
+  padding: 12px 16px;
   background: var(--bg-secondary);
   border-top: 1px solid var(--border-color);
 }
@@ -346,18 +346,19 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 12px 16px;
+  padding: 10px 12px;
   border: none;
-  border-radius: 12px;
-  font-size: 13px;
+  border-radius: 10px;
+  font-size: 12px;
+  min-height: 42px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 
   mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
   }
 
   &:disabled {

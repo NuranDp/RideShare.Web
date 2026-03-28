@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,7 +7,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatRippleModule } from '@angular/material/core';
+import { Subscription } from 'rxjs';
 import { RideService } from '../../../services/ride.service';
+import { NotificationService } from '../../../services/notification.service';
 import { MyRideRequest, RequestStatus, CreateRatingRequest } from '../../../models/ride.model';
 import { RatingDialogComponent, RatingDialogData } from '../../../components/rating-dialog/rating-dialog.component';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../components/confirm-dialog/confirm-dialog.component';
@@ -28,13 +30,15 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../../../components/c
   templateUrl: './my-requests.component.html',
   styleUrls: ['./my-requests.component.scss']
 })
-export class MyRequestsComponent implements OnInit {
+export class MyRequestsComponent implements OnInit, OnDestroy {
   requests: MyRideRequest[] = [];
   loading = true;
   activeTab: 'pending' | 'accepted' | 'history' = 'pending';
+  private notificationSub?: Subscription;
 
   constructor(
     private rideService: RideService,
+    private notificationService: NotificationService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private router: Router
@@ -42,6 +46,19 @@ export class MyRequestsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadRequests();
+
+    // Auto-refresh when ride-related notifications come in
+    this.notificationSub = this.notificationService.onRideNotification$.subscribe(notification => {
+      this.loadRequests();
+      // Auto-switch to accepted tab when a request is accepted
+      if (notification.type === 'request_accepted') {
+        this.activeTab = 'accepted';
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.notificationSub?.unsubscribe();
   }
 
   loadRequests(): void {

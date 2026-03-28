@@ -25,9 +25,16 @@
     <mat-icon>home</mat-icon>
     <span>Home</span>
   </a>
-  <a class="nav-item" routerLink="/rider/post-ride" routerLinkActive="active">
-    <mat-icon>add_circle_outline</mat-icon>
-    <span>Post Ride</span>
+  <a class="nav-item" (click)="onOngoingClick($event)" [class.active]="isActiveRidePage" style="cursor:pointer">
+    <mat-icon [class.active-icon]="activeRide">navigation</mat-icon>
+    <span>Ongoing</span>
+    @if (activeRide) {
+      <span class="active-dot"></span>
+    }
+  </a>
+  <a class="nav-item" routerLink="/rider/nearby-requests" routerLinkActive="active">
+    <mat-icon>wifi_tethering</mat-icon>
+    <span>Nearby</span>
   </a>
   <a class="nav-item" routerLink="/rider/my-rides" routerLinkActive="active">
     <mat-icon>list_alt</mat-icon>
@@ -39,5 +46,8 @@
   </a>
 </nav>
 
-<!-- Ride Request Popup -->
+<!-- Ride Request Popup (for scheduled rides) -->
 <app-ride-request-popup></app-ride-request-popup>
+
+<!-- On-Demand Request Popup (for "now" requests) -->
+<app-ondemand-request-popup></app-ondemand-request-popup>

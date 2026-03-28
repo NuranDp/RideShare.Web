@@ -22,6 +22,80 @@ namespace RideShare.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("RideShare.Core.Entities.OnDemandRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTime?>("AcceptedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("AcceptedRiderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<double>("DropoffLat")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("DropoffLng")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("DropoffLocation")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Message")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("PassengerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<double>("PickupLat")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("PickupLng")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("PickupLocation")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("RequestedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("RideId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AcceptedRiderId");
+
+                    b.HasIndex("ExpiresAt");
+
+                    b.HasIndex("PassengerId");
+
+                    b.HasIndex("RideId");
+
+                    b.HasIndex("Status");
+
+                    b.ToTable("OnDemandRequests");
+                });
+
             modelBuilder.Entity("RideShare.Core.Entities.Rating", b =>
                 {
                     b.Property<Guid>("Id")
@@ -69,6 +143,9 @@ namespace RideShare.Api.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("ArrivalNotified")
+                        .HasColumnType("boolean");
 
                     b.Property<double?>("CurrentLat")
                         .HasColumnType("double precision");
@@ -329,6 +406,31 @@ namespace RideShare.Api.Migrations
                             Role = "Admin",
                             ThemePreference = "light"
                         });
+                });
+
+            modelBuilder.Entity("RideShare.Core.Entities.OnDemandRequest", b =>
+                {
+                    b.HasOne("RideShare.Core.Entities.User", "AcceptedRider")
+                        .WithMany()
+                        .HasForeignKey("AcceptedRiderId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("RideShare.Core.Entities.User", "Passenger")
+                        .WithMany()
+                        .HasForeignKey("PassengerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RideShare.Core.Entities.Ride", "Ride")
+                        .WithMany()
+                        .HasForeignKey("RideId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("AcceptedRider");
+
+                    b.Navigation("Passenger");
+
+                    b.Navigation("Ride");
                 });
 
             modelBuilder.Entity("RideShare.Core.Entities.Rating", b =>

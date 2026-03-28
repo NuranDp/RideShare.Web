@@ -136,3 +136,23 @@
     </div>
   }
 </div>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <a class="nav-item" routerLink="/passenger">
+    <mat-icon>home</mat-icon>
+    <span>Home</span>
+  </a>
+  <a class="nav-item" routerLink="/passenger/browse-rides">
+    <mat-icon>search</mat-icon>
+    <span>Find Ride</span>
+  </a>
+  <a class="nav-item active" routerLink="/passenger/my-requests">
+    <mat-icon>pending_actions</mat-icon>
+    <span>Requests</span>
+  </a>
+  <a class="nav-item" routerLink="/passenger" [queryParams]="{tab: 'profile'}">
+    <mat-icon>person</mat-icon>
+    <span>Profile</span>
+  </a>
+</nav>

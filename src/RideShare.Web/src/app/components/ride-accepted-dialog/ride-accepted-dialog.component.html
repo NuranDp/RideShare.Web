@@ -1,0 +1,73 @@
+<div class="ride-accepted-overlay">
+  <!-- Success Header -->
+  <div class="success-header">
+    <div class="success-icon-wrapper">
+      <div class="success-circle">
+        <mat-icon>check</mat-icon>
+      </div>
+      <div class="pulse-ring"></div>
+      <div class="pulse-ring delay"></div>
+    </div>
+    <h2 class="title">Ride Accepted!</h2>
+  </div>
+
+  <!-- Map Section -->
+  <div class="map-container">
+    <div id="accepted-map" class="map"></div>
+    <!-- Route Legend -->
+    <div class="map-legend">
+      <span class="legend-item"><span class="dot origin"></span> Pickup</span>
+      <span class="legend-item"><span class="dot dest"></span> Drop-off</span>
+    </div>
+  </div>
+
+  <!-- Rider Info Card -->
+  <div class="rider-card">
+    <div class="rider-avatar">
+      <mat-icon>two_wheeler</mat-icon>
+    </div>
+    <div class="rider-details">
+      <span class="rider-name">{{ data.riderName }}</span>
+      @if (data.vehicleModel || data.plateNumber) {
+        <span class="vehicle-info">
+          @if (data.vehicleModel) { {{ data.vehicleModel }} }
+          @if (data.vehicleModel && data.plateNumber) { · }
+          @if (data.plateNumber) { {{ data.plateNumber }} }
+        </span>
+      }
+    </div>
+    @if (data.riderPhone) {
+      <a class="call-btn" [href]="'tel:' + data.riderPhone" title="Call rider">
+        <mat-icon>phone</mat-icon>
+      </a>
+    }
+  </div>
+
+  <!-- Route Summary -->
+  <div class="route-summary">
+    <div class="route-point">
+      <span class="dot origin"></span>
+      <span class="address">{{ data.origin }}</span>
+    </div>
+    <div class="route-line"></div>
+    <div class="route-point">
+      <span class="dot dest"></span>
+      <span class="address">{{ data.destination }}</span>
+    </div>
+  </div>
+
+  <p class="info-text">
+    Your rider will contact you before departure. You can track their live location once the ride starts.
+  </p>
+
+  <!-- Actions -->
+  <div class="actions">
+    <button class="btn-primary" (click)="viewRide()">
+      <mat-icon>visibility</mat-icon>
+      View Ride Details
+    </button>
+    <button class="btn-secondary" (click)="dismiss()">
+      Dismiss
+    </button>
+  </div>
+</div>

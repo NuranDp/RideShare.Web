@@ -39,6 +39,34 @@
         <mat-icon class="share-ride-arrow">arrow_forward</mat-icon>
       </button>
 
+      <!-- On-Demand Requests Section - Simple Toggle -->
+      <div class="nearby-section clickable" routerLink="/rider/nearby-requests">
+        <div class="nearby-header">
+          <div class="nearby-header-left">
+            <div class="nearby-icon" [class.active]="isNearbyActive">
+              <mat-icon>{{ isNearbyActive ? 'wifi_tethering' : 'wifi_off' }}</mat-icon>
+            </div>
+            <div class="nearby-info">
+              <span class="nearby-title">Nearby Requests</span>
+              <span class="nearby-hint">{{ isNearbyActive ? 'You are online' : 'Go online to receive' }}</span>
+            </div>
+          </div>
+          <mat-slide-toggle 
+            [checked]="isNearbyActive" 
+            (change)="toggleNearbyAvailability()"
+            (click)="$event.stopPropagation()"
+            color="primary">
+          </mat-slide-toggle>
+        </div>
+        @if (isNearbyActive && nearbyRequests.length > 0) {
+          <div class="nearby-badge">
+            <span class="badge-count">{{ nearbyRequests.length }}</span>
+            <span class="badge-text">active request{{ nearbyRequests.length > 1 ? 's' : '' }}</span>
+            <mat-icon>chevron_right</mat-icon>
+          </div>
+        }
+      </div>
+
       <!-- Active Rides Section -->
       <div class="rides-section">
         <div class="section-title">
