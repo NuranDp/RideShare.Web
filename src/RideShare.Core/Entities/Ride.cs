@@ -28,6 +28,7 @@ public class Ride
     // Navigation properties
     public User Rider { get; set; } = null!;
     public ICollection<RideRequest> Requests { get; set; } = new List<RideRequest>();
+    public ICollection<ChatMessage> ChatMessages { get; set; } = new List<ChatMessage>();
 }
 
 public enum RideStatus

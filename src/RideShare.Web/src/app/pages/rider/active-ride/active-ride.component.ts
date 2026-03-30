@@ -7,8 +7,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RideService } from '../../../services/ride.service';
+import { AuthService } from '../../../services/auth.service';
+import { RideChatService } from '../../../services/ride-chat.service';
 import { Ride } from '../../../models/ride.model';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../components/confirm-dialog/confirm-dialog.component';
+import { RideChatComponent } from '../../../components/ride-chat/ride-chat.component';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 type RidePhase = 'loading' | 'pickup' | 'arrived' | 'inprogress' | 'completed';
@@ -22,7 +25,8 @@ type RidePhase = 'loading' | 'pickup' | 'arrived' | 'inprogress' | 'completed';
     MatButtonModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatDialogModule
+    MatDialogModule,
+    RideChatComponent
   ],
   animations: [
     trigger('fadeSlide', [
@@ -154,6 +158,17 @@ type RidePhase = 'loading' | 'pickup' | 'arrived' | 'inprogress' | 'completed';
           </div>
         </div>
 
+        <!-- Chat Section -->
+        @if (currentUserId && rideId) {
+          <div class="chat-section" @fadeSlide>
+            <app-ride-chat
+              [rideId]="rideId"
+              [currentUserId]="currentUserId"
+              [maxMessages]="2"
+            ></app-ride-chat>
+          </div>
+        }
+
         <!-- Action Buttons -->
         <div class="action-section">
           <div class="quick-options">
@@ -223,7 +238,7 @@ type RidePhase = 'loading' | 'pickup' | 'arrived' | 'inprogress' | 'completed';
       background: var(--bg-primary);
       display: flex;
       flex-direction: column;
-      padding-bottom: 180px;
+      padding-bottom: 140px;
     }
 
     /* Loading & Error States */
@@ -688,6 +703,58 @@ type RidePhase = 'loading' | 'pickup' | 'arrived' | 'inprogress' | 'completed';
       }
     }
 
+    // ── Chat Section ──
+    .chat-toggle-section {
+      padding: 16px;
+      border-top: 1px solid #e0e0e0;
+      background: var(--surface-variant, #f9f9f9);
+    }
+
+    .chat-toggle-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: white;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+
+      &:hover {
+        border-color: #667eea;
+        color: #667eea;
+      }
+
+      &.active {
+        background: #667eea;
+        border-color: #667eea;
+        color: white;
+      }
+    }
+
+    .chat-panel {
+      margin-top: 12px;
+      height: 320px;
+      max-height: 320px;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #e0e0e0;
+    }
+
     @media (max-width: 420px) {
       .quick-options {
         grid-template-columns: 1fr;
@@ -695,6 +762,11 @@ type RidePhase = 'loading' | 'pickup' | 'arrived' | 'inprogress' | 'completed';
 
       .completed-actions {
         grid-template-columns: 1fr;
+      }
+
+      .chat-panel {
+        height: 280px;
+        max-height: 280px;
       }
     }
   `]
@@ -705,6 +777,8 @@ export class ActiveRideComponent implements OnInit, OnDestroy {
   phase: RidePhase = 'loading';
   error: string | null = null;
   processing = false;
+  showChat = false;
+  currentUserId: string | null = null;
   
   private locationWatchId: number | null = null;
   private currentLat = 0;
@@ -714,11 +788,24 @@ export class ActiveRideComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private rideService: RideService,
+    private authService: AuthService,
+    private rideChatService: RideChatService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
+    // Get current user ID
+    this.authService.getCurrentUser().subscribe({
+      next: (user) => {
+        if (user && user.id) {
+          this.currentUserId = user.id;
+          // Initialize chat connection
+          this.initializeChat();
+        }
+      }
+    });
+
     this.rideId = this.route.snapshot.paramMap.get('id');
     if (this.rideId) {
       this.loadRide();
@@ -727,6 +814,24 @@ export class ActiveRideComponent implements OnInit, OnDestroy {
       this.error = 'No ride ID provided';
       this.phase = 'loading';
     }
+  }
+
+  private initializeChat(): void {
+    const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
+    if (!token) {
+      console.warn('No token found - chat will not initialize');
+      return;
+    }
+
+    console.log('Initializing chat connection...');
+    this.rideChatService.initializeConnection(token)
+      .then(() => {
+        console.log('✅ Chat connection initialized successfully');
+      })
+      .catch(err => {
+        console.error('❌ Chat init failed:', err);
+        // Note: Error will be displayed in the chat component via the error$ observable
+      });
   }
 
   ngOnDestroy(): void {

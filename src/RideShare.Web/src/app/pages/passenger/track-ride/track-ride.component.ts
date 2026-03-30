@@ -8,7 +8,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { RideService } from '../../../services/ride.service';
 import { LocationTrackingService } from '../../../services/location-tracking.service';
+import { AuthService } from '../../../services/auth.service';
+import { RideChatService } from '../../../services/ride-chat.service';
 import { RideLocation } from '../../../models/ride.model';
+import { RideChatComponent } from '../../../components/ride-chat/ride-chat.component';
 import * as L from 'leaflet';
 
 @Component({
@@ -21,7 +24,8 @@ import * as L from 'leaflet';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    RideChatComponent
   ],
   templateUrl: './track-ride.component.html',
   styleUrls: ['./track-ride.component.scss']
@@ -31,7 +35,7 @@ export class TrackRideComponent implements OnInit, OnDestroy, AfterViewInit {
   private riderMarker: L.Marker | null = null;
   private originMarker: L.Marker | null = null;
   private destMarker: L.Marker | null = null;
-  private rideId: string = '';
+  rideId: string = '';
   private locationSubscription: EffectRef | null = null;
 
   loading = signal(true);
@@ -40,17 +44,52 @@ export class TrackRideComponent implements OnInit, OnDestroy, AfterViewInit {
   lastUpdateTime = signal<string | null>(null);
   
   cardExpanded = false;
+  showChat = false;
+  currentUserId: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private rideService: RideService,
     public locationService: LocationTrackingService,
+    private authService: AuthService,
+    private rideChatService: RideChatService,
     private snackBar: MatSnackBar,
     private injector: Injector,
     private router: Router
   ) {}
 
+  private hydrateCurrentUserFromStorage(): void {
+    const userJson = localStorage.getItem('current_user');
+    if (!userJson) return;
+
+    try {
+      const user = JSON.parse(userJson) as { id?: string };
+      if (user?.id) {
+        this.currentUserId = user.id;
+      }
+    } catch {
+      // Ignore malformed local storage payload.
+    }
+  }
+
   ngOnInit(): void {
+    this.hydrateCurrentUserFromStorage();
+
+    // Get current user ID
+    this.authService.getCurrentUser().subscribe({
+      next: (user) => {
+        if (user && user.id) {
+          this.currentUserId = user.id;
+          // Initialize chat connection
+          this.initializeChat();
+        }
+      },
+      error: () => {
+        // Keep chat usable with local user fallback.
+        this.initializeChat();
+      }
+    });
+
     this.rideId = this.route.snapshot.paramMap.get('id') || '';
     if (!this.rideId) {
       this.error.set('Invalid ride ID');
@@ -67,6 +106,24 @@ export class TrackRideComponent implements OnInit, OnDestroy, AfterViewInit {
         this.updateRiderPosition(location.lat, location.lng);
       }
     }, { injector: this.injector, allowSignalWrites: true });
+  }
+
+  private initializeChat(): void {
+    const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
+    if (!token) {
+      console.warn('No token found - chat will not initialize');
+      return;
+    }
+
+    console.log('Initializing chat connection...');
+    this.rideChatService.initializeConnection(token)
+      .then(() => {
+        console.log('✅ Chat connection initialized successfully');
+      })
+      .catch(err => {
+        console.error('❌ Chat init failed:', err);
+        // Note: Error will be displayed in the chat component via the error$ observable
+      });
   }
 
   ngAfterViewInit(): void {

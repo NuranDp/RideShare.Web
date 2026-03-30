@@ -76,6 +76,7 @@ builder.Services.AddScoped<IRiderService, RiderService>();
 builder.Services.AddScoped<IRideService, RideService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IOnDemandService, OnDemandService>();
+builder.Services.AddScoped<IChatService, ChatService>();
 
 // Configure CORS for Angular (dev and production)
 var allowedOriginsEnv = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS");
@@ -117,5 +118,6 @@ app.MapGet("/api/health", () => Results.Ok(new { status = "healthy", timestamp =
 app.MapControllers();
 app.MapHub<NotificationHub>("/hubs/notifications");
 app.MapHub<LocationTrackingHub>("/hubs/location");
+app.MapHub<ChatHub>("/hubs/chat");
 
 app.Run();

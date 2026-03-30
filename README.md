@@ -58,6 +58,7 @@ A motorcycle-based ride-sharing platform where riders post their commute routes 
 - **On-Demand Request Popup**: Bottom sheet for riders showing nearby instant requests with distance and route info
 - **Live Location Tracking**: GPS updates every 5 seconds during rides
 - **ETA Calculations**: Estimated arrival time for passengers
+- **In-Ride Chat**: Real-time messaging between rider and passenger during active rides (last 2 messages shown inline, always-visible input, max 200 characters per message, Chelsea blue themed bubbles)
 - **Notification Types**: `request_accepted`, `request_rejected`, `ride_started`, `ride_completed`, `ride_cancelled`, `rider_arrived`, `ondemand_accepted`, `ondemand_expired`
 
 ### PWA & Mobile Support
@@ -121,6 +122,7 @@ ride-share/
 │           │   ├── ondemand-request-popup/
 │           │   ├── rating-dialog/
 │           │   ├── ride-accepted-dialog/
+│           │   ├── ride-chat/
 │           │   ├── ride-map/
 │           │   ├── ride-request-popup/
 │           │   ├── ride-status-dialog/
@@ -135,6 +137,7 @@ ride-share/
 │               ├── location-tracking.service.ts
 │               ├── notification.service.ts
 │               ├── ride.service.ts
+│               ├── ride-chat.service.ts
 │               ├── rider.service.ts
 │               └── theme.service.ts
 │
@@ -306,7 +309,13 @@ The app will be available at `http://localhost:4200`
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/api/rides/{id}/rate` | Rate a completed ride |
+| GET | `/api/rides/{id}/messages` | Get chat messages for a ride |
 | GET | `/api/rider/{id}/ratings` | Get rider's ratings |
+
+### Chat
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/rides/{id}/messages` | Get chat messages for a ride |
 
 ### Admin
 | Method | Endpoint | Description |
@@ -320,8 +329,7 @@ The app will be available at `http://localhost:4200`
 | Hub | Purpose |
 |-----|---------|
 | `/hubs/notifications` | Real-time notifications |
-| `/hubs/location` | Live ride tracking |
-
+| `/hubs/location` | Live ride tracking || `/hubs/chat` | In-ride messaging between rider and passenger |
 **Notification event names**: `request_accepted`, `request_rejected`, `ride_started`, `ride_completed`, `ride_cancelled`, `rider_arrived`, `ondemand_accepted`, `ondemand_expired`
 
 ## Map Features

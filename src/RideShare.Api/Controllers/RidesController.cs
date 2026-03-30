@@ -399,4 +399,35 @@ public class RidesController : ControllerBase
         var rides = await _rideService.GetAllRidesDebugAsync();
         return Ok(rides);
     }
+
+    // ── Chat Endpoints ──
+    
+    /// <summary>
+    /// Get all messages for a ride (Rider or accepted passenger only)
+    /// </summary>
+    [HttpGet("{rideId}/messages")]
+    [Authorize]
+    public async Task<IActionResult> GetRideMessages(Guid rideId)
+    {
+        var userId = GetUserId();
+        if (userId == null) return Unauthorized();
+
+        var canAccess = await _getChatService().CanUserAccessRideAsync(rideId, userId.Value);
+        if (!canAccess)
+            return Forbid("You don't have access to this ride's chat");
+
+        var messages = await _getChatService().GetRideMessagesAsync(rideId);
+        return Ok(messages.Select(m => new
+        {
+            id = m.Id,
+            rideId = m.RideId,
+            senderId = m.SenderId,
+            senderName = m.Sender.FullName,
+            senderPhotoUrl = m.Sender.ProfilePhotoUrl,
+            message = m.Message,
+            createdAt = m.CreatedAt
+        }));
+    }
+
+    private IChatService _getChatService() => HttpContext.RequestServices.GetRequiredService<IChatService>();
 }

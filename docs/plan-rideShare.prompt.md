@@ -89,6 +89,7 @@ ride-share/
 │   │   ├── DTOs/               # Data transfer objects
 │   │   ├── Services/           # Business logic
 │   │   │   ├── AuthService.cs
+│   │   │   ├── ChatService.cs
 │   │   │   ├── NotificationService.cs
 │   │   │   ├── OnDemandService.cs
 │   │   │   ├── RiderService.cs
@@ -140,6 +141,7 @@ ride-share/
 │           │   ├── ondemand-request-popup/
 │           │   ├── rating-dialog/
 │           │   ├── ride-accepted-dialog/
+│           │   ├── ride-chat/
 │           │   ├── ride-map/
 │           │   ├── ride-request-popup/
 │           │   ├── ride-status-dialog/
@@ -154,6 +156,7 @@ ride-share/
 │           │   ├── location-tracking.service.ts
 │           │   ├── notification.service.ts
 │           │   ├── ride.service.ts
+│           │   ├── ride-chat.service.ts
 │           │   ├── rider.service.ts
 │           │   └── theme.service.ts
 │           ├── guards/         # Route guards
@@ -377,6 +380,17 @@ CREATE TABLE Ratings (
 );
 ```
 
+### ChatMessages Table
+```sql
+CREATE TABLE ChatMessages (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    RideId UNIQUEIDENTIFIER NOT NULL FOREIGN KEY REFERENCES Rides(Id),
+    SenderId UNIQUEIDENTIFIER NOT NULL FOREIGN KEY REFERENCES Users(Id),
+    Message NVARCHAR(200) NOT NULL,
+    CreatedAt DATETIME2 DEFAULT GETUTCDATE()
+);
+```
+
 ---
 
 ## API Endpoints
@@ -425,12 +439,21 @@ CREATE TABLE Ratings (
 | POST | `/api/rides/{id}/rate` | Rate a completed ride |
 | GET | `/api/rider/{id}/ratings` | Get rider's ratings |
 
+### Chat
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/rides/{id}/messages` | Get chat messages for a ride |
+
 ### Live Tracking (SignalR)
 | Hub | Method | Description |
 |-----|--------|-------------|
 | `/hubs/location` | `UpdateLocation` | Rider broadcasts GPS position |
 | `/hubs/location` | `JoinRideTracking` | Passenger joins ride tracking |
 | `/hubs/notifications` | `ReceiveNotification` | Real-time notifications |
+| `/hubs/chat` | `JoinRideChat` | Join a ride's chat group |
+| `/hubs/chat` | `LeaveRideChat` | Leave a ride's chat group |
+| `/hubs/chat` | `SendMessage` | Send message in ride chat (max 200 chars) |
+| `/hubs/chat` | `receiveMessage` | Receive a new chat message |
 ### On-Demand Rides
 | Method | Endpoint | Description |
 |--------|----------|--------------|

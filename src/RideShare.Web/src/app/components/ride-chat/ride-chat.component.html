@@ -1,0 +1,65 @@
+<div class="uber-chat">
+  <!-- Minimal Header -->
+  <div class="chat-header">
+    <span class="header-title">Messages</span>
+    <span class="connection-dot" [class.online]="isConnected"></span>
+  </div>
+
+  <!-- Error Toast -->
+  @if (error) {
+    <div class="error-toast">
+      <mat-icon>warning</mat-icon>
+      <span>{{ error }}</span>
+    </div>
+  }
+
+  <!-- Messages Area -->
+  <div class="messages-area" #messagesContainer>
+    @if (isLoading) {
+      <div class="loading-state">
+        <mat-spinner diameter="28"></mat-spinner>
+      </div>
+    } @else if (messages.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">
+          <mat-icon>chat_bubble_outline</mat-icon>
+        </div>
+        <p>Send a message to start chatting</p>
+      </div>
+    } @else {
+      @for (msg of displayedMessages; track msg.id) {
+        <div class="message-row" [class.outgoing]="msg.isOwnMessage">
+          <div class="bubble">
+            <span class="text">{{ msg.message }}</span>
+          </div>
+          <span class="time">{{ getMessageTime(msg.createdAt) }}</span>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Input Bar (Uber style) -->
+  <div class="input-bar">
+    <input
+      type="text"
+      [(ngModel)]="newMessageText"
+      (keydown)="handleKeydown($event)"
+      placeholder="Message"
+      [disabled]="isSending"
+      maxlength="200"
+      class="message-input"
+    />
+    <button
+      type="button"
+      (click)="sendMessage()"
+      [disabled]="!newMessageText.trim() || isSending"
+      class="send-btn"
+    >
+      @if (isSending) {
+        <mat-spinner diameter="18"></mat-spinner>
+      } @else {
+        <mat-icon>arrow_upward</mat-icon>
+      }
+    </button>
+  </div>
+</div>

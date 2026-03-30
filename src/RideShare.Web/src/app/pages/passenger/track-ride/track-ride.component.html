@@ -128,12 +128,24 @@
             <span>Rider</span>
           </div>
         </div>
+
+        <!-- Chat Section -->
+        @if (rideId) {
+          <div class="chat-section" (click)="$event.stopPropagation()">
+            <app-ride-chat
+              [rideId]="rideId"
+              [currentUserId]="currentUserId"
+              [maxMessages]="2"
+            ></app-ride-chat>
+          </div>
+        }
       }
 
       <div class="expand-hint">
         <mat-icon>{{ cardExpanded ? 'expand_more' : 'expand_less' }}</mat-icon>
       </div>
     </div>
+
   }
 </div>
 

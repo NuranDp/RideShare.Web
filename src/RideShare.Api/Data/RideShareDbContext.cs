@@ -15,6 +15,7 @@ public class RideShareDbContext : DbContext
     public DbSet<RideRequest> RideRequests => Set<RideRequest>();
     public DbSet<Rating> Ratings => Set<Rating>();
     public DbSet<OnDemandRequest> OnDemandRequests => Set<OnDemandRequest>();
+    public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -151,6 +152,31 @@ public class RideShareDbContext : DbContext
             // Index for finding nearby requests
             entity.HasIndex(e => e.Status);
             entity.HasIndex(e => e.ExpiresAt);
+        });
+
+        // ChatMessage configuration
+        modelBuilder.Entity<ChatMessage>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
+            entity.Property(e => e.RideId).IsRequired();
+            entity.Property(e => e.SenderId).IsRequired();
+            entity.Property(e => e.Message).IsRequired().HasMaxLength(1000);
+
+            // Configure explicit relationship
+            entity.HasOne(e => e.Ride)
+                .WithMany(r => r.ChatMessages)
+                .HasForeignKey(e => e.RideId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Sender)
+                .WithMany()
+                .HasForeignKey(e => e.SenderId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Index for fetching messages by ride
+            entity.HasIndex(e => e.RideId);
+            entity.HasIndex(e => new { e.RideId, e.CreatedAt });
         });
 
         // Seed admin user with static values (required by EF Core for seeding)
