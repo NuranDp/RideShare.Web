@@ -25,6 +25,29 @@ builder.Services.AddOpenApi();
 // Add SignalR
 builder.Services.AddSignalR();
 
+// Add Memory Cache
+builder.Services.AddMemoryCache();
+
+// Add Response Compression
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<Microsoft.AspNetCore.ResponseCompression.BrotliCompressionProvider>();
+    options.Providers.Add<Microsoft.AspNetCore.ResponseCompression.GzipCompressionProvider>();
+    options.MimeTypes = Microsoft.AspNetCore.ResponseCompression.ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/json", "text/plain", "text/html", "text/css", "application/javascript" });
+});
+
+builder.Services.Configure<Microsoft.AspNetCore.ResponseCompression.BrotliCompressionProviderOptions>(options =>
+{
+    options.Level = System.IO.Compression.CompressionLevel.Fastest;
+});
+
+builder.Services.Configure<Microsoft.AspNetCore.ResponseCompression.GzipCompressionProviderOptions>(options =>
+{
+    options.Level = System.IO.Compression.CompressionLevel.SmallestSize;
+});
+
 // Configure DbContext (Supabase PostgreSQL)
 builder.Services.AddDbContext<RideShareDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -101,6 +124,9 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Response compression must be first
+app.UseResponseCompression();
 
 // CORS must be early in the pipeline - before any errors can occur
 app.UseCors("AllowAngular");

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using RideShare.Api.Data;
 using RideShare.Api.DTOs;
 using RideShare.Core.Entities;
@@ -49,12 +50,17 @@ public class RideService : IRideService
     private readonly RideShareDbContext _context;
     private readonly INotificationService _notificationService;
     private readonly IPricingService _pricingService;
+    private readonly IMemoryCache _cache;
+    
+    // Throttle DB writes - only persist location every 15 seconds
+    private const int LocationPersistIntervalSeconds = 15;
 
-    public RideService(RideShareDbContext context, INotificationService notificationService, IPricingService pricingService)
+    public RideService(RideShareDbContext context, INotificationService notificationService, IPricingService pricingService, IMemoryCache cache)
     {
         _context = context;
         _notificationService = notificationService;
         _pricingService = pricingService;
+        _cache = cache;
     }
 
     public async Task<RideDto?> CreateRideAsync(Guid riderId, CreateRideRequest request)
@@ -357,17 +363,16 @@ public class RideService : IRideService
         
         if (ride == null) return false;
 
-        ride.CurrentLat = lat;
-        ride.CurrentLng = lng;
-        ride.LocationUpdatedAt = DateTime.UtcNow;
-
-        await _context.SaveChangesAsync();
-
-        // Broadcast location to all tracking passengers
+        // Always broadcast location via SignalR for real-time UI updates
         await _notificationService.BroadcastLocationUpdateAsync(rideId, lat, lng);
 
+        // Check cache for last persist time to throttle database writes
+        var cacheKey = $"ride_location_persist_{rideId}";
+        var shouldPersist = !_cache.TryGetValue(cacheKey, out _);
+
         // Check if rider has arrived at pickup point (within ~100 meters)
-        if (!ride.ArrivalNotified)
+        bool needsArrivalCheck = !ride.ArrivalNotified;
+        if (needsArrivalCheck)
         {
             var acceptedRequest = ride.Requests.FirstOrDefault(r => r.Status == RideRequestStatus.Accepted);
             if (acceptedRequest != null)
@@ -383,7 +388,7 @@ public class RideService : IRideService
                     if (distance <= 100) // Within 100 meters
                     {
                         ride.ArrivalNotified = true;
-                        await _context.SaveChangesAsync();
+                        shouldPersist = true; // Force persist for arrival notification
 
                         await _notificationService.SendRiderArrivedNotificationAsync(
                             acceptedRequest.PassengerId,
@@ -393,6 +398,19 @@ public class RideService : IRideService
                     }
                 }
             }
+        }
+
+        // Only persist to database if throttle interval has passed
+        if (shouldPersist)
+        {
+            ride.CurrentLat = lat;
+            ride.CurrentLng = lng;
+            ride.LocationUpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            // Set cache to throttle next persist
+            _cache.Set(cacheKey, true, TimeSpan.FromSeconds(LocationPersistIntervalSeconds));
         }
 
         return true;

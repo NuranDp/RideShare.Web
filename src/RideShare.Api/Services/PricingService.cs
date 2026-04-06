@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using RideShare.Api.Data;
 using RideShare.Api.DTOs;
 using RideShare.Core.Entities;
@@ -16,10 +17,14 @@ public interface IPricingService
 public class PricingService : IPricingService
 {
     private readonly RideShareDbContext _context;
+    private readonly IMemoryCache _cache;
+    private const string PricingCacheKey = "pricing_settings";
+    private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(10);
 
-    public PricingService(RideShareDbContext context)
+    public PricingService(RideShareDbContext context, IMemoryCache cache)
     {
         _context = context;
+        _cache = cache;
     }
 
     public async Task<PricingSettingsDto> GetPricingSettingsAsync()
@@ -64,6 +69,11 @@ public class PricingService : IPricingService
         settings.UpdatedByAdminId = adminId;
 
         await _context.SaveChangesAsync();
+        
+        // Invalidate cache and store updated settings
+        _cache.Remove(PricingCacheKey);
+        _cache.Set(PricingCacheKey, settings, CacheDuration);
+        
         return MapToDto(settings);
     }
 
@@ -133,6 +143,12 @@ public class PricingService : IPricingService
 
     private async Task<PricingSettings> GetOrCreateSettingsAsync()
     {
+        // Try to get from cache first
+        if (_cache.TryGetValue(PricingCacheKey, out PricingSettings? cachedSettings) && cachedSettings != null)
+        {
+            return cachedSettings;
+        }
+
         var settings = await _context.PricingSettings.FirstOrDefaultAsync(s => s.Id == 1);
         
         if (settings == null)
@@ -141,6 +157,9 @@ public class PricingService : IPricingService
             _context.PricingSettings.Add(settings);
             await _context.SaveChangesAsync();
         }
+
+        // Cache the settings
+        _cache.Set(PricingCacheKey, settings, CacheDuration);
 
         return settings;
     }

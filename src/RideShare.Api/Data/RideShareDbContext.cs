@@ -78,6 +78,12 @@ public class RideShareDbContext : DbContext
                 .WithMany(u => u.PostedRides)
                 .HasForeignKey(e => e.RiderId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Performance indexes
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.RiderId);
+            entity.HasIndex(e => e.DepartureTime);
+            entity.HasIndex(e => new { e.Status, e.DepartureTime });
         });
 
         // RideRequest configuration
@@ -97,6 +103,12 @@ public class RideShareDbContext : DbContext
                 .WithMany(u => u.RideRequests)
                 .HasForeignKey(e => e.PassengerId)
                 .OnDelete(DeleteBehavior.NoAction); // Prevent cascade cycle
+
+            // Performance indexes
+            entity.HasIndex(e => e.RideId);
+            entity.HasIndex(e => e.PassengerId);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => new { e.RideId, e.Status });
         });
 
         // Rating configuration
