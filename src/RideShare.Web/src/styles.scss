@@ -25,19 +25,19 @@ body.light-theme {
   --danger-bg: #ffebee;
   
   --text-primary: #1e293b;
-  --text-secondary: #64748b;
-  --text-muted: #94a3b8;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
   --text-inverse: #ffffff;
   
   --bg-primary: #f5f7fa;
   --bg-secondary: #f1f5f9;
   --bg-card: #ffffff;
-  --bg-input: #f5f7fa;
+  --bg-input: #ffffff;
   --bg-hover: #f0f0f0;
   
-  --border-color: #e2e8f0;
-  --border-light: #f0f0f0;
-  --border: #e2e8f0;
+  --border-color: #cbd5e1;
+  --border-light: #e2e8f0;
+  --border: #cbd5e1;
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
@@ -46,6 +46,20 @@ body.light-theme {
   --nav-bg: #ffffff;
   --nav-text: #666666;
   --nav-active: #034694;
+  
+  /* Material Input Overrides for Light Mode */
+  --mdc-filled-text-field-input-text-color: #1e293b;
+  --mdc-outlined-text-field-input-text-color: #1e293b;
+  --mdc-filled-text-field-caret-color: #0A56A4;
+  --mdc-outlined-text-field-caret-color: #0A56A4;
+  --mdc-filled-text-field-label-text-color: #475569;
+  --mdc-outlined-text-field-label-text-color: #475569;
+  --mdc-filled-text-field-container-color: #ffffff;
+  --mdc-outlined-text-field-outline-color: #cbd5e1;
+  --mdc-filled-text-field-focus-label-text-color: #0A56A4;
+  --mdc-outlined-text-field-focus-label-text-color: #0A56A4;
+  --mdc-outlined-text-field-focus-outline-color: #0A56A4;
+  --mat-form-field-state-layer-color: transparent;
 }
 
 /* Dark Theme */
@@ -196,6 +210,59 @@ mat-card-subtitle {
   
   .mat-toolbar button[mat-icon-button] {
     margin: 0 2px;
+  }
+}
+
+/* ========== GLOBAL FORM FIELD STYLES ========== */
+
+/* Ensure form field labels are visible in all themes */
+.mat-mdc-form-field {
+  /* Label visibility */
+  .mat-mdc-floating-label,
+  .mdc-floating-label {
+    color: var(--text-secondary) !important;
+    font-weight: 500;
+  }
+  
+  /* Floating label when above input - add background to prevent overlap */
+  .mdc-floating-label--float-above {
+    color: var(--primary) !important;
+    font-weight: 600;
+    background: var(--bg-card);
+    padding: 0 4px;
+  }
+  
+  /* Focused/floating label */
+  &.mat-focused .mat-mdc-floating-label,
+  &.mat-form-field-should-float .mat-mdc-floating-label {
+    color: var(--primary) !important;
+    font-weight: 600;
+  }
+  
+  /* Input text */
+  .mat-mdc-input-element {
+    color: var(--text-primary) !important;
+    
+    &::placeholder {
+      color: var(--text-muted) !important;
+      opacity: 0.6 !important;
+    }
+  }
+  
+  /* Outline borders */
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: var(--border-color) !important;
+  }
+  
+  /* Focused outline */
+  &.mat-focused {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: var(--primary) !important;
+    }
   }
 }
 

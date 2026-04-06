@@ -6,7 +6,7 @@
     </div>
     <div class="toggle-text">
       <span class="toggle-status">{{ isAvailable ? 'Online' : 'Offline' }}</span>
-      <span class="toggle-hint">{{ isAvailable ? 'Receiving requests' : 'Tap to go online' }}</span>
+      <span class="toggle-hint">{{ isAvailable ? 'Receiving ride requests' : 'Tap to go online' }}</span>
     </div>
     <mat-slide-toggle 
       [checked]="isAvailable" 
@@ -84,7 +84,7 @@
             <!-- Status Badge -->
             <div class="status-badge badge-active">
               <mat-icon>wifi_tethering</mat-icon>
-              <span>Active</span>
+              <span>Active Request</span>
             </div>
 
             <!-- Passenger Header -->

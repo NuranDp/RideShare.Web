@@ -25,24 +25,19 @@
 
       <div class="schedule-grid">
         <div class="schedule-item">
+          <label>Departure Date</label>
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Departure Date</mat-label>
-            <input matInput [matDatepicker]="picker" formControlName="departureDate" [min]="minDate">
+            <input matInput [matDatepicker]="picker" formControlName="departureDate" [min]="minDate" placeholder="Select date">
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
-            @if (rideForm.get('departureDate')?.hasError('required')) {
-              <mat-error>Date is required</mat-error>
-            }
           </mat-form-field>
         </div>
 
         <div class="schedule-item">
+          <label>Departure Time</label>
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Departure Time</mat-label>
-            <input matInput type="time" formControlName="departureTime">
-            @if (rideForm.get('departureTime')?.hasError('required')) {
-              <mat-error>Time is required</mat-error>
-            }
+            <input matInput type="time" formControlName="departureTime" placeholder="Select time">
+            <mat-icon matIconSuffix class="time-icon">schedule</mat-icon>
           </mat-form-field>
         </div>
       </div>
@@ -73,11 +68,10 @@
 
       <!-- Notes -->
       <div class="notes-card">
+        <label>Notes (Optional)</label>
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Notes (Optional)</mat-label>
           <textarea matInput formControlName="notes" rows="3"
             placeholder="Route details, pickup points, preferences..."></textarea>
-          <mat-icon matPrefix>notes</mat-icon>
         </mat-form-field>
       </div>
     </div>

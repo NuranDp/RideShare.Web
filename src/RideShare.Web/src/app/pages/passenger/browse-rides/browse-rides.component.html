@@ -17,13 +17,16 @@
   </div>
   @if (!searchCollapsed) {
     <div class="search-form">
-      <div class="search-field">
-        <mat-icon class="field-icon origin">trip_origin</mat-icon>
-        <input type="text" [(ngModel)]="searchParams.origin" placeholder="From (origin)">
-      </div>
-      <div class="search-field">
-        <mat-icon class="field-icon dest">place</mat-icon>
-        <input type="text" [(ngModel)]="searchParams.destination" placeholder="To (destination)">
+      <div class="route-inputs">
+        <div class="connector-line"></div>
+        <div class="input-row">
+          <span class="location-dot pickup"></span>
+          <input type="text" [(ngModel)]="searchParams.origin" placeholder="Enter pickup location">
+        </div>
+        <div class="input-row">
+          <span class="location-dot dropoff"></span>
+          <input type="text" [(ngModel)]="searchParams.destination" placeholder="Enter destination">
+        </div>
       </div>
       <div class="search-actions">
         <button class="search-btn outline" (click)="clearSearch()">Clear</button>

@@ -2,87 +2,78 @@
   <!-- Location Inputs -->
   <div class="location-inputs">
     <!-- Origin Input -->
-    <div class="location-input-row" [class.active]="activeInput === 'origin'">
-      <div class="location-marker origin">A</div>
-      <mat-form-field appearance="outline" class="search-field">
-        <mat-label>Pickup Location</mat-label>
-        <input matInput 
+    <div class="input-group" [class.focused]="activeInput === 'origin'">
+      <label class="input-label">
+        <span class="label-dot origin"></span>
+        Pickup Location
+      </label>
+      <div class="input-wrapper">
+        <input type="text"
+               class="location-input"
                [(ngModel)]="originAddress" 
                (focus)="setActiveInput('origin')"
                (input)="onSearchInput($event, 'origin')"
                (keydown.enter)="searchAddress('origin')"
-               placeholder="Search or tap on map"
+               placeholder="Search address or tap on map"
                [matAutocomplete]="autoOrigin">
-        <button mat-icon-button matSuffix type="button" 
-                (click)="searchAddress('origin')" 
-                [disabled]="!originAddress || searching">
-          @if (searching && activeInput === 'origin') {
-            <mat-spinner diameter="20"></mat-spinner>
+        <button class="icon-btn" type="button"
+                (click)="useCurrentLocation('origin')"
+                [disabled]="gettingLocation"
+                title="Use my current location">
+          @if (gettingLocation && activeInput === 'origin') {
+            <mat-spinner diameter="18"></mat-spinner>
           } @else {
-            <mat-icon>search</mat-icon>
+            <mat-icon>my_location</mat-icon>
           }
         </button>
-        <mat-autocomplete #autoOrigin="matAutocomplete" (optionSelected)="onOptionSelected($event, 'origin')">
-          @for (result of searchResults; track result.display_name) {
-            <mat-option [value]="result">
-              <mat-icon>place</mat-icon>
-              <span>{{ result.display_name }}</span>
-            </mat-option>
-          }
-        </mat-autocomplete>
-      </mat-form-field>
-      <button mat-icon-button type="button"
-              (click)="useCurrentLocation('origin')"
-              [disabled]="gettingLocation"
-              matTooltip="Use my current location">
-        @if (gettingLocation && activeInput === 'origin') {
-          <mat-spinner diameter="20"></mat-spinner>
-        } @else {
-          <mat-icon>my_location</mat-icon>
+      </div>
+      <mat-autocomplete #autoOrigin="matAutocomplete" (optionSelected)="onOptionSelected($event, 'origin')">
+        @for (result of searchResults; track result.display_name) {
+          <mat-option [value]="result">
+            <mat-icon>place</mat-icon>
+            <span>{{ result.display_name }}</span>
+          </mat-option>
         }
-      </button>
+      </mat-autocomplete>
     </div>
 
+    <!-- Connector Line -->
+    <div class="connector-line"></div>
+
     <!-- Destination Input -->
-    <div class="location-input-row" [class.active]="activeInput === 'dest'">
-      <div class="location-marker dest">B</div>
-      <mat-form-field appearance="outline" class="search-field">
-        <mat-label>Drop-off Location</mat-label>
-        <input matInput 
+    <div class="input-group" [class.focused]="activeInput === 'dest'">
+      <label class="input-label">
+        <span class="label-dot dest"></span>
+        Drop-off Location
+      </label>
+      <div class="input-wrapper">
+        <input type="text"
+               class="location-input"
                [(ngModel)]="destAddress" 
                (focus)="setActiveInput('dest')"
                (input)="onSearchInput($event, 'dest')"
                (keydown.enter)="searchAddress('dest')"
-               placeholder="Search or tap on map"
+               placeholder="Search address or tap on map"
                [matAutocomplete]="autoDest">
-        <button mat-icon-button matSuffix type="button" 
-                (click)="searchAddress('dest')" 
-                [disabled]="!destAddress || searching">
-          @if (searching && activeInput === 'dest') {
-            <mat-spinner diameter="20"></mat-spinner>
+        <button class="icon-btn" type="button"
+                (click)="useCurrentLocation('dest')"
+                [disabled]="gettingLocation"
+                title="Use my current location">
+          @if (gettingLocation && activeInput === 'dest') {
+            <mat-spinner diameter="18"></mat-spinner>
           } @else {
-            <mat-icon>search</mat-icon>
+            <mat-icon>my_location</mat-icon>
           }
         </button>
-        <mat-autocomplete #autoDest="matAutocomplete" (optionSelected)="onOptionSelected($event, 'dest')">
-          @for (result of searchResults; track result.display_name) {
-            <mat-option [value]="result">
-              <mat-icon>place</mat-icon>
-              <span>{{ result.display_name }}</span>
-            </mat-option>
-          }
-        </mat-autocomplete>
-      </mat-form-field>
-      <button mat-icon-button type="button"
-              (click)="useCurrentLocation('dest')"
-              [disabled]="gettingLocation"
-              matTooltip="Use my current location">
-        @if (gettingLocation && activeInput === 'dest') {
-          <mat-spinner diameter="20"></mat-spinner>
-        } @else {
-          <mat-icon>my_location</mat-icon>
+      </div>
+      <mat-autocomplete #autoDest="matAutocomplete" (optionSelected)="onOptionSelected($event, 'dest')">
+        @for (result of searchResults; track result.display_name) {
+          <mat-option [value]="result">
+            <mat-icon>place</mat-icon>
+            <span>{{ result.display_name }}</span>
+          </mat-option>
         }
-      </button>
+      </mat-autocomplete>
     </div>
   </div>
 

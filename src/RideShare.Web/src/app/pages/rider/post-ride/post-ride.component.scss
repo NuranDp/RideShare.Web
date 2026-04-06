@@ -3,56 +3,12 @@
   background: var(--bg-primary);
 }
 
-/* Top Bar */
-.top-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: var(--nav-bg);
-  box-shadow: 0 2px 8px var(--shadow);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.back-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  border: none;
-  background: var(--bg-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--text-primary);
-}
-
-.top-bar-title {
-  flex: 1;
-}
-
-.top-bar-title h1 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.top-bar-title .subtitle {
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-.top-bar-spacer {
-  width: 40px;
-}
-
 /* Content Area */
 .content-area {
   padding: 16px;
-  padding-bottom: 180px; /* Space for bottom bar + nav */
+  padding-bottom: 180px;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 /* Form Sections */
@@ -71,7 +27,7 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: var(--primary-gradient-simple);
+  background: var(--primary);
   color: white;
   display: flex;
   align-items: center;
@@ -87,74 +43,138 @@
   color: var(--text-primary);
 }
 
-/* Location Cards - Removed, using unified map now */
-
 /* Schedule Grid */
 .schedule-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 16px;
+  background: var(--bg-card);
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
 }
 
 @media (max-width: 480px) {
   .schedule-grid {
     grid-template-columns: 1fr;
+    padding: 16px;
   }
 }
 
 .schedule-item {
-  background: var(--bg-card);
-  padding: 16px;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-/* Dark mode input overrides for schedule fields */
+.schedule-item label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Time icon styling */
+::ng-deep .time-icon {
+  color: var(--primary) !important;
+  font-size: 22px !important;
+  width: 22px !important;
+  height: 22px !important;
+  margin-right: 4px;
+}
+
+/* Clean input styling */
 ::ng-deep .schedule-item,
 ::ng-deep .notes-card {
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+  
   .mat-mdc-text-field-wrapper {
-    background-color: var(--bg-input) !important;
+    background: var(--bg-secondary) !important;
+    border-radius: 12px !important;
+    padding: 0 !important;
+    border: 1px solid var(--border-color) !important;
+    transition: all 0.2s ease;
   }
   
   .mat-mdc-form-field-flex {
-    background-color: transparent !important;
+    padding: 0 14px !important;
+    min-height: 50px;
+    align-items: center;
+  }
+  
+  .mat-mdc-form-field-infix {
+    padding: 12px 0 !important;
+    min-height: auto !important;
+    width: 100%;
+  }
+  
+  /* Hide the notched outline */
+  .mdc-notched-outline {
+    display: none !important;
   }
   
   input.mat-mdc-input-element,
   textarea.mat-mdc-input-element {
     color: var(--text-primary) !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
     
     &::placeholder {
       color: var(--text-muted) !important;
-      opacity: 0.7;
+      font-weight: 400 !important;
     }
   }
   
-  .mdc-notched-outline__leading,
-  .mdc-notched-outline__notch,
-  .mdc-notched-outline__trailing {
-    border-color: var(--border-color) !important;
+  /* Time input specific styling */
+  input[type="time"] {
+    font-family: inherit;
+    font-weight: 500 !important;
   }
   
-  /* Label styling */
-  .mat-mdc-floating-label,
-  .mdc-floating-label {
-    color: var(--text-secondary) !important;
+  /* Hide floating label - we use external label */
+  .mat-mdc-floating-label {
+    display: none !important;
   }
   
-  /* Fix prefix/suffix icon colors */
-  .mat-mdc-form-field-icon-prefix,
+  /* Icon styling */
   .mat-mdc-form-field-icon-suffix {
-    color: var(--text-secondary) !important;
+    padding: 0 !important;
     
-    mat-icon {
-      color: var(--text-secondary) !important;
-    }
-    
-    .mat-mdc-icon-button {
-      color: var(--text-secondary) !important;
+    .mat-mdc-icon-button,
+    .mat-datepicker-toggle {
+      width: 36px;
+      height: 36px;
+      color: var(--primary) !important;
+      
+      .mat-mdc-button-persistent-ripple {
+        border-radius: 8px;
+      }
+      
+      mat-icon, svg {
+        color: var(--primary) !important;
+        fill: var(--primary) !important;
+      }
     }
   }
+}
+
+/* Hover state */
+::ng-deep .schedule-item .mat-mdc-text-field-wrapper:hover,
+::ng-deep .notes-card .mat-mdc-text-field-wrapper:hover {
+  border-color: var(--primary) !important;
+  background: var(--bg-card) !important;
+}
+
+/* Focus state */
+::ng-deep .schedule-item .mat-mdc-form-field.mat-focused .mat-mdc-text-field-wrapper,
+::ng-deep .notes-card .mat-mdc-form-field.mat-focused .mat-mdc-text-field-wrapper {
+  border-color: var(--primary) !important;
+  border-width: 2px !important;
+  background: var(--bg-card) !important;
+  box-shadow: 0 0 0 3px var(--primary-shadow-light) !important;
 }
 
 :host-context(body.dark-theme) {
@@ -177,9 +197,14 @@
   padding: 16px;
   background: var(--bg-card);
   border-radius: 16px;
-  box-shadow: 0 2px 8px var(--shadow);
+  border: 1px solid var(--border-color);
   cursor: pointer;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  transition: all 0.2s;
+}
+
+.option-card:hover {
+  border-color: var(--primary);
 }
 
 .option-icon {
@@ -202,7 +227,7 @@
 }
 
 .option-icon.active {
-  background: var(--primary-gradient-simple);
+  background: var(--primary);
 }
 
 .option-icon.active mat-icon {
@@ -216,7 +241,7 @@
 .option-title {
   display: block;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
@@ -242,7 +267,7 @@
 }
 
 .option-toggle.active .toggle-track {
-  background: var(--primary-gradient-simple);
+  background: var(--primary);
 }
 
 .toggle-thumb {
@@ -263,10 +288,21 @@
 
 /* Notes Card */
 .notes-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   background: var(--bg-card);
-  padding: 16px;
+  padding: 20px;
   border-radius: 16px;
-  box-shadow: 0 2px 8px var(--shadow);
+  border: 1px solid var(--border-color);
+}
+
+.notes-card label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* Warning Banner */
@@ -274,7 +310,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px;
+  padding: 14px 16px;
   background: var(--warning-bg);
   border-radius: 12px;
   color: var(--warning);
@@ -283,6 +319,7 @@
 
 .warning-banner mat-icon {
   flex-shrink: 0;
+  font-size: 20px;
 }
 
 .warning-banner span {
@@ -299,23 +336,30 @@
   width: 100%;
   padding: 16px 24px;
   border: none;
-  border-radius: 16px;
-  background: var(--primary-gradient-simple);
+  border-radius: 14px;
+  background: var(--primary);
   color: white;
   font-size: 16px;
   font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px var(--primary-shadow);
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px var(--primary-shadow);
 }
 
 .submit-btn:disabled {
-  background: var(--bg-secondary);
+  background: var(--border-color);
   color: var(--text-muted);
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .submit-btn:not(:disabled):active {
@@ -323,9 +367,9 @@
 }
 
 .submit-btn mat-icon {
-  font-size: 24px;
-  width: 24px;
-  height: 24px;
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
 }
 
 /* Form Field Overrides */
