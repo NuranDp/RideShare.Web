@@ -16,11 +16,13 @@ public class AdminController : ControllerBase
 {
     private readonly RideShareDbContext _context;
     private readonly IRiderService _riderService;
+    private readonly IPricingService _pricingService;
 
-    public AdminController(RideShareDbContext context, IRiderService riderService)
+    public AdminController(RideShareDbContext context, IRiderService riderService, IPricingService pricingService)
     {
         _context = context;
         _riderService = riderService;
+        _pricingService = pricingService;
     }
 
     [HttpGet("users")]
@@ -152,6 +154,34 @@ public class AdminController : ControllerBase
             activeRides,
             completedRides
         });
+    }
+
+    // =====================
+    // Pricing Settings
+    // =====================
+
+    [HttpGet("pricing")]
+    public async Task<IActionResult> GetPricingSettings()
+    {
+        var settings = await _pricingService.GetPricingSettingsAsync();
+        return Ok(settings);
+    }
+
+    [HttpPut("pricing")]
+    public async Task<IActionResult> UpdatePricingSettings([FromBody] UpdatePricingSettingsRequest request)
+    {
+        var adminId = GetUserId();
+        if (adminId == null) return Unauthorized();
+
+        try
+        {
+            var settings = await _pricingService.UpdatePricingSettingsAsync(adminId.Value, request);
+            return Ok(settings);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     private Guid? GetUserId()

@@ -16,6 +16,8 @@ public class RideShareDbContext : DbContext
     public DbSet<Rating> Ratings => Set<Rating>();
     public DbSet<OnDemandRequest> OnDemandRequests => Set<OnDemandRequest>();
     public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
+    public DbSet<Report> Reports => Set<Report>();
+    public DbSet<PricingSettings> PricingSettings => Set<PricingSettings>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -179,6 +181,65 @@ public class RideShareDbContext : DbContext
             entity.HasIndex(e => new { e.RideId, e.CreatedAt });
         });
 
+        // Report configuration
+        modelBuilder.Entity<Report>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
+            entity.Property(e => e.Reason).HasConversion<string>().HasMaxLength(30);
+            entity.Property(e => e.Description).HasMaxLength(1000);
+            entity.Property(e => e.Status).HasConversion<string>().HasMaxLength(20);
+            entity.Property(e => e.AdminNotes).HasMaxLength(1000);
+
+            entity.HasOne(e => e.Reporter)
+                .WithMany()
+                .HasForeignKey(e => e.ReporterId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(e => e.ReportedUser)
+                .WithMany()
+                .HasForeignKey(e => e.ReportedUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(e => e.Ride)
+                .WithMany()
+                .HasForeignKey(e => e.RideId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(e => e.ResolvedByAdmin)
+                .WithMany()
+                .HasForeignKey(e => e.ResolvedByAdminId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.ReportedUserId);
+        });
+
+        // PricingSettings configuration (singleton)
+        modelBuilder.Entity<PricingSettings>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.BaseFare).HasPrecision(10, 2);
+            entity.Property(e => e.PerKmRate).HasPrecision(10, 2);
+            entity.Property(e => e.MinimumFare).HasPrecision(10, 2);
+            entity.Property(e => e.MaximumFare).HasPrecision(10, 2);
+            entity.Property(e => e.PlatformFeePercent).HasPrecision(5, 2);
+            entity.Property(e => e.Currency).HasMaxLength(10);
+            entity.Property(e => e.CurrencySymbol).HasMaxLength(5);
+
+            entity.HasOne(e => e.UpdatedByAdmin)
+                .WithMany()
+                .HasForeignKey(e => e.UpdatedByAdminId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        // Ride pricing fields
+        modelBuilder.Entity<Ride>(entity =>
+        {
+            entity.Property(e => e.Fare).HasPrecision(10, 2);
+            entity.Property(e => e.EstimatedDistanceKm).HasPrecision(10, 2);
+        });
+
         // Seed admin user with static values (required by EF Core for seeding)
         var adminId = Guid.Parse("00000000-0000-0000-0000-000000000001");
         modelBuilder.Entity<User>().HasData(new User
@@ -191,6 +252,21 @@ public class RideShareDbContext : DbContext
             Role = UserRole.Admin,
             IsActive = true,
             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+        });
+
+        // Seed default pricing settings
+        modelBuilder.Entity<PricingSettings>().HasData(new PricingSettings
+        {
+            Id = 1,
+            BaseFare = 20.00m,
+            PerKmRate = 5.00m,
+            MinimumFare = 25.00m,
+            MaximumFare = 500.00m,
+            Currency = "PHP",
+            CurrencySymbol = "₱",
+            IsEnabled = true,
+            PlatformFeePercent = 10.00m,
+            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
         });
     }
 }

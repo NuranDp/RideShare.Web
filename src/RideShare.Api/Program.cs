@@ -77,6 +77,8 @@ builder.Services.AddScoped<IRideService, RideService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IOnDemandService, OnDemandService>();
 builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IPricingService, PricingService>();
 
 // Configure CORS for Angular (dev and production)
 var allowedOriginsEnv = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS");

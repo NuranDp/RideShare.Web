@@ -118,4 +118,12 @@ export class LicenseReviewComponent implements OnInit {
       }
     });
   }
+
+  isExpiringSoon(dateStr: string | undefined): boolean {
+    if (!dateStr) return false;
+    const expiryDate = new Date(dateStr);
+    const threeMonthsFromNow = new Date();
+    threeMonthsFromNow.setMonth(threeMonthsFromNow.getMonth() + 3);
+    return expiryDate <= threeMonthsFromNow;
+  }
 }

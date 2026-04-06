@@ -45,6 +45,9 @@ public class RideDto
     public string Status { get; set; } = string.Empty;
     public int RequestCount { get; set; }
     public DateTime CreatedAt { get; set; }
+    // Pricing
+    public decimal? Fare { get; set; }
+    public decimal? EstimatedDistanceKm { get; set; }
     // Accepted passenger info (for active rides)
     public Guid? PassengerId { get; set; }
     public string? PassengerName { get; set; }
@@ -68,6 +71,9 @@ public class RideListDto
     public bool HelmetProvided { get; set; }
     public string Status { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
+    // Pricing
+    public decimal? Fare { get; set; }
+    public decimal? EstimatedDistanceKm { get; set; }
 }
 
 public class CreateRideRequestDto

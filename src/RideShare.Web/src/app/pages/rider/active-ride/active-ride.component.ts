@@ -12,6 +12,7 @@ import { RideChatService } from '../../../services/ride-chat.service';
 import { Ride } from '../../../models/ride.model';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../components/confirm-dialog/confirm-dialog.component';
 import { RideChatComponent } from '../../../components/ride-chat/ride-chat.component';
+import { ReportDialogComponent, ReportDialogData } from '../../../components/report-dialog/report-dialog.component';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 type RidePhase = 'loading' | 'pickup' | 'arrived' | 'inprogress' | 'completed';
@@ -228,6 +229,13 @@ type RidePhase = 'loading' | 'pickup' | 'arrived' | 'inprogress' | 'completed';
               </div>
             }
           }
+        </div>
+
+        <!-- Report Link (subtle, at bottom) -->
+        <div class="report-link-section">
+          <button class="report-text-link" type="button" (click)="reportPassenger()">
+            Report an issue with this ride
+          </button>
         </div>
       }
     </div>
@@ -523,6 +531,29 @@ type RidePhase = 'loading' | 'pickup' | 'arrived' | 'inprogress' | 'completed';
         width: 24px;
         height: 24px;
         color: white;
+      }
+    }
+
+    /* Report Link Section */
+    .report-link-section {
+      padding: 24px 16px 16px;
+      text-align: center;
+    }
+
+    .report-text-link {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      padding: 8px 12px;
+      text-decoration: underline;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+
+      &:hover {
+        opacity: 1;
+        color: var(--text-secondary);
       }
     }
 
@@ -1054,6 +1085,25 @@ export class ActiveRideComponent implements OnInit, OnDestroy {
           this.snackBar.open(err.error?.message || 'Failed to cancel ride', 'OK', { duration: 3000 });
         }
       });
+    });
+  }
+
+  reportPassenger(): void {
+    if (!this.ride) return;
+    const passengerName = this.ride.passengerName || 'Passenger';
+    const passengerId = this.ride.passengerId;
+    if (!passengerId) {
+      this.snackBar.open('No passenger to report', 'OK', { duration: 2000 });
+      return;
+    }
+    this.dialog.open(ReportDialogComponent, {
+      width: '440px',
+      maxWidth: '95vw',
+      data: {
+        reportedUserId: passengerId,
+        reportedUserName: passengerName,
+        rideId: this.rideId
+      } as ReportDialogData
     });
   }
 }

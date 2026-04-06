@@ -48,11 +48,13 @@ public class RideService : IRideService
 {
     private readonly RideShareDbContext _context;
     private readonly INotificationService _notificationService;
+    private readonly IPricingService _pricingService;
 
-    public RideService(RideShareDbContext context, INotificationService notificationService)
+    public RideService(RideShareDbContext context, INotificationService notificationService, IPricingService pricingService)
     {
         _context = context;
         _notificationService = notificationService;
+        _pricingService = pricingService;
     }
 
     public async Task<RideDto?> CreateRideAsync(Guid riderId, CreateRideRequest request)
@@ -64,6 +66,20 @@ public class RideService : IRideService
         if (riderProfile == null)
         {
             return null; // Rider not verified
+        }
+
+        // Calculate fare if coordinates are provided
+        decimal? fare = null;
+        decimal? distanceKm = null;
+        if (request.OriginLat.HasValue && request.OriginLng.HasValue && 
+            request.DestLat.HasValue && request.DestLng.HasValue)
+        {
+            var fareResult = await _pricingService.CalculateFareAsync(
+                request.OriginLat.Value, request.OriginLng.Value,
+                request.DestLat.Value, request.DestLng.Value);
+            
+            fare = fareResult.Fare;
+            distanceKm = (decimal)fareResult.DistanceKm;
         }
 
         var ride = new Ride
@@ -78,6 +94,8 @@ public class RideService : IRideService
             DepartureTime = request.DepartureTime,
             HelmetProvided = request.HelmetProvided,
             Notes = request.Notes,
+            Fare = fare,
+            EstimatedDistanceKm = distanceKm,
             Status = RideStatus.Active,
             CreatedAt = DateTime.UtcNow
         };
@@ -153,7 +171,9 @@ public class RideService : IRideService
             DepartureTime = r.DepartureTime,
             HelmetProvided = r.HelmetProvided,
             Status = r.Status.ToString(),
-            CreatedAt = r.CreatedAt
+            CreatedAt = r.CreatedAt,
+            Fare = r.Fare,
+            EstimatedDistanceKm = r.EstimatedDistanceKm
         }).ToList();
     }
 
@@ -847,6 +867,8 @@ public class RideService : IRideService
             Status = ride.Status.ToString(),
             RequestCount = ride.Requests?.Count ?? 0,
             CreatedAt = ride.CreatedAt,
+            Fare = ride.Fare,
+            EstimatedDistanceKm = ride.EstimatedDistanceKm,
             // Accepted passenger info
             PassengerId = acceptedRequest?.PassengerId,
             PassengerName = acceptedRequest?.Passenger?.FullName,

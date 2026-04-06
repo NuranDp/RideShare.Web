@@ -1,0 +1,194 @@
+<div class="admin-page">
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-left">
+      <button class="back-btn" routerLink="/admin">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-info">
+        <h1>User Reports</h1>
+        <p>Review and manage reported users</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="stat-pills">
+        <span class="pill pending" [class.active]="pendingCount > 0">
+          <mat-icon>pending</mat-icon>
+          {{ pendingCount }} Pending
+        </span>
+        <span class="pill total">
+          <mat-icon>assessment</mat-icon>
+          {{ reports.length }} Total
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <div class="page-content">
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-tabs">
+        <button class="tab" [class.active]="statusFilter === ''" (click)="statusFilter = ''; onFilterChange()">
+          All
+        </button>
+        <button class="tab" [class.active]="statusFilter === 'Pending'" (click)="statusFilter = 'Pending'; onFilterChange()">
+          Pending
+        </button>
+        <button class="tab" [class.active]="statusFilter === 'Reviewing'" (click)="statusFilter = 'Reviewing'; onFilterChange()">
+          Reviewing
+        </button>
+        <button class="tab" [class.active]="statusFilter === 'Resolved'" (click)="statusFilter = 'Resolved'; onFilterChange()">
+          Resolved
+        </button>
+        <button class="tab" [class.active]="statusFilter === 'Dismissed'" (click)="statusFilter = 'Dismissed'; onFilterChange()">
+          Dismissed
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    @if (loading) {
+      <div class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading reports...</p>
+      </div>
+    }
+
+    <!-- Empty State -->
+    @if (!loading && filteredReports.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <h2>All Clear!</h2>
+        <p>There are no reports matching your filter.</p>
+        @if (statusFilter !== '') {
+          <button class="text-btn" (click)="statusFilter = ''; onFilterChange()">
+            View all reports
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Reports List -->
+    @if (!loading && filteredReports.length > 0) {
+      <div class="reports-list">
+        @for (report of filteredReports; track report.id) {
+          <div class="report-card" [class.is-pending]="report.status === 'Pending'" [class.processing]="processingId === report.id">
+            <!-- Card Header -->
+            <div class="card-header">
+              <div class="reason-info">
+                <div class="reason-icon" [ngClass]="'reason-' + report.reason.toLowerCase()">
+                  <mat-icon>{{ getReasonIcon(report.reason) }}</mat-icon>
+                </div>
+                <div class="reason-text">
+                  <span class="reason-label">{{ getReasonLabel(report.reason) }}</span>
+                  <span class="report-date">{{ formatDate(report.createdAt) }}</span>
+                </div>
+              </div>
+              <span class="status-chip" [ngClass]="getStatusClass(report.status)">
+                {{ report.status }}
+              </span>
+            </div>
+
+            <!-- Users Section -->
+            <div class="users-section">
+              <div class="user-card reporter">
+                <span class="user-label">Reporter</span>
+                <span class="user-name">{{ report.reporterName }}</span>
+                <span class="user-email">{{ report.reporterEmail }}</span>
+              </div>
+              <div class="arrow-wrapper">
+                <mat-icon>east</mat-icon>
+              </div>
+              <div class="user-card reported">
+                <span class="user-label">Reported User</span>
+                <span class="user-name">{{ report.reportedUserName }}</span>
+                <span class="user-role">{{ report.reportedUserRole }}</span>
+              </div>
+            </div>
+
+            <!-- Ride Info -->
+            @if (report.rideOrigin) {
+              <div class="ride-context">
+                <mat-icon>route</mat-icon>
+                <span>{{ report.rideOrigin }} → {{ report.rideDestination }}</span>
+              </div>
+            }
+
+            <!-- Description -->
+            @if (report.description) {
+              <div class="report-description">
+                <p>{{ report.description }}</p>
+              </div>
+            }
+
+            <!-- Admin Notes -->
+            @if (report.adminNotes) {
+              <div class="admin-notes">
+                <div class="notes-header">
+                  <mat-icon>comment</mat-icon>
+                  <span>Admin Notes</span>
+                </div>
+                <p>{{ report.adminNotes }}</p>
+                @if (report.resolvedByAdminName) {
+                  <span class="resolved-info">
+                    By {{ report.resolvedByAdminName }} on {{ formatDate(report.resolvedAt!) }}
+                  </span>
+                }
+              </div>
+            }
+
+            <!-- Resolve Form -->
+            @if (resolveReportId === report.id) {
+              <div class="resolve-form">
+                <div class="form-header">
+                  <mat-icon>gavel</mat-icon>
+                  <span>Take Action</span>
+                </div>
+                <div class="form-fields">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Action</mat-label>
+                    <mat-select [(ngModel)]="resolveStatus">
+                      <mat-option value="Resolved">Resolve - Take action against user</mat-option>
+                      <mat-option value="Dismissed">Dismiss - No action needed</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Admin Notes (optional)</mat-label>
+                    <textarea matInput [(ngModel)]="adminNotes" rows="3" maxlength="1000" placeholder="Explain your decision..."></textarea>
+                    <mat-hint>{{ adminNotes.length }}/1000</mat-hint>
+                  </mat-form-field>
+                </div>
+                <div class="form-actions">
+                  <button class="action-btn secondary" (click)="cancelResolve()" [disabled]="processingId === report.id">
+                    Cancel
+                  </button>
+                  <button class="action-btn" [ngClass]="resolveStatus === 'Resolved' ? 'success' : 'warning'" (click)="submitResolve()" [disabled]="processingId === report.id">
+                    @if (processingId === report.id) {
+                      <mat-spinner diameter="18"></mat-spinner>
+                    } @else {
+                      <mat-icon>{{ resolveStatus === 'Resolved' ? 'check' : 'close' }}</mat-icon>
+                      {{ resolveStatus === 'Resolved' ? 'Resolve Report' : 'Dismiss Report' }}
+                    }
+                  </button>
+                </div>
+              </div>
+            }
+
+            <!-- Action Button -->
+            @if (report.status === 'Pending' && resolveReportId !== report.id) {
+              <div class="card-actions">
+                <button class="action-btn primary" (click)="startResolve(report.id)">
+                  <mat-icon>gavel</mat-icon>
+                  Take Action
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

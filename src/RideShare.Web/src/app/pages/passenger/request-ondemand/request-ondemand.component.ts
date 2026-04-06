@@ -12,6 +12,8 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { OnDemandService } from '../../../services/on-demand.service';
 import { NotificationService } from '../../../services/notification.service';
+import { RideService } from '../../../services/ride.service';
+import { FareCalculationResponse } from '../../../models/pricing.model';
 import { LocationPickerComponent } from '../../../components/location-picker/location-picker.component';
 import { CreateOnDemandRequest, OnDemandRequest } from '../../../models/on-demand.model';
 import { Subscription } from 'rxjs';
@@ -65,12 +67,17 @@ export class RequestOnDemandComponent implements OnInit, OnDestroy, AfterViewIni
   private expirationTimer: any;
   remainingTime = 0;
   
+  // Fare calculation
+  fareInfo: FareCalculationResponse | null = null;
+  loadingFare = false;
+  
   // Subscriptions
   private subscription = new Subscription();
 
   constructor(
     private onDemandService: OnDemandService,
     private notificationService: NotificationService,
+    private rideService: RideService,
     private router: Router,
     private snackBar: MatSnackBar
   ) {
@@ -85,6 +92,8 @@ export class RequestOnDemandComponent implements OnInit, OnDestroy, AfterViewIni
       this.dropoffLat = state.dropoffLat;
       this.dropoffLng = state.dropoffLng;
       this.step = 'confirm';
+      // Calculate fare after navigation
+      setTimeout(() => this.calculateFare(), 0);
     }
   }
 
@@ -270,7 +279,28 @@ export class RequestOnDemandComponent implements OnInit, OnDestroy, AfterViewIni
       this.step = 'dropoff';
     } else if (this.step === 'dropoff' && this.dropoffLocation) {
       this.step = 'confirm';
+      this.calculateFare();
     }
+  }
+
+  calculateFare(): void {
+    if (!this.pickupLat || !this.dropoffLat) return;
+    
+    this.loadingFare = true;
+    this.rideService.calculateFare({
+      originLat: this.pickupLat,
+      originLng: this.pickupLng,
+      destLat: this.dropoffLat,
+      destLng: this.dropoffLng
+    }).subscribe({
+      next: (response) => {
+        this.fareInfo = response;
+        this.loadingFare = false;
+      },
+      error: () => {
+        this.loadingFare = false;
+      }
+    });
   }
 
   prevStep(): void {

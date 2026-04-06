@@ -20,6 +20,9 @@ export interface Ride {
   status: RideStatus;
   createdAt: string;
   requestCount: number;
+  // Pricing
+  fare?: number;
+  estimatedDistanceKm?: number;
   // Accepted passenger info (for active rides)
   passengerId?: string;
   passengerName?: string;
@@ -42,6 +45,9 @@ export interface RideListItem {
   helmetProvided: boolean;
   status: RideStatus;
   createdAt: string;
+  // Pricing
+  fare?: number;
+  estimatedDistanceKm?: number;
 }
 
 export interface AcceptedPassengerInfo {

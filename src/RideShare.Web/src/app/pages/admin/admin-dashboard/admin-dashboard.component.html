@@ -1,87 +1,169 @@
-<div class="admin-header">
-  <div class="header-content">
-    <div class="brand">
-      <mat-icon>admin_panel_settings</mat-icon>
-      <span>Share Ride Admin</span>
+<div class="admin-layout">
+  <!-- Mobile Header -->
+  <header class="mobile-header">
+    <button class="menu-toggle" (click)="toggleMobileMenu()">
+      <mat-icon>{{ mobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
+    </button>
+    <div class="mobile-logo">
+      <mat-icon>two_wheeler</mat-icon>
+      <span>RideShare Admin</span>
     </div>
-    <div class="user-info">
-      <span class="user-name">{{ authService.currentUser()?.fullName }}</span>
-      <button mat-icon-button (click)="authService.logout()" matTooltip="Logout">
+    <button class="mobile-logout" (click)="authService.logout()">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </header>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-overlay" [class.open]="mobileMenuOpen" (click)="closeMobileMenu()"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.mobile-open]="mobileMenuOpen">
+    <div class="sidebar-header">
+      <div class="logo">
+        <mat-icon>two_wheeler</mat-icon>
+        <span>RideShare</span>
+      </div>
+      <span class="admin-badge">Admin</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item active" (click)="closeMobileMenu()">
+        <mat-icon>dashboard</mat-icon>
+        <span>Dashboard</span>
+      </a>
+      <a class="nav-item" routerLink="/admin/license-review" (click)="closeMobileMenu()">
+        <mat-icon>verified_user</mat-icon>
+        <span>License Review</span>
+      </a>
+      <a class="nav-item" routerLink="/admin/manage-reports" (click)="closeMobileMenu()">
+        <mat-icon>flag</mat-icon>
+        <span>Reports</span>
+      </a>
+      <a class="nav-item" routerLink="/admin/pricing" (click)="closeMobileMenu()">
+        <mat-icon>payments</mat-icon>
+        <span>Pricing</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="avatar">
+          <mat-icon>person</mat-icon>
+        </div>
+        <div class="user-details">
+          <span class="name">{{ authService.currentUser()?.fullName }}</span>
+          <span class="role">Administrator</span>
+        </div>
+      </div>
+      <button class="logout-btn" (click)="authService.logout()">
         <mat-icon>logout</mat-icon>
       </button>
     </div>
-  </div>
-</div>
+  </aside>
 
-<div class="dashboard-container">
-  <div class="welcome-section">
-    <h1>Welcome to Admin Dashboard</h1>
-    <p>Manage your platform from here</p>
-  </div>
-  
-  <div class="cards-grid">
-    <mat-card class="admin-card">
-      <mat-card-header>
-        <div class="card-icon users">
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="greeting">
+        <h1>Welcome back!</h1>
+        <p>Here's what's happening with your platform today.</p>
+      </div>
+      <div class="top-actions">
+        <button class="notification-btn">
+          <mat-icon>notifications</mat-icon>
+        </button>
+      </div>
+    </header>
+
+    <!-- Quick Stats -->
+    <section class="quick-stats">
+      <div class="stat-card">
+        <div class="stat-icon users">
           <mat-icon>people</mat-icon>
         </div>
-        <mat-card-title>User Management</mat-card-title>
-        <mat-card-subtitle>Manage all users</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <p>View, activate, or deactivate user accounts.</p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-raised-button class="action-btn">Manage Users</button>
-      </mat-card-actions>
-    </mat-card>
-
-    <mat-card class="admin-card highlight">
-      <mat-card-header>
-        <div class="card-icon verify">
-          <mat-icon>verified_user</mat-icon>
+        <div class="stat-info">
+          <span class="stat-value">--</span>
+          <span class="stat-label">Total Users</span>
         </div>
-        <mat-card-title>License Verification</mat-card-title>
-        <mat-card-subtitle>Review pending licenses</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <p>Approve or reject rider license submissions.</p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-raised-button class="action-btn primary" routerLink="/admin/license-review">Review Licenses</button>
-      </mat-card-actions>
-    </mat-card>
-
-    <mat-card class="admin-card">
-      <mat-card-header>
-        <div class="card-icon rides">
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon rides">
           <mat-icon>two_wheeler</mat-icon>
         </div>
-        <mat-card-title>Ride Management</mat-card-title>
-        <mat-card-subtitle>Oversee all rides</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <p>View and manage all rides on the platform.</p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-raised-button class="action-btn">View Rides</button>
-      </mat-card-actions>
-    </mat-card>
-
-    <mat-card class="admin-card">
-      <mat-card-header>
-        <div class="card-icon stats">
-          <mat-icon>analytics</mat-icon>
+        <div class="stat-info">
+          <span class="stat-value">--</span>
+          <span class="stat-label">Active Rides</span>
         </div>
-        <mat-card-title>Platform Statistics</mat-card-title>
-        <mat-card-subtitle>View metrics & analytics</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <p>Monitor platform usage and performance metrics.</p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-raised-button class="action-btn">View Stats</button>
-      </mat-card-actions>
-    </mat-card>
-  </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon verify">
+          <mat-icon>pending_actions</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">--</span>
+          <span class="stat-label">Pending Licenses</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon reports">
+          <mat-icon>flag</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">--</span>
+          <span class="stat-label">Open Reports</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="quick-actions-section">
+      <h2 class="section-title">Quick Actions</h2>
+      <div class="actions-grid">
+        <button class="action-card" routerLink="/admin/license-review">
+          <div class="action-icon verify">
+            <mat-icon>verified_user</mat-icon>
+          </div>
+          <div class="action-text">
+            <span class="action-title">Review Licenses</span>
+            <span class="action-desc">Approve or reject rider applications</span>
+          </div>
+          <mat-icon class="action-arrow">chevron_right</mat-icon>
+        </button>
+
+        <button class="action-card" routerLink="/admin/manage-reports">
+          <div class="action-icon reports">
+            <mat-icon>flag</mat-icon>
+          </div>
+          <div class="action-text">
+            <span class="action-title">Manage Reports</span>
+            <span class="action-desc">Handle user complaints and issues</span>
+          </div>
+          <mat-icon class="action-arrow">chevron_right</mat-icon>
+        </button>
+
+        <button class="action-card" routerLink="/admin/pricing">
+          <div class="action-icon pricing">
+            <mat-icon>payments</mat-icon>
+          </div>
+          <div class="action-text">
+            <span class="action-title">Pricing Settings</span>
+            <span class="action-desc">Configure fares and platform fees</span>
+          </div>
+          <mat-icon class="action-arrow">chevron_right</mat-icon>
+        </button>
+
+        <button class="action-card disabled">
+          <div class="action-icon users">
+            <mat-icon>people</mat-icon>
+          </div>
+          <div class="action-text">
+            <span class="action-title">User Management</span>
+            <span class="action-desc">Coming soon</span>
+          </div>
+          <mat-icon class="action-arrow">chevron_right</mat-icon>
+        </button>
+      </div>
+    </section>
+  </main>
 </div>

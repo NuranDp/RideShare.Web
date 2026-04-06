@@ -11,10 +11,12 @@ namespace RideShare.Api.Controllers;
 public class RidesController : ControllerBase
 {
     private readonly IRideService _rideService;
+    private readonly IPricingService _pricingService;
 
-    public RidesController(IRideService rideService)
+    public RidesController(IRideService rideService, IPricingService pricingService)
     {
         _rideService = rideService;
+        _pricingService = pricingService;
     }
 
     /// <summary>
@@ -430,4 +432,37 @@ public class RidesController : ControllerBase
     }
 
     private IChatService _getChatService() => HttpContext.RequestServices.GetRequiredService<IChatService>();
+
+    // ── Pricing Endpoints ──
+
+    /// <summary>
+    /// Get current pricing settings (public)
+    /// </summary>
+    [HttpGet("pricing")]
+    public async Task<IActionResult> GetPricingSettings()
+    {
+        var settings = await _pricingService.GetPricingSettingsAsync();
+        return Ok(settings);
+    }
+
+    /// <summary>
+    /// Calculate fare for a route (public)
+    /// </summary>
+    [HttpPost("pricing/calculate")]
+    public async Task<IActionResult> CalculateFare([FromBody] FareCalculationRequest request)
+    {
+        var result = await _pricingService.CalculateFareAsync(
+            request.OriginLat, request.OriginLng,
+            request.DestLat, request.DestLng);
+        
+        return Ok(new FareCalculationResponse
+        {
+            Fare = result.Fare,
+            DistanceKm = result.DistanceKm,
+            IsEnabled = result.IsEnabled,
+            Currency = result.Currency,
+            CurrencySymbol = result.CurrencySymbol,
+            DisplayText = result.DisplayText
+        });
+    }
 }

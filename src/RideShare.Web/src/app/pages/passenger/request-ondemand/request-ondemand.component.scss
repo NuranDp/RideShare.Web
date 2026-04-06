@@ -237,6 +237,50 @@
   }
 }
 
+.fare-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #dcfce7 0%, #d1fae5 100%);
+  border-radius: 12px;
+  margin-top: 12px;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #16a34a;
+  }
+
+  .fare-amount {
+    font-size: 20px;
+    font-weight: 700;
+    color: #16a34a;
+  }
+
+  .fare-label {
+    font-size: 13px;
+    color: #15803d;
+    margin-left: -4px;
+  }
+
+  .fare-negotiate {
+    font-size: 14px;
+    font-weight: 600;
+    color: #d97706;
+  }
+
+  &.loading {
+    background: #f1f5f9;
+    color: #64748b;
+
+    mat-icon {
+      color: #64748b;
+    }
+  }
+}
+
 .message-field {
   width: 100%;
 

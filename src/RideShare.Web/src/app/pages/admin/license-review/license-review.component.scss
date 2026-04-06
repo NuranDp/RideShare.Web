@@ -1,255 +1,513 @@
-.page-header {
-  background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
-  color: white;
-  padding: 20px 24px;
+// License Review - Modern UX
+.admin-page {
+  min-height: 100vh;
+  background: #f8fafc;
 }
 
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
+.page-header {
+  background: white;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-left {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
 .back-btn {
-  background: rgba(255,255,255,0.15);
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    background: #eff6ff;
+  }
 }
 
-.header-text h1 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 600;
+.header-info {
+  h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: #64748b;
+  }
 }
 
-.header-text p {
-  margin: 4px 0 0;
-  opacity: 0.9;
-  font-size: 14px;
-}
-
-.review-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px;
-  background: #f8fafc;
-  min-height: calc(100vh - 100px);
-}
-
-.requests-count {
+.header-badge {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 20px;
-  padding: 12px 16px;
-  background: #e3f2fd;
-  border-radius: 8px;
-  color: #034694;
+  padding: 8px 16px;
+  background: #f1f5f9;
+  border-radius: 20px;
+  font-size: 13px;
   font-weight: 500;
+  color: #64748b;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &.has-pending {
+    background: #fef3c7;
+    color: #d97706;
+  }
 }
 
-.loading-container {
+.page-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+// Loading State
+.loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 4rem;
-  gap: 1rem;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 16px;
+
+  p {
+    font-size: 14px;
+    color: #64748b;
+  }
 }
 
-.empty-card {
+// Empty State
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  padding: 48px;
-  border-radius: 16px !important;
-  max-width: 400px;
-  margin: 40px auto;
+  padding: 80px 20px;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
 }
 
 .empty-icon {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #4caf50, #2e7d32);
   border-radius: 50%;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
+  margin-bottom: 20px;
+
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: white;
+  }
 }
 
-.empty-icon mat-icon {
-  font-size: 44px;
-  width: 44px;
-  height: 44px;
-  color: white;
-}
-
-.empty-card h2 {
+.empty-state h2 {
   margin: 0 0 8px;
-  color: #1e293b;
+  font-size: 20px;
+  font-weight: 600;
+  color: #0f172a;
 }
 
-.empty-card p {
-  color: #64748b;
+.empty-state p {
   margin: 0 0 24px;
+  font-size: 14px;
+  color: #64748b;
 }
 
-.back-dashboard-btn {
-  background: linear-gradient(135deg, #034694 0%, #0A56A4 100%) !important;
-  color: white !important;
-  border-radius: 8px !important;
+.primary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
 }
 
-.requests-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 20px;
+// Requests List
+.requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .request-card {
-  border-radius: 16px !important;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06) !important;
-  transition: all 0.3s;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+
+  &.processing {
+    opacity: 0.7;
+    pointer-events: none;
+  }
 }
 
-.request-card:hover {
-  box-shadow: 0 8px 24px rgba(3, 70, 148, 0.12) !important;
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.rider-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
 .rider-avatar {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #034694 0%, #0A56A4 100%);
-  border-radius: 50%;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 16px;
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: white;
+  }
 }
 
-.rider-avatar mat-icon {
-  color: white;
-  font-size: 26px;
-  width: 26px;
-  height: 26px;
+.rider-details {
+  display: flex;
+  flex-direction: column;
 }
 
-mat-card-header {
-  padding: 20px 20px 0 !important;
+.rider-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
 }
 
-mat-card-title {
-  font-weight: 600 !important;
-  color: #1e293b !important;
+.rider-email {
+  font-size: 13px;
+  color: #64748b;
 }
 
-.info-grid {
+.submitted-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #94a3b8;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+// License Details
+.license-details {
+  padding: 20px;
+}
+
+.detail-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
-  margin: 16px 0;
-  padding: 16px;
-  background: #f8fafc;
-  border-radius: 12px;
+  margin-bottom: 16px;
+}
 
-  .info-item {
-    display: flex;
-    flex-direction: column;
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
-    &.full-width {
-      grid-column: 1 / -1;
-    }
+.detail-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
+  font-weight: 500;
+}
 
-    .label {
-      font-size: 11px;
-      color: #64748b;
-      text-transform: uppercase;
-      font-weight: 500;
-    }
+.detail-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #0f172a;
 
-    .value {
-      font-size: 14px;
-      color: #1e293b;
-      font-weight: 500;
-      margin-top: 2px;
-    }
+  &.expiring {
+    color: #dc2626;
   }
 }
 
-.license-image {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #e2e8f0;
+.view-license-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #eff6ff;
+  color: #3b82f6;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
 
-  .image-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: #034694;
-    text-decoration: none;
-    font-weight: 500;
-    padding: 8px 16px;
-    background: #e3f2fd;
-    border-radius: 8px;
-    transition: all 0.2s;
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .external {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    opacity: 0.6;
+  }
+
+  &:hover {
+    background: #dbeafe;
+  }
+}
+
+// Rejection Form
+.rejection-form {
+  padding: 0 20px 16px;
+
+  .full-width {
+    width: 100%;
+  }
+}
+
+// Card Actions
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+}
+
+.processing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &.secondary {
+    background: white;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
 
     &:hover {
-      background: #bbdefb;
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+  }
+
+  &.success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+  }
+
+  &.danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
   }
 }
 
-.reject-input {
-  margin-top: 16px;
-}
-
-.full-width {
-  width: 100%;
-}
-
-mat-card-actions {
-  padding: 16px 20px !important;
-  gap: 8px;
-  
-  mat-spinner {
-    margin: 0 16px;
-  }
-
-  button {
-    border-radius: 8px !important;
-  }
-
-  button[color="primary"] {
-    background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%) !important;
-  }
-}
-
+// Responsive
 @media (max-width: 600px) {
   .page-header {
-    padding: 16px;
-  }
-
-  .header-text h1 {
-    font-size: 20px;
-  }
-
-  .review-container {
-    padding: 16px;
-  }
-
-  .requests-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
-
-  mat-card-actions {
     flex-direction: column;
-    gap: 8px;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
   }
 
-  mat-card-actions button {
+  .header-left {
+    gap: 12px;
+  }
+
+  .back-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .header-info {
+    h1 {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 12px;
+    }
+  }
+
+  .header-badge {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .page-content {
+    padding: 16px;
+  }
+
+  .request-card {
+    border-radius: 12px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .rider-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+
+  .rider-name {
+    font-size: 14px;
+  }
+
+  .license-details {
+    padding: 16px;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .view-license-btn {
     width: 100%;
-    margin: 0;
+    justify-content: center;
+    padding: 12px 16px;
+  }
+
+  .rejection-form {
+    padding: 0 16px 12px;
+  }
+
+  .card-actions {
+    flex-direction: column;
+    padding: 12px 16px;
+    gap: 10px;
+
+    .action-btn {
+      width: 100%;
+      justify-content: center;
+      padding: 12px 16px;
+    }
+  }
+
+  .empty-state {
+    padding: 60px 20px;
+  }
+
+  .empty-icon {
+    width: 64px;
+    height: 64px;
+
+    mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  .empty-state h2 {
+    font-size: 18px;
+  }
+
+  .primary-btn {
+    padding: 10px 20px;
+    font-size: 13px;
   }
 }

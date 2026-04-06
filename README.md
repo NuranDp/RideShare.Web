@@ -43,8 +43,11 @@ A motorcycle-based ride-sharing platform where riders post their commute routes 
 - **On-Demand Ride Request**: Uber-style instant pickup — request a ride and nearby verified riders accept
 
 ### Admin Features
+- **Modern Dashboard**: Sidebar navigation, stat cards, quick actions
 - **License Review**: Approve/reject rider license submissions
-- **Platform Oversight**: Monitor platform activity
+- **User Reports**: Review and resolve user complaints
+- **Pricing Settings**: Configure base fare, per km rate, min/max fare, platform fee
+- **Mobile Responsive**: All admin pages work on mobile with hamburger menu
 
 ### Trust System
 - **Trust Score** calculated from:
@@ -68,6 +71,58 @@ A motorcycle-based ride-sharing platform where riders post their commute routes 
 - **Push Notifications**: FCM token support for native push
 - **Native Plugins**: Geolocation, Camera, Splash Screen
 
+## Planned Features
+
+### Admin Enhancements
+- Admin user management page — full CRUD for managing users
+- Admin ride management page — view/cancel all rides
+- Admin dashboard with stats — charts and metrics
+- Admin reports — export CSV, ride volume trends, user growth charts
+
+### Pricing & Payments
+- ~~Ride fare/pricing — suggested fare based on distance~~ ✅ Implemented!
+  - Admin-configurable base fare, per km rate, min/max fare
+  - Platform fee percentage setting
+  - Fare auto-calculated on ride creation
+  - Fare displayed on browse rides and request dialogs
+- Payment integration — in-app wallet or payment gateway
+- Rider earnings dashboard — track completed rides, total distance, earnings summary
+
+### Smart Matching & Scheduling
+- Route matching — auto-suggest rides whose route passes near passenger's pickup/dropoff
+- Recurring/scheduled rides — rider posts daily commute pattern (e.g., "M-F 8am")
+- Saved locations — Home, Work, Favorites for quick ride posting/searching
+- Ride search by map area — drag map to search rides in visible region
+
+### Safety & Trust
+- SOS/Emergency button — one-tap emergency alert during ride
+- Ride sharing via link — share ride tracking with family/friends
+- Two-way ratings — rider can also rate the passenger
+- User blocking — block a user from requesting your rides
+- OTP verification — verify phone number via SMS
+- User reports & complaints — reporting system with admin resolution (implemented)
+- System logs — audit trail of all platform activities
+
+### Media & Uploads
+- Profile photo upload — camera/gallery integration
+- License image upload — file upload to Supabase Storage or S3
+
+### Notifications & Communication
+- Push notifications (FCM) — actual push delivery
+- Email notifications — ride request accepted/rejected, started/completed
+- Ride cancellation reasons — ask why when cancelling
+
+### UX & Platform
+- ~~Mobile responsiveness — optimize layouts for all screen sizes~~ ✅ Admin pages done!
+- Multi-language support (i18n)
+- Offline mode improvements — cache recent rides/requests
+- Ride sharing history — "You've ridden with this rider 3 times before"
+- Favorite riders — bookmark preferred riders
+
+### Analytics & Insights
+- Popular routes analytics — visual heatmap
+- Ride statistics per user — total rides, distance, CO₂ saved
+
 ## Project Structure
 
 ```
@@ -88,9 +143,11 @@ ride-share/
 │       ├── android/            # Capacitor Android project
 │       └── src/app/
 │           ├── pages/          # Feature modules
-│           │   ├── admin/      # License review, dashboard
+│           │   ├── admin/      # License review, dashboard, reports, pricing
 │           │   │   ├── admin-dashboard/
-│           │   │   └── license-review/
+│           │   │   ├── license-review/
+│           │   │   ├── manage-reports/
+│           │   │   └── pricing-settings/
 │           │   ├── rider/      # Post ride, my rides, profile
 │           │   │   ├── active-ride/
 │           │   │   ├── my-rides/
@@ -121,6 +178,7 @@ ride-share/
 │           │   ├── notification-toast/
 │           │   ├── ondemand-request-popup/
 │           │   ├── rating-dialog/
+│           │   ├── report-dialog/
 │           │   ├── ride-accepted-dialog/
 │           │   ├── ride-chat/
 │           │   ├── ride-map/
@@ -136,6 +194,7 @@ ride-share/
 │               ├── auth.service.ts
 │               ├── location-tracking.service.ts
 │               ├── notification.service.ts
+│               ├── report.service.ts
 │               ├── ride.service.ts
 │               ├── ride-chat.service.ts
 │               ├── rider.service.ts

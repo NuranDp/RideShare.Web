@@ -84,6 +84,7 @@ ride-share/
 │   │   │   ├── AdminController.cs
 │   │   │   ├── AuthController.cs
 │   │   │   ├── OnDemandController.cs
+│   │   │   ├── ReportsController.cs
 │   │   │   ├── RiderController.cs
 │   │   │   └── RidesController.cs
 │   │   ├── DTOs/               # Data transfer objects
@@ -92,6 +93,8 @@ ride-share/
 │   │   │   ├── ChatService.cs
 │   │   │   ├── NotificationService.cs
 │   │   │   ├── OnDemandService.cs
+│   │   │   ├── PricingService.cs
+│   │   │   ├── ReportService.cs
 │   │   │   ├── RiderService.cs
 │   │   │   └── RideService.cs
 │   │   ├── Data/               # DbContext
@@ -107,9 +110,11 @@ ride-share/
 │   └── RideShare.Web/          # Angular frontend
 │       └── src/app/
 │           ├── pages/          # Feature modules
-│           │   ├── admin/      # License review, dashboard
+│           │   ├── admin/      # License review, dashboard, reports, pricing
 │           │   │   ├── admin-dashboard/
-│           │   │   └── license-review/
+│           │   │   ├── license-review/
+│           │   │   ├── manage-reports/
+│           │   │   └── pricing-settings/
 │           │   ├── rider/      # Post ride, my rides, profile
 │           │   │   ├── active-ride/
 │           │   │   ├── my-rides/
@@ -141,6 +146,7 @@ ride-share/
 │           │   ├── ondemand-request-popup/
 │           │   ├── rating-dialog/
 │           │   ├── ride-accepted-dialog/
+│           │   ├── report-dialog/
 │           │   ├── ride-chat/
 │           │   ├── ride-map/
 │           │   ├── ride-request-popup/
@@ -156,6 +162,7 @@ ride-share/
 │           │   ├── location-tracking.service.ts
 │           │   ├── notification.service.ts
 │           │   ├── ride.service.ts
+│           │   ├── report.service.ts
 │           │   ├── ride-chat.service.ts
 │           │   ├── rider.service.ts
 │           │   └── theme.service.ts
@@ -315,6 +322,9 @@ CREATE TABLE Rides (
     HelmetProvided BIT DEFAULT 0,
     Notes NVARCHAR(500),
     Status NVARCHAR(20) DEFAULT 'Active', -- Active, InProgress, Booked, Completed, Cancelled
+    -- Pricing
+    Fare DECIMAL(10,2) NULL,              -- Calculated fare based on distance
+    EstimatedDistanceKm DECIMAL(10,2) NULL,-- Distance in kilometers
     -- Live tracking fields
     CurrentLat FLOAT,
     CurrentLng FLOAT,
@@ -391,6 +401,39 @@ CREATE TABLE ChatMessages (
 );
 ```
 
+### Reports Table
+```sql
+CREATE TABLE Reports (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    ReporterId UNIQUEIDENTIFIER NOT NULL FOREIGN KEY REFERENCES Users(Id),
+    ReportedUserId UNIQUEIDENTIFIER NOT NULL FOREIGN KEY REFERENCES Users(Id),
+    RideId UNIQUEIDENTIFIER NULL FOREIGN KEY REFERENCES Rides(Id),
+    Reason NVARCHAR(50) NOT NULL,         -- SafetyConcern, Harassment, NoShow, RecklessDriving, FakeProfile, InappropriateBehavior, Other
+    Description NVARCHAR(1000) NOT NULL,
+    Status NVARCHAR(20) NOT NULL DEFAULT 'Pending',  -- Pending, Reviewing, Resolved, Dismissed
+    AdminNotes NVARCHAR(500) NULL,
+    ResolvedByAdminId UNIQUEIDENTIFIER NULL FOREIGN KEY REFERENCES Users(Id),
+    ResolvedAt DATETIME2 NULL,
+    CreatedAt DATETIME2 DEFAULT GETUTCDATE()
+);
+```
+
+### PricingSettings Table (Singleton)
+```sql
+CREATE TABLE PricingSettings (
+    Id INT PRIMARY KEY DEFAULT 1,        -- Singleton row
+    BaseFare DECIMAL(10,2) DEFAULT 20,   -- Base fare amount
+    PerKmRate DECIMAL(10,2) DEFAULT 10,  -- Rate per kilometer
+    MinimumFare DECIMAL(10,2) DEFAULT 25,-- Minimum fare
+    MaximumFare DECIMAL(10,2) DEFAULT 0, -- Maximum fare (0 = no cap)
+    Currency NVARCHAR(5) DEFAULT 'PHP',
+    CurrencySymbol NVARCHAR(3) DEFAULT '₱',
+    IsEnabled BIT DEFAULT 1,
+    PlatformFeePercent DECIMAL(5,2) DEFAULT 10,
+    UpdatedAt DATETIME2 DEFAULT GETUTCDATE()
+);
+```
+
 ---
 
 ## API Endpoints
@@ -464,6 +507,15 @@ CREATE TABLE ChatMessages (
 | GET | `/api/on-demand/nearby` | Get nearby requests (Rider, ?lat=&lng=&radiusKm=) |
 | POST | `/api/on-demand/request/{id}/accept` | Accept a request (verified Rider) |
 | GET | `/api/on-demand/my-accepted` | Get rider's accepted request history |
+### Reports
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/reports` | Create a report (any authenticated user) |
+| GET | `/api/reports/my-reports` | Get my submitted reports |
+| GET | `/api/reports` | Get all reports (Admin, ?status= filter) |
+| GET | `/api/reports/{id}` | Get report details (Admin) |
+| PUT | `/api/reports/{id}/resolve` | Resolve or dismiss a report (Admin) |
+
 ### Admin
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -476,6 +528,13 @@ CREATE TABLE ChatMessages (
 | GET | `/api/admin/license-requests` | List pending license verifications |
 | PUT | `/api/admin/license/{id}/approve` | Approve rider's license |
 | PUT | `/api/admin/license/{id}/reject` | Reject rider's license |
+| GET | `/api/admin/pricing` | Get current pricing settings |
+| PUT | `/api/admin/pricing` | Update pricing settings |
+
+### Pricing (Public)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/rides/pricing/calculate` | Calculate fare for a route |
 
 ---
 
@@ -565,12 +624,80 @@ CREATE TABLE ChatMessages (
 - [x] Resume guard: only resume Accepted on-demand if `acceptedAt` within 2 hours
 - [x] On-demand status synced to `Completed`/`Cancelled` when linked ride finishes
 
-### Phase 7: Polish (Ongoing)
-- [ ] Mobile responsiveness
-- [ ] Email notifications
-- [ ] Admin user management page
-- [ ] Admin ride management page
-- [ ] Admin dashboard with stats
+### Phase 7: In-Ride Chat ✅
+- [x] `ChatMessage` entity and `ChatMessages` table
+- [x] `ChatService` — send/load messages, access control
+- [x] `ChatHub` SignalR hub — `JoinRideChat`, `LeaveRideChat`, `SendMessage`
+- [x] Angular: `ride-chat/` component — Uber-style inline chat
+- [x] Angular: `ride-chat.service.ts` — SignalR chat connection management
+- [x] Chat always visible on active ride (rider) and track ride (passenger)
+- [x] Last 2 messages shown inline with `maxMessages` input
+- [x] Max 200 characters per message
+- [x] Chelsea blue themed outgoing bubbles (matches app primary color)
+- [x] GET `/api/rides/{id}/messages` endpoint for historical messages
+
+### Phase 8: Admin Enhancements
+- [ ] Admin user management page — full CRUD for managing users
+- [ ] Admin ride management page — view/cancel all rides
+- [ ] Admin dashboard with stats — charts and metrics
+- [ ] Admin reports — export CSV, ride volume trends, user growth charts
+
+### Phase 9: Pricing & Payments ✅
+- [x] Ride fare/pricing — admin-configurable pricing with base fare, per km rate, min/max fare
+- [x] PricingSettings entity with singleton configuration
+- [x] Admin panel pricing settings page with modern UX
+- [x] Auto-calculate fare on ride creation based on distance (Haversine formula)
+- [x] Fare display on browse rides (list view and map view)
+- [x] Fare display on request ride dialog
+- [x] Fare calculation endpoint (`/api/rides/pricing/calculate`)
+- [x] Fare display on on-demand ride confirmation
+- [ ] Payment integration — in-app wallet or payment gateway
+- [ ] Rider earnings dashboard — track completed rides, total distance, earnings summary
+
+### Phase 10: Smart Matching & Scheduling
+- [ ] Route matching — auto-suggest rides whose route passes near passenger's pickup/dropoff
+- [ ] Recurring/scheduled rides — rider posts daily commute pattern (e.g., "M-F 8am")
+- [ ] Saved locations — Home, Work, Favorites for quick ride posting/searching
+- [ ] Ride search by map area — drag map to search rides in visible region
+
+### Phase 11: Safety & Trust
+- [ ] SOS/Emergency button — one-tap emergency alert during ride, share live location with emergency contact
+- [ ] Ride sharing via link — passenger shares ride tracking link with family/friends
+- [ ] Two-way ratings — rider can also rate the passenger
+- [ ] User blocking — block a user from requesting your rides
+- [ ] OTP verification — verify phone number via SMS
+- [x] Manage reports — user reporting/complaints system, admin resolves
+  - `Report` entity with `ReportReason` enum (SafetyConcern, Harassment, NoShow, RecklessDriving, FakeProfile, InappropriateBehavior, Other) and `ReportStatus` enum (Pending, Reviewing, Resolved, Dismissed)
+  - `ReportService` — create, list, resolve reports with validation
+  - `ReportsController` — 5 endpoints (create, my-reports, list all, get by id, resolve)
+  - Angular: `report-dialog/` — reusable dialog for reporting a user (from ride-history and active-ride)
+  - Angular: `manage-reports/` — admin page with stats, status filter, inline resolve form
+  - Angular: `report.service.ts` — API client with reason constants
+  - Report buttons on ride-history (passenger) and active-ride (rider)
+  - Admin dashboard "Manage Reports" card
+- [ ] System logs — audit trail of all platform activities
+
+### Phase 12: Media & Uploads
+- [ ] Profile photo upload — camera/gallery integration (Capacitor camera plugin ready)
+- [ ] License image upload — actual file upload to storage (Supabase Storage or S3)
+
+### Phase 13: Notifications & Communication
+- [ ] Push notifications (FCM) — wire up actual push delivery (backend FCM token endpoint exists)
+- [ ] Email notifications — send emails on ride request accepted/rejected, started/completed
+- [ ] Ride cancellation reasons — ask why when cancelling (data for analytics)
+
+### Phase 14: UX & Platform
+- [x] Mobile responsiveness — admin pages fully responsive with hamburger menu, collapsible sidebar
+- [x] Modern admin dashboard UX — sidebar navigation, stat cards, action cards
+- [x] Mobile-friendly license review, manage reports, and pricing settings pages
+- [ ] Multi-language support (i18n) — Angular i18n or ngx-translate
+- [ ] Offline mode improvements — cache recent rides/requests for offline viewing
+- [ ] Ride sharing history between users — "You've ridden with this rider 3 times before"
+- [ ] Favorite riders — passenger can bookmark preferred riders for quick access
+
+### Phase 15: Analytics & Insights
+- [ ] Popular routes analytics — visual heatmap (backend endpoint exists)
+- [ ] Ride statistics per user — total rides, distance traveled, CO₂ saved
 
 ---
 

@@ -288,6 +288,37 @@
   height: 16px;
 }
 
+/* Fare Badge */
+.fare-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  border-radius: 12px;
+  min-width: 70px;
+
+  &.negotiate {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+
+    .fare-amount {
+      color: #e65100;
+      font-size: 13px;
+    }
+  }
+}
+
+.fare-amount {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2e7d32;
+}
+
+.fare-distance {
+  font-size: 11px;
+  color: #689f38;
+}
+
 /* Route Section */
 .route-section {
   margin-bottom: 16px;
@@ -467,6 +498,23 @@
   width: 18px;
   height: 18px;
   color: #999;
+}
+
+.meta-item.fare {
+  font-weight: 600;
+  color: #2e7d32;
+
+  mat-icon {
+    color: #4caf50;
+  }
+
+  &.negotiate {
+    color: #e65100;
+
+    mat-icon {
+      color: #ff9800;
+    }
+  }
 }
 
 /* Action Buttons */

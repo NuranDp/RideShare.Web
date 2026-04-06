@@ -11,6 +11,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RideService } from '../../../services/ride.service';
 import { PassengerRideHistory, CreateRatingRequest } from '../../../models/ride.model';
 import { RatingDialogComponent, RatingDialogData } from '../../../components/rating-dialog/rating-dialog.component';
+import { ReportDialogComponent, ReportDialogData } from '../../../components/report-dialog/report-dialog.component';
 
 @Component({
   selector: 'app-ride-history',
@@ -118,5 +119,17 @@ export class RideHistoryComponent implements OnInit {
 
   goToProfile(): void {
     this.router.navigate(['/passenger'], { queryParams: { tab: 'profile' } });
+  }
+
+  reportUser(ride: PassengerRideHistory): void {
+    this.dialog.open(ReportDialogComponent, {
+      width: '440px',
+      maxWidth: '95vw',
+      data: {
+        reportedUserId: ride.riderId,
+        reportedUserName: ride.riderName,
+        rideId: ride.rideId
+      } as ReportDialogData
+    });
   }
 }

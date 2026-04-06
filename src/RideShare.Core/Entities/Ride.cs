@@ -15,6 +15,10 @@ public class Ride
     public string? Notes { get; set; }
     public RideStatus Status { get; set; } = RideStatus.Active;
     
+    // Pricing
+    public decimal? Fare { get; set; }
+    public decimal? EstimatedDistanceKm { get; set; }
+    
     // Live tracking fields
     public double? CurrentLat { get; set; }
     public double? CurrentLng { get; set; }

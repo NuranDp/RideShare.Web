@@ -1,129 +1,139 @@
-<div class="page-header">
-  <div class="header-content">
-    <button mat-icon-button class="back-btn" routerLink="/admin">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <div class="header-text">
-      <h1>License Verification</h1>
-      <p>Review and approve rider licenses</p>
+<div class="admin-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="back-btn" routerLink="/admin">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-info">
+        <h1>License Verification</h1>
+        <p>Review and approve rider license submissions</p>
+      </div>
+    </div>
+    <div class="header-badge" [class.has-pending]="requests().length > 0">
+      <mat-icon>pending_actions</mat-icon>
+      <span>{{ requests().length }} Pending</span>
     </div>
   </div>
-</div>
 
-<div class="review-container">
-  @if (loading()) {
-    <div class="loading-container">
-      <mat-spinner diameter="40"></mat-spinner>
-      <p>Loading requests...</p>
-    </div>
-  } @else if (requests().length === 0) {
-    <mat-card class="empty-card">
-      <mat-card-content>
+  <!-- Content -->
+  <div class="page-content">
+    @if (loading()) {
+      <div class="loading-state">
+        <mat-spinner diameter="44"></mat-spinner>
+        <p>Loading verification requests...</p>
+      </div>
+    } @else if (requests().length === 0) {
+      <div class="empty-state">
         <div class="empty-icon">
-          <mat-icon>check_circle</mat-icon>
+          <mat-icon>verified</mat-icon>
         </div>
         <h2>All Caught Up!</h2>
-        <p>No pending license verification requests.</p>
-        <button mat-raised-button class="back-dashboard-btn" routerLink="/admin">
-          <mat-icon>dashboard</mat-icon>
+        <p>No pending license verification requests at this time.</p>
+        <button class="primary-btn" routerLink="/admin">
+          <mat-icon>arrow_back</mat-icon>
           Back to Dashboard
         </button>
-      </mat-card-content>
-    </mat-card>
-  } @else {
-    <div class="requests-count">
-      <mat-icon>pending_actions</mat-icon>
-      {{ requests().length }} pending {{ requests().length === 1 ? 'request' : 'requests' }}
-    </div>
-
-    <div class="requests-grid">
-      @for (request of requests(); track request.id) {
-        <mat-card class="request-card">
-          <mat-card-header>
-            <div class="rider-avatar">
-              <mat-icon>person</mat-icon>
-            </div>
-            <mat-card-title>{{ request.riderName }}</mat-card-title>
-            <mat-card-subtitle>{{ request.riderEmail }}</mat-card-subtitle>
-          </mat-card-header>
-
-          <mat-card-content>
-            <div class="info-grid">
-              <div class="info-item">
-                <span class="label">License Number</span>
-                <span class="value">{{ request.licenseNumber }}</span>
+      </div>
+    } @else {
+      <div class="requests-list">
+        @for (request of requests(); track request.id) {
+          <div class="request-card" [class.processing]="processing() === request.id">
+            <!-- Card Header -->
+            <div class="card-header">
+              <div class="rider-info">
+                <div class="rider-avatar">
+                  <mat-icon>person</mat-icon>
+                </div>
+                <div class="rider-details">
+                  <span class="rider-name">{{ request.riderName }}</span>
+                  <span class="rider-email">{{ request.riderEmail }}</span>
+                </div>
               </div>
-              <div class="info-item">
-                <span class="label">Expiry Date</span>
-                <span class="value">{{ request.licenseExpiryDate | date:'mediumDate' }}</span>
-              </div>
-              <div class="info-item">
-                <span class="label">Motorcycle</span>
-                <span class="value">{{ request.motorcycleModel || 'Not specified' }}</span>
-              </div>
-              <div class="info-item">
-                <span class="label">License Plate</span>
-                <span class="value">{{ request.plateNumber || 'Not specified' }}</span>
-              </div>
-              <div class="info-item full-width">
-                <span class="label">Submitted</span>
-                <span class="value">{{ request.submittedAt | date:'medium' }}</span>
+              <div class="submitted-date">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ request.submittedAt | date:'MMM d, y' }}</span>
               </div>
             </div>
 
-            @if (request.licenseImageUrl) {
-              <div class="license-image">
-                <a [href]="request.licenseImageUrl" target="_blank" class="image-link">
+            <!-- License Details -->
+            <div class="license-details">
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="detail-label">License Number</span>
+                  <span class="detail-value">{{ request.licenseNumber }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Expiry Date</span>
+                  <span class="detail-value" [class.expiring]="isExpiringSoon(request.licenseExpiryDate)">
+                    {{ request.licenseExpiryDate | date:'MMM d, y' }}
+                  </span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Motorcycle</span>
+                  <span class="detail-value">{{ request.motorcycleModel || 'Not specified' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Plate Number</span>
+                  <span class="detail-value">{{ request.plateNumber || 'Not specified' }}</span>
+                </div>
+              </div>
+
+              @if (request.licenseImageUrl) {
+                <a [href]="request.licenseImageUrl" target="_blank" class="view-license-btn">
                   <mat-icon>image</mat-icon>
                   View License Image
+                  <mat-icon class="external">open_in_new</mat-icon>
                 </a>
+              }
+            </div>
+
+            <!-- Rejection Form -->
+            @if (showRejectInput() === request.id) {
+              <div class="rejection-form">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Reason for rejection</mat-label>
+                  <textarea 
+                    matInput 
+                    [(ngModel)]="rejectionReason" 
+                    rows="2"
+                    placeholder="Please provide a reason for rejecting this license..."></textarea>
+                </mat-form-field>
               </div>
             }
 
-            <!-- Rejection Reason Input -->
-            @if (showRejectInput() === request.id) {
-              <mat-form-field appearance="outline" class="full-width reject-input">
-                <mat-label>Rejection Reason</mat-label>
-                <textarea 
-                  matInput 
-                  [(ngModel)]="rejectionReason" 
-                  rows="2"
-                  placeholder="Enter reason for rejection"></textarea>
-              </mat-form-field>
-            }
-          </mat-card-content>
-
-          <mat-card-actions align="end">
-            @if (processing() === request.id) {
-              <mat-spinner diameter="24"></mat-spinner>
-            } @else if (showRejectInput() === request.id) {
-              <button mat-button (click)="cancelReject()">Cancel</button>
-              <button 
-                mat-raised-button 
-                color="warn" 
-                (click)="confirmReject(request.id)"
-                [disabled]="!rejectionReason.trim()">
-                Confirm Reject
-              </button>
-            } @else {
-              <button 
-                mat-raised-button 
-                color="warn" 
-                (click)="startReject(request.id)">
-                <mat-icon>close</mat-icon>
-                Reject
-              </button>
-              <button 
-                mat-raised-button 
-                color="primary" 
-                (click)="approve(request.id)">
-                <mat-icon>check</mat-icon>
-                Approve
-              </button>
-            }
-          </mat-card-actions>
-        </mat-card>
-      }
-    </div>
-  }
+            <!-- Card Actions -->
+            <div class="card-actions">
+              @if (processing() === request.id) {
+                <div class="processing-indicator">
+                  <mat-spinner diameter="24"></mat-spinner>
+                  <span>Processing...</span>
+                </div>
+              } @else if (showRejectInput() === request.id) {
+                <button class="action-btn secondary" (click)="cancelReject()">
+                  Cancel
+                </button>
+                <button 
+                  class="action-btn danger" 
+                  (click)="confirmReject(request.id)"
+                  [disabled]="!rejectionReason.trim()">
+                  <mat-icon>close</mat-icon>
+                  Confirm Rejection
+                </button>
+              } @else {
+                <button class="action-btn secondary" (click)="startReject(request.id)">
+                  <mat-icon>close</mat-icon>
+                  Reject
+                </button>
+                <button class="action-btn success" (click)="approve(request.id)">
+                  <mat-icon>check</mat-icon>
+                  Approve License
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
 </div>

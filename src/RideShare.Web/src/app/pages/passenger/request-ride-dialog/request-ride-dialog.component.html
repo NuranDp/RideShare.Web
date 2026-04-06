@@ -45,6 +45,14 @@
           Helmet
         </span>
       }
+      <span class="info-badge fare" [class.negotiate]="!data.ride.fare">
+        <mat-icon>payments</mat-icon>
+        @if (data.ride.fare) {
+          ₱{{ data.ride.fare | number:'1.0-0' }}
+        } @else {
+          Negotiate
+        }
+      </span>
     </div>
   </div>
 

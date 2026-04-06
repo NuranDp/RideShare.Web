@@ -1,0 +1,750 @@
+// Manage Reports - Modern UX
+.admin-page {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.page-header {
+  background: white;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    background: #eff6ff;
+  }
+}
+
+.header-info {
+  h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: #64748b;
+  }
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stat-pills {
+  display: flex;
+  gap: 10px;
+}
+
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &.pending {
+    background: #f1f5f9;
+    color: #64748b;
+
+    &.active {
+      background: #fef3c7;
+      color: #d97706;
+    }
+  }
+
+  &.total {
+    background: #eff6ff;
+    color: #3b82f6;
+  }
+}
+
+.page-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+// Filter Bar
+.filter-bar {
+  margin-bottom: 20px;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 4px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  overflow-x: auto;
+}
+
+.tab {
+  padding: 10px 18px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f1f5f9;
+  }
+
+  &.active {
+    background: #0f172a;
+    color: white;
+  }
+}
+
+// Loading State
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 16px;
+
+  p {
+    font-size: 14px;
+    color: #64748b;
+  }
+}
+
+// Empty State
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 80px 20px;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+.empty-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: white;
+  }
+}
+
+.empty-state h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.empty-state p {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.text-btn {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Reports List
+.reports-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.report-card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  &.is-pending {
+    border-left: 4px solid #f59e0b;
+  }
+
+  &.processing {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+}
+
+// Card Header
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.reason-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.reason-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    color: white;
+  }
+
+  &.reason-harassment { background: linear-gradient(135deg, #ef4444, #dc2626); }
+  &.reason-spam { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  &.reason-inappropriate { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+  &.reason-safety { background: linear-gradient(135deg, #ec4899, #db2777); }
+  &.reason-fraud { background: linear-gradient(135deg, #f97316, #ea580c); }
+  &.reason-other { background: linear-gradient(135deg, #64748b, #475569); }
+}
+
+.reason-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reason-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.report-date {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.status-chip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.status-pending {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  &.status-reviewing {
+    background: #dbeafe;
+    color: #2563eb;
+  }
+
+  &.status-resolved {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+
+  &.status-dismissed {
+    background: #f1f5f9;
+    color: #64748b;
+  }
+}
+
+// Users Section
+.users-section {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  padding: 20px;
+}
+
+.user-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  background: #f8fafc;
+  border-radius: 12px;
+
+  &.reported {
+    background: #fef2f2;
+  }
+}
+
+.user-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.user-email {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.user-role {
+  display: inline-block;
+  margin-top: 2px;
+  padding: 2px 8px;
+  background: white;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #3b82f6;
+}
+
+.arrow-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cbd5e1;
+}
+
+// Ride Context
+.ride-context {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 20px 12px;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #64748b;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #94a3b8;
+  }
+}
+
+// Description
+.report-description {
+  margin: 0 20px 16px;
+  padding: 14px 16px;
+  background: #fffbeb;
+  border-radius: 10px;
+  border-left: 3px solid #f59e0b;
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: #78350f;
+    line-height: 1.5;
+    font-style: italic;
+  }
+}
+
+// Admin Notes
+.admin-notes {
+  margin: 0 20px 16px;
+  padding: 14px 16px;
+  background: #f0fdf4;
+  border-radius: 10px;
+
+  .notes-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #16a34a;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: 13px;
+    color: #15803d;
+    line-height: 1.5;
+  }
+
+  .resolved-info {
+    display: block;
+    margin-top: 8px;
+    font-size: 11px;
+    color: #22c55e;
+  }
+}
+
+// Resolve Form
+.resolve-form {
+  margin: 16px 20px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.form-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #3b82f6;
+  }
+}
+
+.form-fields {
+  .full-width {
+    width: 100%;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+// Card Actions
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+}
+
+// Action Buttons
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &.primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+  }
+
+  &.secondary {
+    background: white;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+
+    &:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+  }
+
+  &.success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+  }
+
+  &.warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .header-left {
+    gap: 12px;
+  }
+
+  .users-section {
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .arrow-wrapper {
+    transform: rotate(90deg);
+    padding: 4px 0;
+  }
+
+  .page-content {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .back-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .header-info {
+    h1 {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 12px;
+    }
+  }
+
+  .filter-bar {
+    margin-bottom: 16px;
+  }
+
+  .filter-tabs {
+    gap: 4px;
+    padding: 3px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .tab {
+    padding: 8px 12px;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .stat-pills {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pill {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .report-card {
+    border-radius: 12px;
+  }
+
+  .card-header {
+    padding: 16px;
+  }
+
+  .reason-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .reason-label {
+    font-size: 14px;
+  }
+
+  .status-chip {
+    padding: 4px 10px;
+    font-size: 10px;
+  }
+
+  .user-card {
+    padding: 12px;
+  }
+
+  .ride-context {
+    margin: 0 16px 12px;
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+
+  .report-description {
+    margin: 0 16px 12px;
+    padding: 12px 14px;
+  }
+
+  .admin-notes {
+    margin: 0 16px 12px;
+    padding: 12px 14px;
+  }
+
+  .resolve-form {
+    margin: 12px 16px;
+    padding: 16px;
+  }
+
+  .form-header {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+
+    .action-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .card-actions {
+    padding: 12px 16px;
+
+    .action-btn {
+      padding: 10px 16px;
+      font-size: 12px;
+    }
+  }
+
+  .empty-state {
+    padding: 60px 20px;
+  }
+
+  .empty-icon {
+    width: 64px;
+    height: 64px;
+
+    mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  .empty-state h2 {
+    font-size: 18px;
+  }
+}

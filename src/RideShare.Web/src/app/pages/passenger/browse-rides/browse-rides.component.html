@@ -102,6 +102,14 @@
                 <mat-icon>sports_motorsports</mat-icon>
                 <span>{{ selectedRide.helmetProvided ? 'Helmet provided' : 'No helmet' }}</span>
               </div>
+              <div class="meta-item fare" [class.negotiate]="!selectedRide.fare">
+                <mat-icon>payments</mat-icon>
+                @if (selectedRide.fare) {
+                  <span>₱{{ selectedRide.fare | number:'1.0-0' }}</span>
+                } @else {
+                  <span>Negotiate</span>
+                }
+              </div>
             </div>
             <button class="request-btn" (click)="requestRide(selectedRide)">
               <mat-icon>send</mat-icon>
@@ -133,6 +141,16 @@
                     </span>
                   }
                 </div>
+              </div>
+              <div class="fare-badge" [class.negotiate]="!ride.fare">
+                @if (ride.fare) {
+                  <span class="fare-amount">₱{{ ride.fare | number:'1.0-0' }}</span>
+                  @if (ride.estimatedDistanceKm) {
+                    <span class="fare-distance">~{{ ride.estimatedDistanceKm | number:'1.1-1' }} km</span>
+                  }
+                } @else {
+                  <span class="fare-amount">Negotiate</span>
+                }
               </div>
             </div>
 

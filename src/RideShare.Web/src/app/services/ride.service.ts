@@ -20,6 +20,7 @@ import {
   UpdateLocationRequest,
   PopularRoutesResponse
 } from '../models/ride.model';
+import { FareCalculationRequest, FareCalculationResponse } from '../models/pricing.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -158,5 +159,10 @@ export class RideService {
     return this.http.get<PopularRoutesResponse>(`${this.apiUrl}/popular-routes`, {
       params: { limit: limit.toString() }
     });
+  }
+
+  // Calculate fare for a route
+  calculateFare(request: FareCalculationRequest): Observable<FareCalculationResponse> {
+    return this.http.post<FareCalculationResponse>(`${this.apiUrl}/pricing/calculate`, request);
   }
 }

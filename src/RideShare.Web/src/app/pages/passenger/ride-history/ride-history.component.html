@@ -90,9 +90,22 @@
 
           @if (ride.rideStatus === 'Completed' && !ride.hasRated) {
             <mat-card-actions align="end">
+              <button mat-button color="warn" (click)="reportUser(ride)">
+                <mat-icon>flag</mat-icon>
+                Report
+              </button>
               <button mat-raised-button color="accent" (click)="rateRide(ride)">
                 <mat-icon>star</mat-icon>
                 Rate This Ride
+              </button>
+            </mat-card-actions>
+          }
+
+          @if (ride.rideStatus === 'Completed' && ride.hasRated) {
+            <mat-card-actions align="end">
+              <button mat-button color="warn" (click)="reportUser(ride)">
+                <mat-icon>flag</mat-icon>
+                Report
               </button>
             </mat-card-actions>
           }

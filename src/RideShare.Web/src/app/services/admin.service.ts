@@ -8,6 +8,7 @@ import {
   LicenseVerificationRequest,
   AdminUserListItem
 } from '../models/rider.model';
+import { PricingSettings, UpdatePricingSettingsRequest } from '../models/pricing.model';
 
 @Injectable({
   providedIn: 'root'
@@ -35,5 +36,14 @@ export class AdminService {
 
   getAllUsers(): Observable<AdminUserListItem[]> {
     return this.http.get<AdminUserListItem[]>(`${this.apiUrl}/users`);
+  }
+
+  // Pricing endpoints
+  getPricingSettings(): Observable<PricingSettings> {
+    return this.http.get<PricingSettings>(`${this.apiUrl}/pricing`);
+  }
+
+  updatePricingSettings(request: UpdatePricingSettingsRequest): Observable<PricingSettings> {
+    return this.http.put<PricingSettings>(`${this.apiUrl}/pricing`, request);
   }
 }

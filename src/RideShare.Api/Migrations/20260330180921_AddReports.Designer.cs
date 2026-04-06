@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RideShare.Api.Data;
@@ -11,9 +12,11 @@ using RideShare.Api.Data;
 namespace RideShare.Api.Migrations
 {
     [DbContext(typeof(RideShareDbContext))]
-    partial class RideShareDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260330180921_AddReports")]
+    partial class AddReports
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -126,75 +129,6 @@ namespace RideShare.Api.Migrations
                     b.HasIndex("Status");
 
                     b.ToTable("OnDemandRequests");
-                });
-
-            modelBuilder.Entity("RideShare.Core.Entities.PricingSettings", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("BaseFare")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)");
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
-
-                    b.Property<string>("CurrencySymbol")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("character varying(5)");
-
-                    b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<decimal>("MaximumFare")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)");
-
-                    b.Property<decimal>("MinimumFare")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)");
-
-                    b.Property<decimal>("PerKmRate")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)");
-
-                    b.Property<decimal>("PlatformFeePercent")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("numeric(5,2)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<Guid?>("UpdatedByAdminId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UpdatedByAdminId");
-
-                    b.ToTable("PricingSettings");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            BaseFare = 20.00m,
-                            Currency = "PHP",
-                            CurrencySymbol = "₱",
-                            IsEnabled = true,
-                            MaximumFare = 500.00m,
-                            MinimumFare = 25.00m,
-                            PerKmRate = 5.00m,
-                            PlatformFeePercent = 10.00m,
-                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        });
                 });
 
             modelBuilder.Entity("RideShare.Core.Entities.Rating", b =>
@@ -325,14 +259,6 @@ namespace RideShare.Api.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
-
-                    b.Property<decimal?>("EstimatedDistanceKm")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)");
-
-                    b.Property<decimal?>("Fare")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)");
 
                     b.Property<bool>("HelmetProvided")
                         .HasColumnType("boolean");
@@ -617,16 +543,6 @@ namespace RideShare.Api.Migrations
                     b.Navigation("Passenger");
 
                     b.Navigation("Ride");
-                });
-
-            modelBuilder.Entity("RideShare.Core.Entities.PricingSettings", b =>
-                {
-                    b.HasOne("RideShare.Core.Entities.User", "UpdatedByAdmin")
-                        .WithMany()
-                        .HasForeignKey("UpdatedByAdminId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("UpdatedByAdmin");
                 });
 
             modelBuilder.Entity("RideShare.Core.Entities.Rating", b =>

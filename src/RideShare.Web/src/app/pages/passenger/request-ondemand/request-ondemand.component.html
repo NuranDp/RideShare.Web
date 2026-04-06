@@ -99,6 +99,22 @@
           </div>
         }
 
+        <!-- Fare Display -->
+        <div class="fare-info" [class.loading]="loadingFare">
+          @if (loadingFare) {
+            <mat-spinner diameter="18"></mat-spinner>
+            <span>Calculating fare...</span>
+          } @else if (fareInfo) {
+            <mat-icon>payments</mat-icon>
+            @if (fareInfo.isEnabled && fareInfo.fare) {
+              <span class="fare-amount">{{ fareInfo.currencySymbol }}{{ fareInfo.fare | number:'1.0-0' }}</span>
+              <span class="fare-label">estimated fare</span>
+            } @else {
+              <span class="fare-negotiate">Fare to negotiate</span>
+            }
+          }
+        </div>
+
         <mat-form-field appearance="outline" class="message-field">
           <mat-label>Message to rider (optional)</mat-label>
           <textarea matInput 

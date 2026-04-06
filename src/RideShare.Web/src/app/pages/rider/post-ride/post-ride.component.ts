@@ -92,7 +92,7 @@ export class PostRideComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.rideForm.invalid || !this.originLocation || !this.destLocation) return;
+    if (this.rideForm.invalid || !this.originLocation || !this.destLocation || this.loading) return;
 
     this.loading = true;
 

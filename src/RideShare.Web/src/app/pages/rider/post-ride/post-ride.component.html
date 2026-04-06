@@ -92,8 +92,7 @@
 
     <!-- Submit Button -->
     <div class="submit-section">
-      <button class="submit-btn" [disabled]="loading || !rideForm.valid || !originLocation || !destLocation"
-              (click)="onSubmit()">
+      <button type="submit" class="submit-btn" [disabled]="loading || !rideForm.valid || !originLocation || !destLocation">
         @if (loading) {
           <mat-spinner diameter="24" color="accent"></mat-spinner>
         } @else {

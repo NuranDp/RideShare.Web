@@ -153,6 +153,17 @@ mat-dialog-content {
   color: #2e7d32;
 }
 
+.info-badge.fare {
+  background: #dcfce7;
+  color: #16a34a;
+  font-weight: 600;
+
+  &.negotiate {
+    background: #fef3c7;
+    color: #d97706;
+  }
+}
+
 /* Progress Steps */
 .progress-steps {
   display: flex;
