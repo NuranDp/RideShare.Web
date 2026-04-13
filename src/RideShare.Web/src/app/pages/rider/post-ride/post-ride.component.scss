@@ -396,11 +396,7 @@
     min-height: auto !important;
     width: 100%;
   }
-  
-  .mdc-notched-outline {
-    display: none !important;
-  }
-  
+
   input.mat-mdc-input-element,
   textarea.mat-mdc-input-element {
     color: var(--text-primary) !important;
@@ -416,10 +412,6 @@
   input[type="time"] {
     font-family: inherit;
     font-weight: 500 !important;
-  }
-  
-  .mat-mdc-floating-label {
-    display: none !important;
   }
   
   .mat-mdc-form-field-icon-suffix {

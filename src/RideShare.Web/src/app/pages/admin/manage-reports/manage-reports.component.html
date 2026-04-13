@@ -155,7 +155,7 @@
                       <mat-option value="Dismissed">Dismiss - No action needed</mat-option>
                     </mat-select>
                   </mat-form-field>
-                  <mat-form-field appearance="outline" class="full-width">
+                  <mat-form-field appearance="outline" class="full-width" floatLabel="always">
                     <mat-label>Admin Notes (optional)</mat-label>
                     <textarea matInput [(ngModel)]="adminNotes" rows="3" maxlength="1000" placeholder="Explain your decision..."></textarea>
                     <mat-hint>{{ adminNotes.length }}/1000</mat-hint>

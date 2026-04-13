@@ -138,7 +138,7 @@
         <div class="schedule-item">
           <label>Departure Date</label>
           <mat-form-field appearance="outline" class="full-width">
-            <input matInput [matDatepicker]="picker" formControlName="departureDate" [min]="minDate" placeholder="Select date">
+            <input matInput [matDatepicker]="picker" formControlName="departureDate" [min]="minDate">
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
@@ -147,7 +147,7 @@
         <div class="schedule-item">
           <label>Departure Time</label>
           <mat-form-field appearance="outline" class="full-width">
-            <input matInput type="time" formControlName="departureTime" placeholder="Select time">
+            <input matInput type="time" formControlName="departureTime">
             <mat-icon matIconSuffix class="time-icon">schedule</mat-icon>
           </mat-form-field>
         </div>
@@ -180,7 +180,8 @@
       <!-- Notes -->
       <div class="notes-card">
         <label>Notes (Optional)</label>
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="outline" class="full-width" floatLabel="always">
+          <mat-label>Notes</mat-label>
           <textarea matInput formControlName="notes" rows="3"
             placeholder="Route details, pickup points, preferences..."></textarea>
         </mat-form-field>

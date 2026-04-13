@@ -204,7 +204,8 @@
       </div>
       <!-- Search Input -->
       <div class="search-input-wrapper" (click)="$event.stopPropagation()">
-        <mat-form-field appearance="outline" class="search-field">
+        <mat-form-field appearance="outline" class="search-field" floatLabel="always">
+          <mat-label>Pickup</mat-label>
           <mat-icon matPrefix class="search-icon">search</mat-icon>
           <input matInput 
                  [(ngModel)]="pickupSearchQuery"
@@ -276,7 +277,8 @@
       </div>
       <!-- Search Input -->
       <div class="search-input-wrapper" (click)="$event.stopPropagation()">
-        <mat-form-field appearance="outline" class="search-field">
+        <mat-form-field appearance="outline" class="search-field" floatLabel="always">
+          <mat-label>Drop-off</mat-label>
           <mat-icon matPrefix class="search-icon">search</mat-icon>
           <input matInput 
                  [(ngModel)]="dropoffSearchQuery"
@@ -326,7 +328,8 @@
       <span>Message to Rider</span>
       <span class="optional-tag">Optional</span>
     </div>
-    <mat-form-field appearance="outline" class="message-field">
+    <mat-form-field appearance="outline" class="message-field" floatLabel="always">
+      <mat-label>Message</mat-label>
       <textarea matInput 
                 [(ngModel)]="message" 
                 rows="2"
