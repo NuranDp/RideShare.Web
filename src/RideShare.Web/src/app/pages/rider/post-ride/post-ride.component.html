@@ -1,22 +1,133 @@
-<!-- Main Content -->
 <div class="content-area">
   <form [formGroup]="rideForm" (ngSubmit)="onSubmit()">
-    <!-- Step 1: Route Section -->
+    <!-- Route Section -->
     <div class="form-section">
       <div class="section-header">
-        <span class="step-badge">1</span>
-        <h2>Route</h2>
+        <mat-icon class="section-icon">two_wheeler</mat-icon>
+        <span class="section-title">Post a Ride</span>
       </div>
 
-      <!-- Unified Route Map -->
-      <app-unified-route-map
-        (originSelected)="onOriginSelected($event)"
-        (destinationSelected)="onDestSelected($event)"
-        (routeCalculated)="onRouteCalculated($event)">
-      </app-unified-route-map>
+      <!-- Location Card -->
+      <div class="location-card">
+        <!-- Pickup Row -->
+        <div class="location-row">
+          <div class="location-dot pickup"></div>
+          <div class="location-input-wrapper">
+            <input type="text"
+                   [(ngModel)]="originSearchQuery"
+                   [ngModelOptions]="{standalone: true}"
+                   placeholder="Pickup location"
+                   (input)="onSearchInput('origin')"
+                   (focus)="onSearchFocus('origin')"
+                   (blur)="onSearchBlur('origin')"
+                   autocomplete="off">
+            @if (!originSearchQuery) {
+              <button type="button" class="locate-btn" (click)="useCurrentLocation('origin')" [disabled]="gettingOriginLocation">
+                @if (gettingOriginLocation) {
+                  <mat-spinner diameter="16"></mat-spinner>
+                } @else {
+                  <mat-icon>my_location</mat-icon>
+                }
+              </button>
+            }
+            @if (originSearchQuery) {
+              <button type="button" class="clear-btn" (click)="clearSearch('origin', $event)">
+                <mat-icon>close</mat-icon>
+              </button>
+            }
+          </div>
+          @if (showOriginResults && originSearchResults.length > 0) {
+            <div class="search-results">
+              @for (result of originSearchResults; track result.place_id) {
+                <div class="search-result-item" (mousedown)="selectSearchResult(result, 'origin', $event)">
+                  <mat-icon>place</mat-icon>
+                  <div class="result-text">
+                    <span class="name">{{ result.display_name.split(',')[0] }}</span>
+                    <span class="address">{{ getShortDisplayName(result.display_name) }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+          @if (originSearching) {
+            <div class="search-loading">
+              <mat-spinner diameter="16"></mat-spinner>
+              <span>Searching...</span>
+            </div>
+          }
+        </div>
+
+        <!-- Connector Dots -->
+        <div class="location-connector">
+          <div class="connector-line"></div>
+        </div>
+
+        <!-- Dropoff Row -->
+        <div class="location-row">
+          <div class="location-dot dropoff"></div>
+          <div class="location-input-wrapper">
+            <input type="text"
+                   [(ngModel)]="destSearchQuery"
+                   [ngModelOptions]="{standalone: true}"
+                   placeholder="Where are you going?"
+                   (input)="onSearchInput('dest')"
+                   (focus)="onSearchFocus('dest')"
+                   (blur)="onSearchBlur('dest')"
+                   autocomplete="off">
+            @if (destSearchQuery) {
+              <button type="button" class="clear-btn" (click)="clearSearch('dest', $event)">
+                <mat-icon>close</mat-icon>
+              </button>
+            }
+          </div>
+          @if (showDestResults && destSearchResults.length > 0) {
+            <div class="search-results">
+              @for (result of destSearchResults; track result.place_id) {
+                <div class="search-result-item" (mousedown)="selectSearchResult(result, 'dest', $event)">
+                  <mat-icon>place</mat-icon>
+                  <div class="result-text">
+                    <span class="name">{{ result.display_name.split(',')[0] }}</span>
+                    <span class="address">{{ getShortDisplayName(result.display_name) }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+          @if (destSearching) {
+            <div class="search-loading">
+              <mat-spinner diameter="16"></mat-spinner>
+              <span>Searching...</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Map Card -->
+      <div class="map-card">
+        <div class="map-toggle-bar">
+          <button type="button" class="map-toggle-btn"
+                  [class.active]="selectionMode === 'origin'"
+                  (click)="selectionMode = 'origin'">
+            <span class="toggle-dot pickup"></span>
+            Set Pickup
+          </button>
+          <button type="button" class="map-toggle-btn"
+                  [class.active]="selectionMode === 'dest'"
+                  (click)="selectionMode = 'dest'">
+            <span class="toggle-dot dropoff"></span>
+            Set Dropoff
+          </button>
+        </div>
+        <div #postRideMap class="map-container"></div>
+        @if (routeLoading) {
+          <div class="route-loading-overlay">
+            <mat-spinner diameter="30"></mat-spinner>
+          </div>
+        }
+      </div>
     </div>
 
-    <!-- Step 2: Schedule Section -->
+    <!-- Schedule Section -->
     <div class="form-section">
       <div class="section-header">
         <span class="step-badge">2</span>
@@ -43,7 +154,7 @@
       </div>
     </div>
 
-    <!-- Step 3: Details Section -->
+    <!-- Details Section -->
     <div class="form-section">
       <div class="section-header">
         <span class="step-badge">3</span>
@@ -77,7 +188,7 @@
     </div>
 
     <!-- Validation Warning -->
-    @if (!originLocation || !destLocation) {
+    @if (!originLat || !destLat) {
       <div class="warning-banner">
         <mat-icon>info</mat-icon>
         <span>Select both pickup and drop-off locations to continue</span>
@@ -86,7 +197,9 @@
 
     <!-- Submit Button -->
     <div class="submit-section">
-      <button type="submit" class="submit-btn" [disabled]="loading || !rideForm.valid || !originLocation || !destLocation">
+      <button type="submit" class="submit-btn"
+              [class.ready]="rideForm.valid && originLat && destLat"
+              [disabled]="loading || !rideForm.valid || !originLat || !destLat">
         @if (loading) {
           <mat-spinner diameter="24" color="accent"></mat-spinner>
         } @else {
