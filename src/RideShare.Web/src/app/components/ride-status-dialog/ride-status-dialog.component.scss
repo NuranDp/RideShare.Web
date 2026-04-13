@@ -2,20 +2,22 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 32px 24px;
+  padding: 28px 20px 24px;
   text-align: center;
-  max-width: 360px;
+  max-width: 400px;
   margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .status-icon-wrapper {
   position: relative;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .status-circle {
-  width: 80px;
-  height: 80px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -24,27 +26,16 @@
   position: relative;
   z-index: 1;
 
-  &.started {
-    background: linear-gradient(135deg, #2196F3, #42A5F5);
-  }
-
-  &.completed {
-    background: linear-gradient(135deg, #4CAF50, #66BB6A);
-  }
-
-  &.cancelled {
-    background: linear-gradient(135deg, #F44336, #EF5350);
-  }
-
-  &.arrived {
-    background: linear-gradient(135deg, #FF9800, #FFB74D);
-  }
+  &.started  { background: linear-gradient(135deg, #2196F3, #42A5F5); }
+  &.completed { background: linear-gradient(135deg, #4CAF50, #66BB6A); }
+  &.cancelled { background: linear-gradient(135deg, #F44336, #EF5350); }
+  &.arrived  { background: linear-gradient(135deg, #FF9800, #FFB74D); }
 
   mat-icon {
     color: white;
-    font-size: 40px;
-    width: 40px;
-    height: 40px;
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
   }
 }
 
@@ -53,46 +44,50 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 80px;
-  height: 80px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   border: 3px solid #2196F3;
   animation: pulseRing 1.5s ease-out infinite;
   opacity: 0;
 
-  &.delay {
-    animation-delay: 0.5s;
-  }
+  &.delay { animation-delay: 0.5s; }
 }
 
 @keyframes scaleIn {
-  0% { transform: scale(0); }
+  0%   { transform: scale(0); }
   100% { transform: scale(1); }
 }
 
 @keyframes pulseRing {
-  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+  0%   { transform: translate(-50%, -50%) scale(1);   opacity: 0.6; }
   100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
 }
 
 .title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
   margin: 0 0 4px;
   color: var(--text-primary, #1a1a2e);
 }
 
 .subtitle {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-secondary, #666);
-  margin: 0 0 24px;
+  margin: 0 0 20px;
   line-height: 1.5;
   max-width: 280px;
+
+  // Less gap before the fare card on completed — the card speaks for itself
+  .ride-status-overlay:has(.ride-report) & {
+    margin-bottom: 14px;
+  }
 }
 
+// ── Standard view (started / arrived / cancelled) ────────────────
 .route-summary {
   width: 100%;
-  padding: 16px;
+  padding: 14px 16px;
   background: var(--surface-variant, #f5f5f5);
   border-radius: 12px;
   margin-bottom: 16px;
@@ -100,32 +95,35 @@
 
 .route-point {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
 }
 
 .dot {
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
   flex-shrink: 0;
+  margin-top: 3px;
 
   &.origin { background: #4CAF50; }
-  &.dest { background: #F44336; }
+  &.dest   { background: #F44336; }
 }
 
 .address {
   font-size: 13px;
   color: var(--text-primary, #333);
   text-align: left;
-  line-height: 1.3;
+  line-height: 1.4;
+  word-break: break-word;
 }
 
 .route-line {
   width: 2px;
-  height: 20px;
+  height: 18px;
   background: #ddd;
-  margin-left: 5px;
+  margin-left: 4px;
+  margin: 4px 0 4px 4px;
 }
 
 .rider-info {
@@ -145,11 +143,13 @@
   }
 }
 
+// ── Actions ──────────────────────────────────────────────────────
 .actions {
   display: flex;
   flex-direction: column;
   gap: 10px;
   width: 100%;
+  margin-top: 4px;
 }
 
 .btn-primary {
@@ -158,33 +158,31 @@
   justify-content: center;
   gap: 8px;
   width: 100%;
-  padding: 14px;
+  min-height: 52px;
+  padding: 14px 16px;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   color: white;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
 
-  &.started {
+  &.started  {
     background: linear-gradient(135deg, #2196F3, #42A5F5);
-    &:hover { box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4); }
+    &:hover { box-shadow: 0 4px 14px rgba(33, 150, 243, 0.4); }
   }
-
   &.completed {
     background: linear-gradient(135deg, #4CAF50, #66BB6A);
-    &:hover { box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4); }
+    &:hover { box-shadow: 0 4px 14px rgba(76, 175, 80, 0.4); }
   }
-
   &.cancelled {
     background: linear-gradient(135deg, #667eea, #764ba2);
-    &:hover { box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
+    &:hover { box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4); }
   }
-
   &.arrived {
     background: linear-gradient(135deg, #FF9800, #FFB74D);
-    &:hover { box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4); }
+    &:hover { box-shadow: 0 4px 14px rgba(255, 152, 0, 0.4); }
   }
 
   mat-icon {
@@ -193,17 +191,13 @@
     height: 20px;
   }
 
-  &:hover {
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
+  &:hover  { transform: translateY(-1px); }
+  &:active { transform: translateY(0); }
 }
 
 .btn-secondary {
   width: 100%;
+  min-height: 44px;
   padding: 12px;
   border: none;
   border-radius: 12px;
@@ -211,25 +205,66 @@
   color: var(--text-secondary, #666);
   font-size: 14px;
   cursor: pointer;
+  transition: background 0.15s;
 
-  &:hover {
-    background: var(--surface-variant, #f0f0f0);
-  }
+  &:hover { background: var(--surface-variant, #f0f0f0); }
 }
 
 // ── Ride report (completed) ──────────────────────────────────────
+.fare-highlight {
+  width: 100%;
+  background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+  border-radius: 18px;
+  padding: 22px 16px 18px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+
+  &.no-fare {
+    background: linear-gradient(135deg, #37474f 0%, #546e7a 100%);
+  }
+
+  .fare-label-top {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: rgba(255, 255, 255, 0.65);
+  }
+
+  .fare-amount {
+    font-size: clamp(36px, 11vw, 48px);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.05;
+    letter-spacing: -1px;
+
+    &.no-amount {
+      opacity: 0.45;
+    }
+  }
+
+  .fare-label-bottom {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-top: 2px;
+  }
+}
+
 .ride-report {
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 
   .report-stats {
     display: flex;
-    justify-content: center;
-    gap: 24px;
+    justify-content: space-between;
+    gap: 8px;
     background: #f0f9f0;
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
+    border-radius: 14px;
+    padding: 14px 12px;
+    margin-bottom: 12px;
   }
 
   .stat-item {
@@ -237,23 +272,29 @@
     flex-direction: column;
     align-items: center;
     gap: 2px;
+    flex: 1;
+    min-width: 0;
 
     mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
+      font-size: 17px;
+      width: 17px;
+      height: 17px;
       color: #4CAF50;
     }
 
     .stat-value {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--text-primary, #1a1a2e);
       line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
     }
 
     .stat-label {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-secondary, #888);
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -261,13 +302,13 @@
   }
 
   .route-summary {
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .rider-card {
     background: var(--surface-variant, #f8f8f8);
-    border: 1px solid #e8e8e8;
-    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    border-radius: 14px;
     padding: 12px 14px;
     display: flex;
     flex-direction: column;
@@ -287,29 +328,45 @@
       width: 18px;
       height: 18px;
       color: #667eea;
+      flex-shrink: 0;
     }
 
     &.secondary {
       font-size: 13px;
       font-weight: 400;
       color: var(--text-secondary, #666);
-
       mat-icon { color: #aaa; }
     }
   }
 
   .rider-name {
     font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
+// ── Dark theme ───────────────────────────────────────────────────
 :host-context(.dark-theme) {
-  .title { color: #e0e0e0; }
-  .route-summary { background: #2a2a3e; }
-  .address, .rider-info { color: #e0e0e0; }
+  .title { color: #e8e8e8; }
+  .subtitle { color: #aaa; }
+  .route-summary { background: #252538; }
+  .address { color: #e0e0e0; }
+  .rider-info { color: #e0e0e0; }
   .route-line { background: #444; }
-  .btn-secondary:hover { background: #333; }
-  .ride-report .report-stats { background: #22223a; }
-  .ride-report .rider-card { background: #1e1e30; border-color: #333; }
+  .btn-secondary { color: #aaa; &:hover { background: #2a2a3a; } }
+  .ride-report {
+    .report-stats { background: #1a2e1a; }
+    .rider-card { background: #1e1e30; border-color: #333; }
+    .rider-card-row { color: #e0e0e0; }
+    .stat-value { color: #e0e0e0; }
+  }
 }
 
+// ── Reduced motion ───────────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .status-circle { animation: none; }
+  .pulse-ring { animation: none; }
+  .btn-primary { transition: none; &:hover { transform: none; } }
+}

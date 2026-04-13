@@ -10,11 +10,14 @@ export interface RideStatusDialogData {
   riderName: string;
   origin: string;
   destination: string;
+  isRider?: boolean;
   // enriched for 'completed' type
   startedAt?: string;
   completedAt?: string;
   vehicleModel?: string;
   plateNumber?: string;
+  fare?: number;
+  distanceKm?: number;
 }
 
 @Component({
@@ -56,7 +59,9 @@ export class RideStatusDialogComponent {
   get subtitle(): string {
     switch (this.data.type) {
       case 'started': return 'Your rider is on the way. Track their live location!';
-      case 'completed': return 'You have arrived. Please rate your experience.';
+      case 'completed': return this.data.isRider
+        ? 'Great job! Here\'s your ride summary.'
+        : 'You have arrived. Here\'s your ride summary.';
       case 'cancelled': return 'This ride has been cancelled by the rider.';
       case 'arrived': return 'Your rider is waiting at the pickup point. Please meet them now!';
     }
@@ -65,7 +70,7 @@ export class RideStatusDialogComponent {
   get actionLabel(): string {
     switch (this.data.type) {
       case 'started': return 'Track Ride';
-      case 'completed': return 'Rate Rider';
+      case 'completed': return this.data.isRider ? 'My Rides' : 'Rate Rider';
       case 'cancelled': return 'Find Another Ride';
       case 'arrived': return 'View on Map';
     }
@@ -74,7 +79,7 @@ export class RideStatusDialogComponent {
   get actionIcon(): string {
     switch (this.data.type) {
       case 'started': return 'my_location';
-      case 'completed': return 'star';
+      case 'completed': return this.data.isRider ? 'list_alt' : 'star';
       case 'cancelled': return 'search';
       case 'arrived': return 'map';
     }

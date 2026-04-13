@@ -10,7 +10,7 @@ public interface INotificationService
     Task SendRequestAcceptedNotificationAsync(Guid passengerId, Guid rideId, string riderName, string riderPhone, string origin, string destination, double? originLat, double? originLng, double? destLat, double? destLng, string? vehicleModel, string? plateNumber);
     Task SendRequestRejectedNotificationAsync(Guid passengerId, string riderName, string origin, string destination);
     Task SendRideCancelledNotificationAsync(Guid passengerId, Guid rideId, string riderName, string origin, string destination);
-    Task SendRideCompletedNotificationAsync(Guid passengerId, Guid rideId, string riderName, string origin, string destination, DateTime? startedAt = null, DateTime? completedAt = null, string? vehicleModel = null, string? plateNumber = null);
+    Task SendRideCompletedNotificationAsync(Guid passengerId, Guid rideId, string riderName, string origin, string destination, DateTime? startedAt = null, DateTime? completedAt = null, string? vehicleModel = null, string? plateNumber = null, decimal? fare = null, decimal? distanceKm = null);
     Task SendNewRatingNotificationAsync(Guid riderId, int rating, string passengerName);
     Task SendRideStartedNotificationAsync(Guid passengerId, Guid rideId, string riderName, string origin, string destination);
     Task SendRiderArrivedNotificationAsync(Guid passengerId, Guid rideId, string riderName, string pickupLocation);
@@ -163,7 +163,7 @@ public class NotificationService : INotificationService
         await SendNotificationAsync(passengerId, notification);
     }
 
-    public async Task SendRideCompletedNotificationAsync(Guid passengerId, Guid rideId, string riderName, string origin, string destination, DateTime? startedAt = null, DateTime? completedAt = null, string? vehicleModel = null, string? plateNumber = null)
+    public async Task SendRideCompletedNotificationAsync(Guid passengerId, Guid rideId, string riderName, string origin, string destination, DateTime? startedAt = null, DateTime? completedAt = null, string? vehicleModel = null, string? plateNumber = null, decimal? fare = null, decimal? distanceKm = null)
     {
         var notification = new NotificationDto
         {
@@ -176,10 +176,12 @@ public class NotificationService : INotificationService
                 { "riderName", riderName },
                 { "origin", origin },
                 { "destination", destination },
-                { "startedAt", startedAt?.ToString("o") ?? "" },
-                { "completedAt", (completedAt ?? DateTime.UtcNow).ToString("o") },
+                { "startedAt", startedAt.HasValue ? DateTime.SpecifyKind(startedAt.Value, DateTimeKind.Utc).ToString("o") : "" },
+                { "completedAt", DateTime.SpecifyKind(completedAt ?? DateTime.UtcNow, DateTimeKind.Utc).ToString("o") },
                 { "vehicleModel", vehicleModel ?? "" },
-                { "plateNumber", plateNumber ?? "" }
+                { "plateNumber", plateNumber ?? "" },
+                { "fare", fare?.ToString("F0") ?? "" },
+                { "distanceKm", distanceKm?.ToString("F1") ?? "" }
             }
         };
 

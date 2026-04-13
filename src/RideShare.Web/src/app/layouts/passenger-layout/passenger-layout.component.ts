@@ -80,7 +80,10 @@ export class PassengerLayoutComponent implements OnInit, OnDestroy {
   private loadActiveRide(): void {
     this.rideService.getMyRequests().subscribe({
       next: (requests) => {
-        this.activeRide = requests.find(r => r.status === 'Accepted' && r.rideStatus === 'InProgress') || null;
+        this.activeRide = requests.find(r =>
+          r.status === 'Accepted' &&
+          (r.rideStatus === 'Booked' || r.rideStatus === 'InProgress')
+        ) || null;
       },
       error: () => {}
     });
@@ -263,7 +266,9 @@ export class PassengerLayoutComponent implements OnInit, OnDestroy {
             startedAt: data['startedAt'] as string || undefined,
             completedAt: data['completedAt'] as string || undefined,
             vehicleModel: data['vehicleModel'] as string || undefined,
-            plateNumber: data['plateNumber'] as string || undefined
+            plateNumber: data['plateNumber'] as string || undefined,
+            fare: data['fare'] ? parseFloat(data['fare'] as string) : undefined,
+            distanceKm: data['distanceKm'] ? parseFloat(data['distanceKm'] as string) : undefined
           } as RideStatusDialogData
         });
 

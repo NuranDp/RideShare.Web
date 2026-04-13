@@ -144,6 +144,11 @@ export class RideService {
     return this.http.put<{ message: string }>(`${this.apiUrl}/${rideId}/start`, request);
   }
 
+  // Mark rider as arrived at pickup point (Rider - notifies passenger)
+  arrivedAtPickup(rideId: string): Observable<{ message: string }> {
+    return this.http.put<{ message: string }>(`${this.apiUrl}/${rideId}/arrived`, {});
+  }
+
   // Update rider's current location during an active ride (Rider)
   updateLocation(rideId: string, request: UpdateLocationRequest): Observable<{ message: string }> {
     return this.http.put<{ message: string }>(`${this.apiUrl}/${rideId}/location`, request);

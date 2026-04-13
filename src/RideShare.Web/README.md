@@ -17,11 +17,15 @@ Angular 19 frontend for the RideShare motorcycle ride-sharing platform with PWA 
 ```
 src/app/
 ├── pages/
-│   ├── admin/              # Admin dashboard, license review
+│   ├── admin/              # Admin dashboard, license review, reports, pricing
 │   │   ├── admin-dashboard/
-│   │   └── license-review/
+│   │   ├── license-review/
+│   │   ├── manage-reports/
+│   │   └── pricing-settings/
 │   ├── rider/              # Post ride, my rides, profile
+│   │   ├── active-ride/
 │   │   ├── my-rides/
+│   │   ├── nearby-requests/
 │   │   ├── post-ride/
 │   │   ├── ride-requests-dialog/
 │   │   ├── ride-requests-page/
@@ -32,6 +36,7 @@ src/app/
 │   │   ├── browse-rides/
 │   │   ├── my-requests/
 │   │   ├── passenger-dashboard/
+│   │   ├── request-ondemand/
 │   │   ├── request-ride/
 │   │   ├── request-ride-dialog/
 │   │   ├── ride-history/
@@ -45,9 +50,14 @@ src/app/
 │   ├── location-picker/    # Reusable map location selector
 │   ├── notification-bell/  # Notification indicator
 │   ├── notification-toast/ # Toast notifications
+│   ├── ondemand-request-popup/ # On-demand request bottom sheet for riders
 │   ├── rating-dialog/      # Rating submission
+│   ├── report-dialog/      # User report submission dialog
+│   ├── ride-accepted-dialog/ # Ride acceptance notification dialog
+│   ├── ride-chat/          # In-ride messaging component
 │   ├── ride-map/           # Ride list map view
 │   ├── ride-request-popup/ # Bottom sheet for ride requests (multi-request nav, blurred bg)
+│   ├── ride-status-dialog/ # Ride state change notifications
 │   ├── route-preview/      # Route visualization
 │   └── unified-route-map/  # Combined route & tracking map
 ├── layouts/
@@ -58,7 +68,10 @@ src/app/
 │   ├── auth.service.ts           # Authentication
 │   ├── location-tracking.service.ts  # Live GPS tracking
 │   ├── notification.service.ts   # SignalR notifications
+│   ├── on-demand.service.ts     # On-demand ride requests
+│   ├── report.service.ts        # User reports
 │   ├── ride.service.ts           # Ride CRUD operations
+│   ├── ride-chat.service.ts     # SignalR chat connection
 │   ├── rider.service.ts          # Rider profile
 │   └── theme.service.ts          # Dark/light mode
 ├── guards/                 # Route guards

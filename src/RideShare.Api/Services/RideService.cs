@@ -16,6 +16,7 @@ public interface IRideService
     Task<RideDto?> UpdateRideAsync(Guid rideId, Guid riderId, UpdateRideRequest request);
     Task<bool> CancelRideAsync(Guid rideId, Guid riderId);
     Task<bool> StartRideAsync(Guid rideId, Guid riderId, double lat, double lng);
+    Task<bool> MarkArrivedAtPickupAsync(Guid rideId, Guid riderId);
     Task<bool> UpdateRideLocationAsync(Guid rideId, Guid riderId, double lat, double lng);
     Task<RideLocationDto?> GetRideLocationAsync(Guid rideId);
     Task<bool> CompleteRideAsync(Guid rideId, Guid riderId);
@@ -284,6 +285,16 @@ public class RideService : IRideService
         ride.CurrentLat = null;
         ride.CurrentLng = null;
 
+        // Calculate fare if not already set
+        if (!ride.Fare.HasValue && ride.OriginLat.HasValue && ride.OriginLng.HasValue && ride.DestLat.HasValue && ride.DestLng.HasValue)
+        {
+            var fareResult = await _pricingService.CalculateFareAsync(
+                ride.OriginLat.Value, ride.OriginLng.Value,
+                ride.DestLat.Value, ride.DestLng.Value);
+            ride.Fare = fareResult.Fare;
+            ride.EstimatedDistanceKm = (decimal)fareResult.DistanceKm;
+        }
+
         // Update rider stats
         var riderProfile = await _context.RiderProfiles.FirstOrDefaultAsync(rp => rp.UserId == riderId);
         if (riderProfile != null)
@@ -314,7 +325,9 @@ public class RideService : IRideService
                 ride.StartedAt,
                 ride.UpdatedAt,
                 riderProfile?.MotorcycleModel,
-                riderProfile?.PlateNumber);
+                riderProfile?.PlateNumber,
+                ride.Fare,
+                ride.EstimatedDistanceKm);
         }
 
         return true;
@@ -349,6 +362,34 @@ public class RideService : IRideService
                 ride.Rider.FullName,
                 ride.Origin,
                 ride.Destination);
+        }
+
+        return true;
+    }
+
+    public async Task<bool> MarkArrivedAtPickupAsync(Guid rideId, Guid riderId)
+    {
+        var ride = await _context.Rides
+            .Include(r => r.Rider)
+            .Include(r => r.Requests)
+            .FirstOrDefaultAsync(r => r.Id == rideId && r.RiderId == riderId);
+
+        if (ride == null) return false;
+        if (ride.Status != RideStatus.Booked) return false;
+        if (ride.ArrivalNotified) return true; // already notified, idempotent
+
+        ride.ArrivalNotified = true;
+        ride.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+
+        var acceptedRequest = ride.Requests.FirstOrDefault(r => r.Status == RideRequestStatus.Accepted);
+        if (acceptedRequest != null)
+        {
+            await _notificationService.SendRiderArrivedNotificationAsync(
+                acceptedRequest.PassengerId,
+                ride.Id,
+                ride.Rider.FullName,
+                ride.Origin);
         }
 
         return true;
@@ -456,7 +497,7 @@ public class RideService : IRideService
             CurrentLat = ride.CurrentLat,
             CurrentLng = ride.CurrentLng,
             LocationUpdatedAt = ride.LocationUpdatedAt,
-            StartedAt = ride.StartedAt,
+            StartedAt = ride.StartedAt.HasValue ? DateTime.SpecifyKind(ride.StartedAt.Value, DateTimeKind.Utc) : null,
             Status = ride.Status.ToString()
         };
     }
@@ -885,6 +926,7 @@ public class RideService : IRideService
             Status = ride.Status.ToString(),
             RequestCount = ride.Requests?.Count ?? 0,
             CreatedAt = ride.CreatedAt,
+            StartedAt = ride.StartedAt.HasValue ? DateTime.SpecifyKind(ride.StartedAt.Value, DateTimeKind.Utc) : null,
             Fare = ride.Fare,
             EstimatedDistanceKm = ride.EstimatedDistanceKm,
             // Accepted passenger info

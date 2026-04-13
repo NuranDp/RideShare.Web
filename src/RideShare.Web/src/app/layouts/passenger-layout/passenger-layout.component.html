@@ -34,7 +34,7 @@
       <div class="active-ride-left">
         <div class="active-dot"></div>
         <div class="active-text">
-          <span class="active-label">Ride In Progress</span>
+          <span class="active-label">{{ activeRide.rideStatus === 'InProgress' ? 'Ride In Progress' : 'Rider Accepted' }}</span>
           <span class="active-route">{{ getShortAddress(activeRide.origin) }} to {{ getShortAddress(activeRide.destination) }}</span>
         </div>
       </div>

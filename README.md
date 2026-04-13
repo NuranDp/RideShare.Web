@@ -196,13 +196,11 @@ ride-share/
 │               ├── notification.service.ts
 │               ├── report.service.ts
 │               ├── ride.service.ts
+│               ├── on-demand.service.ts
 │               ├── ride-chat.service.ts
 │               ├── rider.service.ts
 │               └── theme.service.ts
 │
-├── database/
-│   ├── migrations/             # SQL migration scripts
-│   └── seed/                   # Sample data
 ├── docs/                       # Documentation & plans
 └── RideShare.sln               # .NET solution file
 ```
@@ -329,7 +327,8 @@ The app will be available at `http://localhost:4200`
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/rider/profile` | Get my rider profile |
-| PUT | `/api/rider/profile` | Update motorcycle info & submit license |
+| PUT | `/api/rider/profile` | Update motorcycle info |
+| POST | `/api/rider/license` | Submit license for verification |
 | GET | `/api/rider/{id}/public` | Get public rider profile |
 
 ### Rides
@@ -343,7 +342,13 @@ The app will be available at `http://localhost:4200`
 | PUT | `/api/rides/{id}/start` | Start ride (enables tracking) |
 | PUT | `/api/rides/{id}/complete` | Complete ride |
 | GET | `/api/rides/my-rides` | Get my posted rides |
+| GET | `/api/rides/my-history` | Get my ride history (Passenger) |
+| GET | `/api/rides/my-pending-requests` | Get pending requests for my rides (Rider) |
 | GET | `/api/rides/popular-routes` | Get popular routes |
+| PUT | `/api/rides/{id}/location` | Update rider location (GPS) |
+| GET | `/api/rides/{id}/location` | Get ride's current location |
+| GET | `/api/rides/pricing` | Get current pricing settings |
+| POST | `/api/rides/pricing/calculate` | Calculate fare for a route |
 
 ### Ride Requests
 | Method | Endpoint | Description |
@@ -368,21 +373,36 @@ The app will be available at `http://localhost:4200`
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/api/rides/{id}/rate` | Rate a completed ride |
-| GET | `/api/rides/{id}/messages` | Get chat messages for a ride |
-| GET | `/api/rider/{id}/ratings` | Get rider's ratings |
+| GET | `/api/rides/{id}/has-rated` | Check if already rated (Passenger) |
+| GET | `/api/rides/rider/{riderId}/ratings` | Get rider's ratings |
+| GET | `/api/rides/rider/{riderId}/trust-score` | Get rider's trust score |
 
 ### Chat
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/rides/{id}/messages` | Get chat messages for a ride |
 
+### Reports
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/reports` | Create a report |
+| GET | `/api/reports/my-reports` | Get my submitted reports |
+| GET | `/api/reports` | Get all reports (Admin, `?status=` filter) |
+| GET | `/api/reports/{id}` | Get report details (Admin) |
+| PUT | `/api/reports/{id}/resolve` | Resolve or dismiss a report (Admin) |
+
 ### Admin
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/admin/pending-verifications` | Get pending licenses |
-| PUT | `/api/admin/verify-license/{userId}` | Approve license |
-| PUT | `/api/admin/reject-license/{userId}` | Reject license |
+| GET | `/api/admin/users` | List all users |
+| PUT | `/api/admin/users/{id}/activate` | Activate user account |
+| PUT | `/api/admin/users/{id}/deactivate` | Deactivate user account |
+| GET | `/api/admin/license-requests` | Get pending license verifications |
+| PUT | `/api/admin/license/{id}/approve` | Approve rider's license |
+| PUT | `/api/admin/license/{id}/reject` | Reject rider's license |
 | GET | `/api/admin/stats` | Get platform statistics |
+| GET | `/api/admin/pricing` | Get current pricing settings |
+| PUT | `/api/admin/pricing` | Update pricing settings |
 
 ### SignalR Hubs
 | Hub | Purpose |

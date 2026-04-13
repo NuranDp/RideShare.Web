@@ -16,22 +16,38 @@
   <!-- Ride Report (completed only) -->
   @if (data.type === 'completed') {
     <div class="ride-report">
+
+      <!-- Fare highlight -->
+      <div class="fare-highlight" [class.no-fare]="!data.fare">
+        <span class="fare-label-top">Total Fare</span>
+        @if (data.fare) {
+          <span class="fare-amount">৳{{ data.fare | number:'1.0-0' }}</span>
+        } @else {
+          <span class="fare-amount no-amount">—</span>
+          <span class="fare-label-bottom">Fare not set</span>
+        }
+        @if (data.fare) {
+          <span class="fare-label-bottom">Ride completed</span>
+        }
+      </div>
+
       <!-- Stats row -->
       <div class="report-stats">
-        @if (duration) {
-          <div class="stat-item">
-            <mat-icon>schedule</mat-icon>
-            <span class="stat-value">{{ duration }}</span>
-            <span class="stat-label">Duration</span>
-          </div>
-        }
-        @if (completionTime) {
-          <div class="stat-item">
-            <mat-icon>check_circle</mat-icon>
-            <span class="stat-value">{{ completionTime }}</span>
-            <span class="stat-label">Completed</span>
-          </div>
-        }
+        <div class="stat-item">
+          <mat-icon>straighten</mat-icon>
+          <span class="stat-value">{{ data.distanceKm ? (data.distanceKm | number:'1.1-1') + ' km' : '—' }}</span>
+          <span class="stat-label">Distance</span>
+        </div>
+        <div class="stat-item">
+          <mat-icon>schedule</mat-icon>
+          <span class="stat-value">{{ duration || '—' }}</span>
+          <span class="stat-label">Duration</span>
+        </div>
+        <div class="stat-item">
+          <mat-icon>check_circle</mat-icon>
+          <span class="stat-value">{{ completionTime || '—' }}</span>
+          <span class="stat-label">Completed</span>
+        </div>
       </div>
 
       <!-- Route -->

@@ -20,6 +20,7 @@ export interface Ride {
   status: RideStatus;
   createdAt: string;
   requestCount: number;
+  startedAt?: string;
   // Pricing
   fare?: number;
   estimatedDistanceKm?: number;

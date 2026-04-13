@@ -161,6 +161,7 @@ ride-share/
 │           │   ├── auth.service.ts
 │           │   ├── location-tracking.service.ts
 │           │   ├── notification.service.ts
+│           │   ├── on-demand.service.ts
 │           │   ├── ride.service.ts
 │           │   ├── report.service.ts
 │           │   ├── ride-chat.service.ts
@@ -169,10 +170,6 @@ ride-share/
 │           ├── guards/         # Route guards
 │           ├── interceptors/   # HTTP interceptors
 │           └── models/         # TypeScript interfaces
-│
-├── database/
-│   ├── migrations/             # SQL migration scripts
-│   └── seed/                   # Sample data scripts
 │
 ├── docs/                       # Documentation
 ├── RideShare.sln               # .NET solution file

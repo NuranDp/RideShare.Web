@@ -163,6 +163,25 @@ public class RidesController : ControllerBase
     }
 
     /// <summary>
+    /// Mark rider as arrived at pickup point and notify passenger (Rider - owner only)
+    /// </summary>
+    [HttpPut("{id}/arrived")]
+    [Authorize(Roles = "Rider")]
+    public async Task<IActionResult> ArrivedAtPickup(Guid id)
+    {
+        var userId = GetUserId();
+        if (userId == null) return Unauthorized();
+
+        var result = await _rideService.MarkArrivedAtPickupAsync(id, userId.Value);
+        if (!result)
+        {
+            return BadRequest(new { message = "Ride not found or not in a state where arrival can be marked." });
+        }
+
+        return Ok(new { message = "Passenger has been notified of your arrival." });
+    }
+
+    /// <summary>
     /// Update rider's current location during an active ride (Rider - owner only)
     /// </summary>
     [HttpPut("{id}/location")]

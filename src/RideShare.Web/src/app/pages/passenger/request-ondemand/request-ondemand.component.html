@@ -115,13 +115,15 @@
           }
         </div>
 
-        <mat-form-field appearance="outline" class="message-field">
-          <mat-label>Message to rider (optional)</mat-label>
-          <textarea matInput 
-                    [(ngModel)]="message" 
+        <div class="message-field">
+          <label class="message-label">
+            <mat-icon>chat_bubble_outline</mat-icon>
+            Message to rider <span>(optional)</span>
+          </label>
+          <textarea [(ngModel)]="message"
                     placeholder="Any special instructions..."
                     rows="2"></textarea>
-        </mat-form-field>
+        </div>
 
         <button class="request-btn" 
                 [disabled]="submitting"

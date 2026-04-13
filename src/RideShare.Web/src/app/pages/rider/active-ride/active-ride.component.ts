@@ -13,6 +13,7 @@ import { Ride } from '../../../models/ride.model';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../components/confirm-dialog/confirm-dialog.component';
 import { RideChatComponent } from '../../../components/ride-chat/ride-chat.component';
 import { ReportDialogComponent, ReportDialogData } from '../../../components/report-dialog/report-dialog.component';
+import { RideStatusDialogComponent, RideStatusDialogData } from '../../../components/ride-status-dialog/ride-status-dialog.component';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 type RidePhase = 'loading' | 'pickup' | 'arrived' | 'inprogress' | 'completed';
@@ -922,8 +923,20 @@ export class ActiveRideComponent implements OnInit, OnDestroy {
   }
 
   private arrivedAtPickup(): void {
-    this.phase = 'arrived';
-    this.snackBar.open('Waiting for passenger...', 'OK', { duration: 2000 });
+    if (!this.rideId) return;
+    this.processing = true;
+    this.rideService.arrivedAtPickup(this.rideId).subscribe({
+      next: () => {
+        this.phase = 'arrived';
+        this.processing = false;
+        this.snackBar.open('Passenger has been notified of your arrival.', 'OK', { duration: 3000 });
+      },
+      error: () => {
+        this.phase = 'arrived';
+        this.processing = false;
+        this.snackBar.open('Waiting for passenger...', 'OK', { duration: 2000 });
+      }
+    });
   }
 
   private startRide(): void {
@@ -948,17 +961,54 @@ export class ActiveRideComponent implements OnInit, OnDestroy {
 
   private completeRide(): void {
     if (!this.rideId || this.processing) return;
-    
+
     this.processing = true;
     this.rideService.completeRide(this.rideId).subscribe({
       next: () => {
-        this.processing = false;
-        this.phase = 'completed';
-        this.snackBar.open('Ride completed! Great job!', 'OK', { duration: 2000 });
+        // Re-fetch ride to get updated fare/distance computed by backend
+        this.rideService.getRide(this.rideId!).subscribe({
+          next: (updatedRide) => {
+            this.ride = updatedRide;
+            this.processing = false;
+            this.phase = 'completed';
+            this.openCompletedDialog();
+          },
+          error: () => {
+            // Fallback: open dialog with existing data
+            this.processing = false;
+            this.phase = 'completed';
+            this.openCompletedDialog();
+          }
+        });
       },
       error: (err) => {
         this.processing = false;
         this.snackBar.open(err.error?.message || 'Failed to complete ride', 'OK', { duration: 3000 });
+      }
+    });
+  }
+
+  private openCompletedDialog(): void {
+    this.dialog.open(RideStatusDialogComponent, {
+      width: '420px',
+      maxWidth: '95vw',
+      disableClose: true,
+      panelClass: 'ride-notification-dialog',
+      data: {
+        type: 'completed',
+        rideId: this.rideId!,
+        riderName: this.ride?.passengerName || 'Passenger',
+        origin: this.ride?.origin || '',
+        destination: this.ride?.destination || '',
+        isRider: true,
+        startedAt: this.ride?.startedAt,
+        completedAt: new Date().toISOString(),
+        fare: this.ride?.fare,
+        distanceKm: this.ride?.estimatedDistanceKm
+      } as RideStatusDialogData
+    }).afterClosed().subscribe(result => {
+      if (result === 'completed') {
+        this.router.navigate(['/rider/my-rides']);
       }
     });
   }

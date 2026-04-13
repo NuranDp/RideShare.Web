@@ -45,6 +45,8 @@ public class RideDto
     public string Status { get; set; } = string.Empty;
     public int RequestCount { get; set; }
     public DateTime CreatedAt { get; set; }
+    // Timing
+    public DateTime? StartedAt { get; set; }
     // Pricing
     public decimal? Fare { get; set; }
     public decimal? EstimatedDistanceKm { get; set; }

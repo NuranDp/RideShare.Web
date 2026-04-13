@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, NgZone, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, NgZone, Output, EventEmitter, Input, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -47,6 +47,7 @@ interface SearchResult {
   styleUrls: ['./unified-route-map.component.scss']
 })
 export class UnifiedRouteMapComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('mapContainer', { static: false }) mapContainerRef!: ElementRef<HTMLDivElement>;
   @Input() initialOrigin?: LocationCoordinates;
   @Input() initialDestination?: LocationCoordinates;
   
@@ -155,14 +156,14 @@ export class UnifiedRouteMapComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   private initMap(): void {
-    const container = document.getElementById('unified-route-map');
+    const container = this.mapContainerRef?.nativeElement;
     if (!container) {
       setTimeout(() => this.initMap(), 100);
       return;
     }
 
     try {
-      this.map = L.map('unified-route-map', {
+      this.map = L.map(container, {
         center: this.defaultCenter,
         zoom: this.defaultZoom
       });
@@ -189,10 +190,8 @@ export class UnifiedRouteMapComponent implements OnInit, AfterViewInit, OnDestro
         this.calculateRoute();
       }
 
-      setTimeout(() => {
-        this.map?.invalidateSize();
-        this.mapReady = true;
-      }, 300);
+      this.mapReady = true;
+      setTimeout(() => this.map?.invalidateSize(), 300);
 
     } catch (error) {
       console.error('Error initializing map:', error);
